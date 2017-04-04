@@ -1,0 +1,33 @@
+{
+  "name": "flatten-interval-tree",
+  "version": "0.0.1",
+  "description": "Interval Tree implementation as augmented extention of binary red-black tree",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --reporter spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alexbol99/flatten-interval-tree.git"
+  },
+  "keywords": [
+    "interval",
+    "tree",
+    "binary",
+    "search",
+    "trees",
+    "geometrical",
+    "search"
+  ],
+  "author": "“Alex <“alexbol99@gmail.com”> (“https://github.com/alexbol99/flatten-red-black-tree)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/alexbol99/flatten-interval-tree/issues"
+  },
+  "homepage": "https://github.com/alexbol99/flatten-interval-tree#readme",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "mocha": "^3.2.0"
+  }
+}
