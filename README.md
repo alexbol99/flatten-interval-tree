@@ -1,6 +1,7 @@
 # flatten-interval-tree
 
 [![npm version](https://badge.fury.io/js/flatten-interval-tree.svg)](https://badge.fury.io/js/flatten-interval-tree)
+[![Build Status](https://travis-ci.org/alexbol99/flatten-js.svg?branch=master)](https://travis-ci.org/alexbol99/flatten-js)
 
 Interval Tree implementation as it is described in Cormen et al. (2009, Section 14.3: Interval trees, pp. 348–354).
 
