@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha --reporter spec",
-    "generate-docs": "jsdoc -t ./node_modules/jsdoc/templates/minami -d ./docs index.js"
+    "generate-docs": "jsdoc -t ./node_modules/jsdoc/templates/minami -d ./docs index.js",
+    "cover": "istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec test/*"
   },
   "repository": {
     "type": "git",
