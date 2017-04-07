@@ -37,6 +37,13 @@ let Interval = class Interval {
         return [this.low, this.high];
     }
 
+    maximal_val(val1, val2) {
+        return Math.max(val1, val2);
+    }
+
+    val_less_than(val1, val2 ) {     // trait to compare max property with item ?
+        return val1 < val2;
+    }
 };
 
 module.exports = Interval;

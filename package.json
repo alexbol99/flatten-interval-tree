@@ -4,7 +4,8 @@
   "description": "Interval Tree implementation as augmented extention of binary red-black tree",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --reporter spec"
+    "test": "mocha --reporter spec",
+    "generate-docs": "jsdoc -t ./node_modules/jsdoc/templates/minami -d ./docs index.js"
   },
   "repository": {
     "type": "git",
