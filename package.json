@@ -1,6 +1,6 @@
 {
   "name": "flatten-interval-tree",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Interval Tree implementation as augmented extention of binary red-black tree",
   "main": "index.js",
   "scripts": {
@@ -26,8 +26,7 @@
     "url": "https://github.com/alexbol99/flatten-interval-tree/issues"
   },
   "homepage": "https://github.com/alexbol99/flatten-interval-tree#readme",
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "mocha": "^3.2.0"
   }
