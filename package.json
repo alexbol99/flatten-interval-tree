@@ -29,6 +29,7 @@
   "homepage": "https://github.com/alexbol99/flatten-interval-tree#readme",
   "dependencies": {},
   "devDependencies": {
+    "chai": "^3.5.0",
     "coveralls": "^2.13.0",
     "istanbul": "^0.4.5",
     "mocha": "^3.2.0"
