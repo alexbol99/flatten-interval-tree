@@ -13,13 +13,9 @@
     "url": "git+https://github.com/alexbol99/flatten-interval-tree.git"
   },
   "keywords": [
-    "interval",
-    "tree",
-    "binary",
-    "search",
-    "trees",
-    "geometrical",
-    "search"
+    "interval tree",
+    "binary search trees",
+    "geometrical search"
   ],
   "author": "“Alex <“alexbol99@gmail.com”> (“https://github.com/alexbol99/flatten-red-black-tree)",
   "license": "MIT",

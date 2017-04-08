@@ -257,7 +257,7 @@ let IntervalTree = class IntervalTree {
             this.recalc_max(delete_node);       // update max property upward from delete_node to root
         }
 
-        if (fix_node != nil_node && cut_node.color == Flatten.RedBlackTree.RB_TREE_COLOR_BLACK) {
+        if (fix_node != nil_node && cut_node.color == RB_TREE_COLOR_BLACK) {
             this.delete_fixup(fix_node);
         }
     }

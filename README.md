@@ -22,8 +22,8 @@ Create new instance of interval tree
 ### Insert(key, value)
 Insert new item into the tree. Key is and interval object or an array of [low, high] numeric values. <br/>
 Value may represent any value or refer to any object. If value omitted, tree will store and retrieve keys only. <br/>
-If key is an object, it should implement the following methods: less_than, equal_to, intersect,
-clone, output, maximal_val, val_less_than. <br/>
+If key is an object, it should expose <i>low</i> and <i>high</i> properties and implement the following methods:
+<i>less_than, equal_to, intersect, clone, output, maximal_val, val_less_than</i>. <br/>
 Method returns reference to the inserted node
 
     let node = tree.insert(key, value);
