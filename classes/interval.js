@@ -8,6 +8,10 @@ let Interval = class Interval {
         this.high = high;
     }
 
+    get max() {
+        return this.high;
+    }
+
     interval(low, high) {
         return new Interval(low, high);
     }

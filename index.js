@@ -500,6 +500,32 @@ let IntervalTree = class IntervalTree {
         return res;
     }
 
+    /* Throw error if not every path from root to bottom has same black height */
+    testBlackHeightProperty(node) {
+        let height = 0;
+        let heightLeft = 0;
+        let heightRight = 0;
+        if (node.color == RB_TREE_COLOR_BLACK) {
+            height++;
+        }
+        if (node.left != nil_node) {
+            heightLeft = this.testBlackHeightProperty(node.left);
+        }
+        else {
+            heightLeft = 1;
+        }
+        if (node.right != nil_node) {
+            heightRight = this.testBlackHeightProperty(node.right);
+        }
+        else {
+            heightRight = 1;
+        }
+        if (heightLeft != heightRight) {
+            throw new Error('Red-black height property violated');
+        }
+        height += heightLeft;
+        return height;
+    };
 };
 
 module.exports = IntervalTree;

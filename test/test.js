@@ -69,4 +69,19 @@ describe('#IntervalTree', function() {
         for (let i=0; i < ints.length; i++) tree.insert(ints[i],"val"+i)
         expect(tree.search([3,4])).to.deep.equal([]);
     });
+    it('Each red node has exactly two black child nodes', function () {
+        let tree = new IntervalTree();
+        let ints = [[6,8],[1,2],[7,12],[1,1],[5,7]];
+        for (let i=0; i < ints.length; i++) tree.insert(ints[i],"val"+i)
+        expect(tree.testRedBlackProperty()).to.equal(true);
+    });
+    it('Each path from root to nil node has same black height', function () {
+        let tree = new IntervalTree();
+        let ints = [[6,8],[1,2],[7,12],[1,1],[5,7]];
+        for (let i=0; i < ints.length; i++) tree.insert(ints[i],"val"+i)
+        let height = (tree) => {
+            return tree.testBlackHeightProperty(tree.root);
+        };
+        expect(height(tree)).to.equal(3);
+    });
 });
