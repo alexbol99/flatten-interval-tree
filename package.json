@@ -1,6 +1,6 @@
 {
   "name": "flatten-interval-tree",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Interval Tree implementation as augmented extention of binary red-black tree",
   "main": "index.js",
   "scripts": {
