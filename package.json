@@ -6,8 +6,7 @@
   "scripts": {
     "test": "mocha --reporter spec",
     "generate-docs": "jsdoc -t ./node_modules/jsdoc/templates/minami -d ./docs index.js",
-    "cover": "istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec test/*",
-    "build": "babel index.js -o ./es5/index.js"
+    "cover": "istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec test/*"
   },
   "repository": {
     "type": "git",
@@ -26,8 +25,6 @@
   "homepage": "https://github.com/alexbol99/flatten-interval-tree#readme",
   "dependencies": {},
   "devDependencies": {
-    "babel-cli": "^6.24.1",
-    "babel-preset-es2015": "^6.24.1",
     "chai": "^3.5.0",
     "coveralls": "^2.13.0",
     "istanbul": "^0.4.5",
