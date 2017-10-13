@@ -19,13 +19,17 @@ let Node = class Node {
         this.item = {key: key, value: value};   // key is supposed to be       instance of Interval
 
         /* If not, this should by an array of two numbers */
-        this.item.key == undefined;
         if (key && key instanceof Array && key.length == 2) {
             if (!Number.isNaN(key[0]) && !Number.isNaN(key[1])) {
                 this.item.key = new Interval(Math.min(key[0], key[1]), Math.max(key[0], key[1]));
             }
         }
         this.max = this.item.key ? this.item.key.max : undefined;
+    }
+
+    isNil() {
+        return (this.item.key === undefined && this.item.value === undefined &&
+            this.left === null && this.right === null && this.color === RB_TREE_COLOR_BLACK);
     }
 
     less_than(other_node) {
