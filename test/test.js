@@ -84,4 +84,32 @@ describe('#IntervalTree', function() {
         };
         expect(height(tree)).to.equal(3);
     });
+    it('Same black height property preserved while nodes deleted', function () {
+        let tree = new IntervalTree();
+        let ints = [[6,8],[1,2],[7,12],[1,1],[5,7]];
+        for (let i=0; i < ints.length; i++) tree.insert(ints[i],"val"+i)
+        let height = (tree) => {
+            return tree.testBlackHeightProperty(tree.root);
+        };
+        let h;
+        tree.remove([1,1],"val3");
+        // h = height(tree);
+        expect(height(tree)).to.equal(3);
+        expect(tree.testRedBlackProperty()).to.equal(true);
+
+        tree.remove([5,7],"val4");
+        expect(height(tree)).to.equal(3);
+        expect(tree.testRedBlackProperty()).to.equal(true);
+
+        tree.remove([1,2],"val1");
+        expect(tree.testRedBlackProperty()).to.equal(true);
+        expect(height(tree)).to.equal(2);
+
+        tree.remove([6,8],"val0");
+        expect(tree.testRedBlackProperty()).to.equal(true);
+        expect(height(tree)).to.equal(2);
+
+        tree.remove([7,12],"val2");
+        expect(tree.testRedBlackProperty()).to.equal(true);
+    });
 });
