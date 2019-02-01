@@ -233,9 +233,9 @@ const IntervalTree = class IntervalTree {
         }
 
         // remove cut_node from parent
-        if (fix_node != nil_node) {
+        /*if (fix_node != nil_node) {*/
             fix_node.parent = cut_node.parent;
-        }
+        /*}*/
 
         if (cut_node == this.root) {
             this.root = fix_node;
@@ -261,7 +261,7 @@ const IntervalTree = class IntervalTree {
             this.recalc_max(delete_node);       // update max property upward from delete_node to root
         }
 
-        if (fix_node != nil_node && cut_node.color == RB_TREE_COLOR_BLACK) {
+        if (/*fix_node != nil_node && */cut_node.color == RB_TREE_COLOR_BLACK) {
             this.delete_fixup(fix_node);
         }
     }

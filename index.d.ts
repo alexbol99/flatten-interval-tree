@@ -1,4 +1,4 @@
-// Type definitions for flatten-interval-tree library v0.2
+// Type definitions for flatten-interval-tree library v1.0.2
 // Project: https://github.com/alexbol99/flatten-js
 // Definitions by: Alex Bol
 

@@ -1,13 +1,13 @@
 {
   "name": "flatten-interval-tree",
   "version": "0.2.1",
-  "description": "Interval Tree implementation as augmented extention of binary red-black tree",
-  "main": "index.js",
+  "description": "Interval Tree implementation as augmented binary red-black tree",
+  "main": "./src/index.js",
   "types": "index.d.ts",
   "scripts": {
-    "test": "mocha --reporter spec",
-    "generate-docs": "jsdoc -t ./node_modules/jsdoc/templates/minami -d ./docs index.js",
-    "cover": "istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec test/*"
+    "test": "mocha --require @babel/register --reporter spec",
+    "generate-docs": "jsdoc -t ./node_modules/minami -d ./docs ./src -r README.md",
+    "cover": "istanbul cover ./node_modules/mocha/bin/_mocha -- --require @babel/register -R spec test/*"
   },
   "repository": {
     "type": "git",
@@ -15,8 +15,7 @@
   },
   "keywords": [
     "interval tree",
-    "binary search trees",
-    "geometrical search"
+    "binary search trees"
   ],
   "author": "“Alex <“alexbol99@gmail.com”> (“https://github.com/alexbol99/flatten-red-black-tree)",
   "license": "MIT",
@@ -26,9 +25,16 @@
   "homepage": "https://github.com/alexbol99/flatten-interval-tree#readme",
   "dependencies": {},
   "devDependencies": {
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.2.2",
+    "@babel/node": "^7.2.2",
+    "@babel/preset-env": "^7.3.1",
+    "@babel/register": "^7.0.0",
     "chai": "^3.5.0",
-    "coveralls": "^2.13.0",
+    "coveralls": "^3.0.2",
     "istanbul": "^0.4.5",
-    "mocha": "^3.2.0"
+    "jsdoc": "^3.5.5",
+    "minami": "^1.2.3",
+    "mocha": "^5.2.0"
   }
 }
