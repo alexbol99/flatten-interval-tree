@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>IntervalTree - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
@@ -23,7 +24,7 @@
 <label for="nav-trigger" class="overlay"></label>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="IntervalTree.html">IntervalTree</a><ul class='methods'><li data-type='method'><a href="IntervalTree.html#exist">exist</a></li><li data-type='method'><a href="IntervalTree.html#forEach">forEach</a></li><li data-type='method'><a href="IntervalTree.html#insert">insert</a></li><li data-type='method'><a href="IntervalTree.html#remove">remove</a></li><li data-type='method'><a href="IntervalTree.html#search">search</a></li></ul></li></ul>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Interval.html">Interval</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="IntervalTree.html">IntervalTree</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="IntervalTree.html#exist">exist</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="IntervalTree.html#forEach">forEach</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="IntervalTree.html#insert">insert</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="IntervalTree.html#remove">remove</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="IntervalTree.html#search">search</a></span></li>
 </nav>
 
 <div id="main">
@@ -53,6 +54,7 @@
     <div class="container-overview">
     
         
+<div class="section-method">
 
     
     <h2>Constructor</h2>
@@ -72,14 +74,6 @@
 
 
 
-
-
-
-
-
-
-
-
 <dl class="details">
 
     
@@ -109,7 +103,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line19">line 19</a>
+        <a href="intervalTree.js.html">intervalTree.js</a>, <a href="intervalTree.js.html#line23">line 23</a>
     </li></ul></dd>
     
 
@@ -135,6 +129,14 @@
 
 
 
+
+
+
+
+
+
+
+</div>
     
     </div>
 
@@ -153,6 +155,7 @@
 
         
             
+<div class="section-members">
 <h4 class="name" id="size"><span class="type-signature"></span>size<span class="type-signature"></span></h4>
 
 
@@ -161,8 +164,6 @@
 <div class="description">
     Returns number of items stored in the interval tree
 </div>
-
-
 
 
 
@@ -197,7 +198,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line31">line 31</a>
+        <a href="intervalTree.js.html">intervalTree.js</a>, <a href="intervalTree.js.html#line35">line 35</a>
     </li></ul></dd>
     
 
@@ -213,6 +214,9 @@
 
 
 
+
+</div>
+
         
     
 
@@ -221,6 +225,7 @@
 
         
             
+<div class="section-method">
 
     
 
@@ -233,6 +238,50 @@
 <div class="description">
     Returns true if item {key,value} exist in the tree
 </div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="intervalTree.js.html">intervalTree.js</a>, <a href="intervalTree.js.html#line71">line 71</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
 
 
 
@@ -278,7 +327,10 @@
 
             
 
-            <td class="description last">interval correspondent to keys stored in the tree</td>
+            <td class="description last">
+                interval correspondent to keys stored in the tree
+                
+            </td>
         </tr>
 
     
@@ -296,13 +348,72 @@
 
             
 
-            <td class="description last">value object to be checked</td>
+            <td class="description last">
+                value object to be checked
+                
+            </td>
         </tr>
 
     
     </tbody>
 </table>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="section-returns">
+<h5>Returns:</h5>
+
+        
+
+<dl class="param-type">
+    <dt>
+        Type:
+    </dt>
+    <dd>
+        
+<span class="param-type"><code>boolean</code></span>
+
+
+    </dd>
+</dl>
+
+
+<div class="param-desc">
+    - true if item {key, value} exist in the tree, false otherwise
+</div>
+
+    
+</div>
+
+
+
+</div>
+        
+            
+<div class="section-method">
+
+    
+
+    <h4 class="name" id="forEach"><span class="type-signature"></span>forEach<span class="signature">(visitor(key,value))</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Tree visitor. For each node implement a callback function. <br/>Method calls a callback function with two parameters (key, value)
+</div>
 
 
 
@@ -337,7 +448,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line67">line 67</a>
+        <a href="intervalTree.js.html">intervalTree.js</a>, <a href="intervalTree.js.html#line118">line 118</a>
     </li></ul></dd>
     
 
@@ -347,58 +458,6 @@
 
     
 </dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    - true if item {key, value} exist in the tree, false otherwise
-</div>
-
-
-
-<dl class="param-type">
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">boolean</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="forEach"><span class="type-signature"></span>forEach<span class="signature">(visitor(key,value))</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-<div class="description">
-    Tree visitor. For each node implement a callback function. <br/>Method calls a callback function with two parameters (key, value)
-</div>
 
 
 
@@ -444,7 +503,10 @@
 
             
 
-            <td class="description last">function to be called for each tree item</td>
+            <td class="description last">
+                function to be called for each tree item
+                
+            </td>
         </tr>
 
     
@@ -456,45 +518,6 @@
 
 
 
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line114">line 114</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
 
 
 
@@ -505,14 +528,10 @@
 
 
 
-
-
-
-
-
-
+</div>
         
             
+<div class="section-method">
 
     
 
@@ -530,6 +549,50 @@
 
 
 
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="intervalTree.js.html">intervalTree.js</a>, <a href="intervalTree.js.html#line57">line 57</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
 
 
 
@@ -570,7 +633,10 @@
 
             
 
-            <td class="description last">interval object or array of two numbers [low, high]</td>
+            <td class="description last">
+                interval object or array of two numbers [low, high]
+                
+            </td>
         </tr>
 
     
@@ -588,7 +654,10 @@
 
             
 
-            <td class="description last">value representing any object (optional)</td>
+            <td class="description last">
+                value representing any object (optional)
+                
+            </td>
         </tr>
 
     
@@ -600,45 +669,6 @@
 
 
 
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line53">line 53</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
 
 
 
@@ -647,38 +677,37 @@
 
 
 
-
-
-
-
-
+<div class="section-returns">
 <h5>Returns:</h5>
 
         
-<div class="param-desc">
-    - returns reference to inserted node as an object {key:interval, value: value}
-</div>
-
-
 
 <dl class="param-type">
     <dt>
-        Type
+        Type:
     </dt>
     <dd>
         
-<span class="param-type">Node</span>
+<span class="param-type"><code>Node</code></span>
 
 
     </dd>
 </dl>
 
+
+<div class="param-desc">
+    - returns reference to inserted node as an object {key:interval, value: value}
+</div>
+
     
+</div>
 
 
 
+</div>
         
             
+<div class="section-method">
 
     
 
@@ -696,6 +725,50 @@
 
 
 
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="intervalTree.js.html">intervalTree.js</a>, <a href="intervalTree.js.html#line82">line 82</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
 
 
 
@@ -736,7 +809,10 @@
 
             
 
-            <td class="description last">interval correspondent to keys stored in the tree</td>
+            <td class="description last">
+                interval correspondent to keys stored in the tree
+                
+            </td>
         </tr>
 
     
@@ -754,13 +830,72 @@
 
             
 
-            <td class="description last">- value object</td>
+            <td class="description last">
+                - value object
+                
+            </td>
         </tr>
 
     
     </tbody>
 </table>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="section-returns">
+<h5>Returns:</h5>
+
+        
+
+<dl class="param-type">
+    <dt>
+        Type:
+    </dt>
+    <dd>
+        
+<span class="param-type"><code>boolean</code></span>
+
+
+    </dd>
+</dl>
+
+
+<div class="param-desc">
+    - true if item {key, value} deleted, false if not found
+</div>
+
+    
+</div>
+
+
+
+</div>
+        
+            
+<div class="section-method">
+
+    
+
+    <h4 class="name" id="search"><span class="type-signature"></span>search<span class="signature">(interval)</span><span class="type-signature"> &rarr; {Array}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Returns array of entry values which keys intersect with given interval <br/>If no values stored in the tree, returns array of keys which intersect given interval
+</div>
 
 
 
@@ -795,7 +930,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line78">line 78</a>
+        <a href="intervalTree.js.html">intervalTree.js</a>, <a href="intervalTree.js.html#line97">line 97</a>
     </li></ul></dd>
     
 
@@ -805,58 +940,6 @@
 
     
 </dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    - true if item {key, value} deleted, false if not found
-</div>
-
-
-
-<dl class="param-type">
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">boolean</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="search"><span class="type-signature"></span>search<span class="signature">(interval)</span><span class="type-signature"> &rarr; {Array}</span></h4>
-
-    
-
-
-
-<div class="description">
-    Returns array of entry values which keys intersect with given interval <br/>If no values stored in the tree, returns array of keys which intersect given interval
-</div>
 
 
 
@@ -902,7 +985,10 @@
 
             
 
-            <td class="description last">search interval, or array [low, high]</td>
+            <td class="description last">
+                search interval, or array [low, high]
+                
+            </td>
         </tr>
 
     
@@ -914,45 +1000,6 @@
 
 
 
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line93">line 93</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
 
 
 
@@ -961,32 +1008,30 @@
 
 
 
-
-
-
-
-
+<div class="section-returns">
 <h5>Returns:</h5>
 
         
 
-
 <dl class="param-type">
     <dt>
-        Type
+        Type:
     </dt>
     <dd>
         
-<span class="param-type">Array</span>
+<span class="param-type"><code>Array</code></span>
 
 
     </dd>
 </dl>
 
+
     
+</div>
 
 
 
+</div>
         
     
 
@@ -1005,7 +1050,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Oct 13 2017 17:53:53 GMT+0300 (Jerusalem Daylight Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Feb 01 2019 10:45:25 GMT+0200 (Israel Standard Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>

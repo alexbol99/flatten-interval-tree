@@ -2,8 +2,11 @@
  * Created by Alex Bol on 3/31/2017.
  */
 
-let expect = require('chai').expect;
-let IntervalTree = require('../index');
+// let expect = require('chai').expect;
+// let IntervalTree = require('../index');
+
+import { expect } from 'chai';
+import IntervalTree from '../src/index';
 
 describe('#IntervalTree', function() {
     it('Create new instanse of IntervalTree ', function () {
