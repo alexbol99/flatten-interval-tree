@@ -5,12 +5,14 @@
 
 Implementation of the interval binary search tree according to Cormen et al. Introduction to Algorithms (2009, Section 14.3: Interval trees, pp. 348–354).
 
+This is beta version.
+
 ## Installation
-npm install flatten-interval-tree -save
+npm install --save flatten-interval-tree
 
 ## Usage
 
-    let IntervalTree = require('flatten-interval-tree');
+    import IntervalTree from 'flatten-interval-tree'
 
 ## API Reference
 
