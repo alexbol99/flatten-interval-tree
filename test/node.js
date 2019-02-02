@@ -4,10 +4,8 @@
 
 'use strict';
 
-// let expect = require('chai').expect;
-// let Node = require('../classes/node');
-import { expect } from 'chai';
-import Node from '../src/classes/node';
+let expect = require('chai').expect;
+let Node = require('../classes/node');
 
 describe('#RedBlackTree Node', function() {
     it('Node class exist when required', function () {
