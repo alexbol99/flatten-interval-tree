@@ -22,7 +22,7 @@ declare class Interval {
 }
 
 declare class Node {
-    constructor(key?: Interval | [number,number], value?: Value )
+    constructor(key?: Interval | number[], value?: Value )
 
     left: Node;
     right: Node;
@@ -47,9 +47,9 @@ declare class IntervalTree {
     readonly keys: Node[];
     readonly isEmpty: boolean;
 
-    insert(key: Interval | [number,number], value?: Value) : Node;
-    exist(key: Interval | [number,number], value?: Value): boolean;
-    remove(key: Interval | [number,number], value?: Value) : Node;
-    search(interval: Interval | [number,number]) : Array<Value>;     // Array of value's or key.output()'s
+    insert(key: Interval | number[], value?: Value) : Node;
+    exist(key: Interval | number[], value?: Value): boolean;
+    remove(key: Interval | number[], value?: Value) : Node;
+    search(interval: Interval | number[]) : Array<Value>;     // Array of value's or key.output()'s
     forEach(callbackfn: (key: Interval, value: Value) => void, thisArg?: any ) : void;
 }
