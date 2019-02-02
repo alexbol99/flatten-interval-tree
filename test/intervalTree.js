@@ -2,8 +2,9 @@
  * Created by Alex Bol on 3/31/2017.
  */
 
-let expect = require('chai').expect;
-let IntervalTree = require('../index');
+import { expect } from 'chai';
+import IntervalTree from '../index';
+// import IntervalTree from '../dist/interval-tree.esm';
 
 describe('#IntervalTree', function() {
     it('Create new instanse of IntervalTree ', function () {

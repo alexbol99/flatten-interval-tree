@@ -2,7 +2,7 @@
  * Created by Alex Bol on 4/1/2017.
  */
 
-let Interval = class Interval {
+const Interval = class Interval {
     constructor(low, high) {
         this.low = low;
         this.high = high;
@@ -50,4 +50,5 @@ let Interval = class Interval {
     }
 };
 
-module.exports = Interval;
+// module.exports = Interval;
+export default Interval;

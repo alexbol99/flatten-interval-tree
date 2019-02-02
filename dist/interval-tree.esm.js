@@ -1,58 +1,155 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>intervalTree.js - Documentation</title>
+/**
+ * Created by Alex Bol on 4/1/2017.
+ */
 
-    <script src="scripts/prettify/prettify.js"></script>
-    <script src="scripts/prettify/lang-css.js"></script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
-    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
-    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
-</head>
-<body>
+const Interval = class Interval {
+    constructor(low, high) {
+        this.low = low;
+        this.high = high;
+    }
 
-<input type="checkbox" id="nav-trigger" class="nav-trigger" />
-<label for="nav-trigger" class="navicon-button x">
-  <div class="navicon"></div>
-</label>
+    get max() {
+        return this.high;
+    }
 
-<label for="nav-trigger" class="overlay"></label>
+    interval(low, high) {
+        return new Interval(low, high);
+    }
 
-<nav>
-    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Interval.html">Interval</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="IntervalTree.html">IntervalTree</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="IntervalTree.html#exist">exist</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="IntervalTree.html#forEach">forEach</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="IntervalTree.html#insert">insert</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="IntervalTree.html#remove">remove</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="IntervalTree.html#search">search</a></span></li>
-</nav>
+    clone() {
+        return new Interval(this.low, this.high);
+    }
 
-<div id="main">
-    
-    <h1 class="page-title">intervalTree.js</h1>
-    
+    less_than(other_interval) {
+        return this.low < other_interval.low ||
+            this.low == other_interval.low && this.high < other_interval.high;
+    }
 
-    
+    equal_to(other_interval) {
+        return this.low == other_interval.low && this.high == other_interval.high;
+    }
 
+    intersect(other_interval) {
+        return !this.not_intersect(other_interval);
+    }
 
+    not_intersect(other_interval) {
+        return (this.high < other_interval.low || other_interval.high < this.low);
+    }
 
-    
-    <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>/**
+    output() {
+        return [this.low, this.high];
+    }
+
+    maximal_val(val1, val2) {
+        return Math.max(val1, val2);
+    }
+
+    val_less_than(val1, val2 ) {     // trait to compare max property with item ?
+        return val1 < val2;
+    }
+};
+
+/**
+ * Created by Alex Bol on 3/28/2017.
+ */
+
+// module.exports = {
+//     RB_TREE_COLOR_RED: 0,
+//     RB_TREE_COLOR_BLACK: 1
+// };
+
+const RB_TREE_COLOR_RED = 0;
+const RB_TREE_COLOR_BLACK = 1;
+
+/**
+ * Created by Alex Bol on 4/1/2017.
+ */
+
+const Node = class Node {
+    constructor(key = undefined, value = undefined,
+                left = null, right = null, parent = null, color = RB_TREE_COLOR_BLACK) {
+        this.left = left;                     // reference to left child node
+        this.right = right;                   // reference to right child node
+        this.parent = parent;                 // reference to parent node
+        this.color = color;
+
+        this.item = {key: key, value: value};   // key is supposed to be       instance of Interval
+
+        /* If not, this should by an array of two numbers */
+        if (key && key instanceof Array && key.length == 2) {
+            if (!Number.isNaN(key[0]) && !Number.isNaN(key[1])) {
+                this.item.key = new Interval(Math.min(key[0], key[1]), Math.max(key[0], key[1]));
+            }
+        }
+        this.max = this.item.key ? this.item.key.max : undefined;
+    }
+
+    isNil() {
+        return (this.item.key === undefined && this.item.value === undefined &&
+            this.left === null && this.right === null && this.color === RB_TREE_COLOR_BLACK);
+    }
+
+    less_than(other_node) {
+        return this.item.key.less_than(other_node.item.key);
+    }
+
+    equal_to(other_node) {
+        let value_equal = true;
+        if (this.item.value && other_node.item.value) {
+            value_equal = this.item.value.equal_to ? this.item.value.equal_to(other_node.item.value) :
+                this.item.value == other_node.item.value;
+        }
+        return this.item.key.equal_to(other_node.item.key) && value_equal;
+    }
+
+    intersect(other_node) {
+        return this.item.key.intersect(other_node.item.key);
+    }
+
+    copy_data(other_node) {
+        this.item.key = other_node.item.key.clone();
+        this.item.value = other_node.item.value;
+    }
+
+    update_max() {
+        // use key (Interval) max property instead of key.high
+        this.max = this.item.key ? this.item.key.max : undefined;
+        if (this.right && this.right.max) {
+            let maximal_val = this.item.key.maximal_val;
+            this.max = maximal_val(this.max, this.right.max);
+        }
+        if (this.left && this.left.max) {
+            let maximal_val = this.item.key.maximal_val;
+            this.max = maximal_val(this.max, this.left.max);
+        }
+    }
+
+    // Other_node does not intersect any node of left subtree, if this.left.max < other_node.item.key.low
+    not_intersect_left_subtree(search_node) {
+        let val_less_than = this.item.key.val_less_than;
+        let high = this.left.max.high ? this.left.max.high : this.left.max;
+        return val_less_than(high, search_node.item.key.low);
+    }
+
+    // Other_node does not intersect right subtree if other_node.item.key.high < this.right.key.low
+    not_intersect_right_subtree(search_node) {
+        let val_less_than = this.item.key.val_less_than;
+        let low = this.right.max.low ? this.right.max.low : this.right.item.key.low;
+        return val_less_than(search_node.item.key.high, low);
+    }
+};
+
+/**
  * Created by Alex Bol on 3/31/2017.
  */
-'use strict';
-
-import Node from './node.js';
-import {RB_TREE_COLOR_RED, RB_TREE_COLOR_BLACK} from '../utils/constants.js';
 
 const nil_node = new Node();
 
 /**
- * Implementation of interval binary search tree &lt;br/>
- * Interval tree stores items which are couples of {key:interval, value: value} &lt;br/>
- * Interval is an object with high and low properties or simply array of numeric [low,high] values &lt;br />
+ * Implementation of interval binary search tree <br/>
+ * Interval tree stores items which are couples of {key:interval, value: value} <br/>
+ * Interval is an object with high and low properties or simply array of numeric [low,high] values <br />
  * If interval is an object, it should implement and expose methods less_than, equals_to, intersect and others,
  * see documentation
  * @type {IntervalTree}
@@ -126,7 +223,7 @@ const IntervalTree = class IntervalTree {
     }
 
     /**
-     * Returns array of entry values which keys intersect with given interval &lt;br/>
+     * Returns array of entry values which keys intersect with given interval <br/>
      * If no values stored in the tree, returns array of keys which intersect given interval
      * @param interval - search interval, or array [low, high]
      * @returns {Array}
@@ -148,7 +245,7 @@ const IntervalTree = class IntervalTree {
     }
 
     /**
-     * Tree visitor. For each node implement a callback function. &lt;br/>
+     * Tree visitor. For each node implement a callback function. <br/>
      * Method calls a callback function with two parameters (key, value)
      * @param visitor(key,value) - function to be called for each tree item
      */
@@ -202,7 +299,7 @@ const IntervalTree = class IntervalTree {
         let uncle_node;
 
         current_node = insert_node;
-        while (current_node != this.root &amp;&amp; current_node.parent.color == RB_TREE_COLOR_RED) {
+        while (current_node != this.root && current_node.parent.color == RB_TREE_COLOR_RED) {
             if (current_node.parent == current_node.parent.parent.left) {   // parent is left child of grandfather
                 uncle_node = current_node.parent.parent.right;              // right brother of parent
                 if (uncle_node.color == RB_TREE_COLOR_RED) {             // Case 1. Uncle is red
@@ -212,7 +309,7 @@ const IntervalTree = class IntervalTree {
                     current_node.parent.parent.color = RB_TREE_COLOR_RED;
                     current_node = current_node.parent.parent;
                 }
-                else {                                                    // Case 2 &amp; 3. Uncle is black
+                else {                                                    // Case 2 & 3. Uncle is black
                     if (current_node == current_node.parent.right) {     // Case 2. Current if right child
                         // This case is transformed into Case 3.
                         current_node = current_node.parent;
@@ -298,7 +395,7 @@ const IntervalTree = class IntervalTree {
             this.recalc_max(delete_node);       // update max property upward from delete_node to root
         }
 
-        if (/*fix_node != nil_node &amp;&amp; */cut_node.color == RB_TREE_COLOR_BLACK) {
+        if (/*fix_node != nil_node && */cut_node.color == RB_TREE_COLOR_BLACK) {
             this.delete_fixup(fix_node);
         }
     }
@@ -307,7 +404,7 @@ const IntervalTree = class IntervalTree {
         let current_node = fix_node;
         let brother_node;
 
-        while (current_node != this.root &amp;&amp; current_node.parent != null &amp;&amp; current_node.color == RB_TREE_COLOR_BLACK) {
+        while (current_node != this.root && current_node.parent != null && current_node.color == RB_TREE_COLOR_BLACK) {
             if (current_node == current_node.parent.left) {          // fix node is left child
                 brother_node = current_node.parent.right;
                 if (brother_node.color == RB_TREE_COLOR_RED) {   // Case 1. Brother is red
@@ -317,7 +414,7 @@ const IntervalTree = class IntervalTree {
                     brother_node = current_node.parent.right;                      // update brother
                 }
                 // Derive to cases 2..4: brother is black
-                if (brother_node.left.color == RB_TREE_COLOR_BLACK &amp;&amp;
+                if (brother_node.left.color == RB_TREE_COLOR_BLACK &&
                     brother_node.right.color == RB_TREE_COLOR_BLACK) {  // case 2: both nephews black
                     brother_node.color = RB_TREE_COLOR_RED;              // re-color brother
                     current_node = current_node.parent;                  // continue iteration
@@ -347,7 +444,7 @@ const IntervalTree = class IntervalTree {
                     brother_node = current_node.parent.left;                        // update brother
                 }
                 // Go to cases 2..4
-                if (brother_node.left.color == RB_TREE_COLOR_BLACK &amp;&amp;
+                if (brother_node.left.color == RB_TREE_COLOR_BLACK &&
                     brother_node.right.color == RB_TREE_COLOR_BLACK) {   // case 2
                     brother_node.color = RB_TREE_COLOR_RED;             // re-color brother
                     current_node = current_node.parent;                              // continue iteration
@@ -391,17 +488,17 @@ const IntervalTree = class IntervalTree {
     // Original search_interval method; container res support push() insertion
     // Search all intervals intersecting given one
     tree_search_interval(node, search_node, res) {
-        if (node != null &amp;&amp; node != nil_node) {
-            // if (node->left != nil_node &amp;&amp; node->left->max >= low) {
-            if (node.left != nil_node &amp;&amp; !node.not_intersect_left_subtree(search_node)) {
+        if (node != null && node != nil_node) {
+            // if (node->left != nil_node && node->left->max >= low) {
+            if (node.left != nil_node && !node.not_intersect_left_subtree(search_node)) {
                 this.tree_search_interval(node.left, search_node, res);
             }
-            // if (low &lt;= node->high &amp;&amp; node->low &lt;= high) {
+            // if (low <= node->high && node->low <= high) {
             if (node.intersect(search_node)) {
                 res.push(node);
             }
-            // if (node->right != nil_node &amp;&amp; node->low &lt;= high) {
-            if (node.right != nil_node &amp;&amp; !node.not_intersect_right_subtree(search_node)) {
+            // if (node->right != nil_node && node->low <= high) {
+            if (node.right != nil_node && !node.not_intersect_right_subtree(search_node)) {
                 this.tree_search_interval(node.right, search_node, res);
             }
         }
@@ -409,7 +506,7 @@ const IntervalTree = class IntervalTree {
 
     local_minimum(node) {
         let node_min = node;
-        while (node_min.left != null &amp;&amp; node_min.left != nil_node) {
+        while (node_min.left != null && node_min.left != nil_node) {
             node_min = node_min.left;
         }
         return node_min;
@@ -418,7 +515,7 @@ const IntervalTree = class IntervalTree {
     // not in use
     local_maximum(node) {
         let node_max = node;
-        while (node_max.right != null &amp;&amp; node_max.right != nil_node) {
+        while (node_max.right != null && node_max.right != nil_node) {
             node_max = node_max.right;
         }
         return node_max;
@@ -435,7 +532,7 @@ const IntervalTree = class IntervalTree {
         else {
             current_node = node;
             parent_node = node.parent;
-            while (parent_node != null &amp;&amp; parent_node.right == current_node) {
+            while (parent_node != null && parent_node.right == current_node) {
                 current_node = parent_node;
                 parent_node = parent_node.parent;
             }
@@ -448,7 +545,7 @@ const IntervalTree = class IntervalTree {
     //           y            ---------------.       x
     //          / \                                  / \
     //         x   c          left-rotate(T,x)      a   y
-    //        / \             &lt;---------------         / \
+    //        / \             <---------------         / \
     //       a   b                                    b   c
 
     rotate_left(x) {
@@ -475,12 +572,12 @@ const IntervalTree = class IntervalTree {
         y.left = x;                 // x becomes left child of y
         x.parent = y;               // and y becomes parent of x
 
-        if (x != null &amp;&amp; x != nil_node) {
+        if (x != null && x != nil_node) {
             x.update_max();
         }
 
         y = x.parent;
-        if (y != null &amp;&amp; y != nil_node) {
+        if (y != null && y != nil_node) {
             y.update_max();
         }
     }
@@ -509,18 +606,18 @@ const IntervalTree = class IntervalTree {
         x.right = y;                 // y becomes right child of x
         y.parent = x;               // and x becomes parent of y
 
-        if (y != null &amp;&amp; y != nil_node) {
+        if (y != null && y != nil_node) {
             y.update_max();
         }
 
         x = y.parent;
-        if (x != null &amp;&amp; x != nil_node) {
+        if (x != null && x != nil_node) {
             x.update_max();
         }
     }
 
     tree_walk(node, action) {
-        if (node != null &amp;&amp; node != nil_node) {
+        if (node != null && node != nil_node) {
             this.tree_walk(node.left, action);
             // arr.push(node.toArray());
             action(node);
@@ -533,7 +630,7 @@ const IntervalTree = class IntervalTree {
         let res = true;
         this.tree_walk(this.root, function (node) {
             if (node.color == RB_TREE_COLOR_RED) {
-                if (!(node.left.color == RB_TREE_COLOR_BLACK &amp;&amp; node.right.color == RB_TREE_COLOR_BLACK)) {
+                if (!(node.left.color == RB_TREE_COLOR_BLACK && node.right.color == RB_TREE_COLOR_BLACK)) {
                     res = false;
                 }
             }
@@ -569,24 +666,4 @@ const IntervalTree = class IntervalTree {
     };
 };
 
-// module.exports = IntervalTree;
 export default IntervalTree;
-</code></pre>
-        </article>
-    </section>
-
-
-
-
-</div>
-
-<br class="clear">
-
-<footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sat Feb 02 2019 10:10:25 GMT+0200 (Israel Standard Time) using the Minami theme.
-</footer>
-
-<script>prettyPrint();</script>
-<script src="scripts/linenumber.js"></script>
-</body>
-</html>
