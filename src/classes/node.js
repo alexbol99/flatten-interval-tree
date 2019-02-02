@@ -15,7 +15,7 @@ const Node = class Node {
         this.parent = parent;                 // reference to parent node
         this.color = color;
 
-        this.item = {key: key, value: value};   // key is supposed to be       instance of Interval
+        this.item = {key: key, value: value};   // key is supposed to be instance of Interval
 
         /* If not, this should by an array of two numbers */
         if (key && key instanceof Array && key.length == 2) {

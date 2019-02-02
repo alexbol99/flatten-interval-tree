@@ -5,6 +5,7 @@
 export = IntervalTree;
 
 type Comparable = any;      // any object that implements operators '<' and '==' and  method'max'
+type Value = any;
 
 declare class Interval {
     low: Comparable;
@@ -21,13 +22,13 @@ declare class Interval {
 }
 
 declare class Node {
-    constructor(key?: Interval, value?: any )
+    constructor(key?: Interval | [number,number], value?: Value )
 
     left: Node;
     right: Node;
     parent: Node;
     color: 1 | 0;
-    item: {key: Interval, value: any};
+    item: {key: Interval, value: Value};
 
     isNil() : boolean;
     less_than(other_node: Node) : boolean;
@@ -46,9 +47,9 @@ declare class IntervalTree {
     readonly keys: Node[];
     readonly isEmpty: boolean;
 
-    insert(key: Interval, value?: any) : Node;
-    exist(key: Interval, value?: any): boolean;
-    remove(key: Interval, value?: any) : Node;
-    search(interval: Interval) : Array<any>;     // Array of value's or key.output()'s
-    forEach(callbackfn: (key: Interval, value: any) => void, thisArg?: any ) : void;
+    insert(key: Interval | [number,number], value?: Value) : Node;
+    exist(key: Interval | [number,number], value?: Value): boolean;
+    remove(key: Interval | [number,number], value?: Value) : Node;
+    search(interval: Interval | [number,number]) : Array<Value>;     // Array of value's or key.output()'s
+    forEach(callbackfn: (key: Interval, value: Value) => void, thisArg?: any ) : void;
 }
