@@ -114,6 +114,17 @@ let IntervalTree = class IntervalTree {
     forEach(visitor) {
         this.tree_walk(this.root, (node) => visitor(node.item.key, node.item.value));
     };
+    
+    /**
+     * Tree visitor which maps results to an array. <br/>
+     * Method calls a callback function with two parameters (key, value)
+     * @param visitor(key,value) - function to be called for each tree item
+     */
+    map(visitor) {
+        const bucket = []
+        this.tree_mapper(this.root, (node) => visitor(node.item.key, node.item.value), bucket);
+        return bucket
+    }
 
     recalc_max(node) {
         let node_current = node;
@@ -483,6 +494,15 @@ let IntervalTree = class IntervalTree {
             this.tree_walk(node.left, action);
             // arr.push(node.toArray());
             action(node);
+            this.tree_walk(node.right, action);
+        }
+    }
+    
+    tree_mapper(node, action, bucket) {
+        if (node != null && node != nil_node) {
+            this.tree_walk(node.left, action);
+            // arr.push(node.toArray());
+            bucket.push(action(node));
             this.tree_walk(node.right, action);
         }
     }
