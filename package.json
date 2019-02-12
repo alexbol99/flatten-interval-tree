@@ -1,6 +1,6 @@
 {
   "name": "flatten-interval-tree",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "Interval search tree implemented as augmented binary red-black tree",
   "main": "dist/interval-tree.cjs.js",
   "umd:main": "dist/interval-tree.umd.js",
