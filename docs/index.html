@@ -24,7 +24,7 @@
 <label for="nav-trigger" class="overlay"></label>
 
 <nav>
-    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Interval.html">Interval</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="IntervalTree.html">IntervalTree</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="IntervalTree.html#exist">exist</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="IntervalTree.html#forEach">forEach</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="IntervalTree.html#insert">insert</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="IntervalTree.html#remove">remove</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="IntervalTree.html#search">search</a></span></li>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Interval.html">Interval</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="IntervalTree.html">IntervalTree</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="IntervalTree.html#exist">exist</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="IntervalTree.html#forEach">forEach</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="IntervalTree.html#insert">insert</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="IntervalTree.html#isEmpty">isEmpty</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="IntervalTree.html#remove">remove</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="IntervalTree.html#search">search</a></span></li>
 </nav>
 
 <div id="main">
@@ -51,21 +51,20 @@
         <article><h1>flatten-interval-tree</h1><p><a href="https://badge.fury.io/js/flatten-interval-tree"><img src="https://badge.fury.io/js/flatten-interval-tree.svg" alt="npm version"></a>
 <a href="https://travis-ci.org/alexbol99/flatten-js"><img src="https://travis-ci.org/alexbol99/flatten-js.svg?branch=master" alt="Build Status"></a></p>
 <p>Implementation of the interval binary search tree according to Cormen et al. Introduction to Algorithms (2009, Section 14.3: Interval trees, pp. 348–354).</p>
-<h2>Installation</h2><p>npm install flatten-interval-tree -save</p>
-<h2>Usage</h2><pre class="prettyprint source"><code>let IntervalTree = require('flatten-interval-tree');</code></pre><h2>API Reference</h2><h3>Constructor</h3><p>Create new instance of interval tree</p>
-<pre class="prettyprint source"><code>let tree = new IntervalTree();</code></pre><h3>Insert(key, value)</h3><p>Insert new item into the tree. Key is and interval object or an array of [low, high] numeric values. <br/>
+<h4>This version is beta</h4><h2>Installation</h2><pre class="prettyprint source lang-bash"><code>npm install --save flatten-interval-tree</code></pre><h2>Usage</h2><pre class="prettyprint source lang-javascript"><code>import IntervalTree from 'flatten-interval-tree'</code></pre><h2>API Reference</h2><h3>Constructor</h3><p>Create new instance of interval tree</p>
+<pre class="prettyprint source lang-javascript"><code>let tree = new IntervalTree()</code></pre><h3>Insert(key, value)</h3><p>Insert new item into the tree. Key is and interval object or an array of [low, high] numeric values. <br/>
 Value may represent any value or refer to any object. If value omitted, tree will store and retrieve keys only. <br/>
 If key is an object, it should expose <i>low</i> and <i>high</i> properties and implement the following methods:
 <i>less_than, equal_to, intersect, clone, output, maximal_val, val_less_than</i>. <br/>
 Method returns reference to the inserted node</p>
-<pre class="prettyprint source"><code>let node = tree.insert(key, value);</code></pre><h3>Exist(key,value)</h3><p>Method returns true if entry {key, value} exists in the tree. <br/>
+<pre class="prettyprint source lang-javascript"><code>let node = tree.insert(key, value)</code></pre><h3>Exist(key,value)</h3><p>Method returns true if item {key, value} exists in the tree. <br/>
 Method may be useful if need to support unique items.</p>
-<pre class="prettyprint source"><code>let exist = tree.exist(key,value);</code></pre><h3>Remove(key, value)</h3><p>Removes item from the tree. Returns true if item was actually deleted, false if not found</p>
-<pre class="prettyprint source"><code>let removed = tree.remove(key, value);</code></pre><h3>Search(interval)</h3><p>Returns array of values which keys intersected with given interval. <br/>
+<pre class="prettyprint source lang-javascript"><code>let exist = tree.exist(key, value)</code></pre><h3>Remove(key, value)</h3><p>Removes item from the tree. Returns true if item was actually deleted, false if not found</p>
+<pre class="prettyprint source lang-javascript"><code>let removed = tree.remove(key, value)</code></pre><h3>Search(interval)</h3><p>Returns array of values which keys intersected with given interval. <br/>
 If tree stores only keys with no values, search returns array of keys which intersect given interval</p>
-<pre class="prettyprint source"><code>let resp = tree.search(interval);</code></pre><h3>Size (getter)</h3><p>Returns number of items stored in the tree</p>
-<pre class="prettyprint source"><code>let size = tree.size;</code></pre><h3>ForEach(visitor)</h3><p>Enables to traverse the whole tree and perform operation for each item</p>
-<pre class="prettyprint source"><code>tree.forEach( (key, value) => console.log(value) )</code></pre><h2>Tests</h2><pre class="prettyprint source"><code>npm test</code></pre><h2>Contributors</h2><p>In lieu of a formal style guide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code.</p>
+<pre class="prettyprint source lang-javascript"><code>let resp = tree.search(interval)</code></pre><h3>Size (getter)</h3><p>Returns number of items stored in the tree</p>
+<pre class="prettyprint source lang-javascript"><code>let size = tree.size</code></pre><h3>ForEach(visitor)</h3><p>Enables to traverse the whole tree and perform operation for each item</p>
+<pre class="prettyprint source lang-javascript"><code>tree.forEach( (key, value) => console.log(value) )</code></pre><h2>Tests</h2><pre class="prettyprint source lang-bash"><code>npm test</code></pre><h2>Contributors</h2><p>In lieu of a formal style guide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code.</p>
 <h2>License</h2><p>MIT</p></article>
     </section>
 
@@ -79,7 +78,7 @@ If tree stores only keys with no values, search returns array of keys which inte
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sat Feb 02 2019 10:10:25 GMT+0200 (Israel Standard Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Wed Feb 13 2019 00:31:56 GMT+0200 (Israel Standard Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>
