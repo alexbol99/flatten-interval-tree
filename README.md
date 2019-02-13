@@ -66,6 +66,9 @@ Enables to traverse the whole tree and perform operation for each item
 tree.forEach( (key, value) => console.log(value) )
 ```
 
+## Documentation
+Here may be found full [documentation](https://alexbol99.github.io/flatten-interval-tree/)
+
 ## Tests
 ```bash
 npm test
