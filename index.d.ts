@@ -47,8 +47,9 @@ declare class IntervalTree {
 
     readonly size: number;
     readonly keys: Node[];
-    readonly isEmpty: boolean;
+    readonly items: Array<{key:Interval, value:Value}>
 
+    isEmpty(): boolean;
     insert(key: Interval | number[], value?: Value) : Node;
     exist(key: Interval | number[], value?: Value): boolean;
     remove(key: Interval | number[], value?: Value) : Node;

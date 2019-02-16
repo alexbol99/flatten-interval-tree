@@ -58,6 +58,33 @@ describe('#IntervalTree', function() {
         expect(tree.keys).to.deep.equal([[1,1],[5,7],[5,12],[6,8]]);
         expect(tree.exist([1,4])).to.be.false;
     });
+    it('May become empty after all entries will be deleted', function () {
+        let tree = new IntervalTree();
+        let ints = [[6,8],[1,4],[5,12],[1,1],[5,7]];
+        for (let i=0; i < ints.length; i++) tree.insert(ints[i],"val"+i)
+        tree.remove([6,8],"val0");
+        tree.remove([1,4],"val1");
+        tree.remove([5,12],"val2");
+        tree.remove([1,1],"val3");
+        tree.remove([5,7],"val4");
+
+        expect(tree.size).to.equal(0);
+        expect(tree.isEmpty()).to.be.true;
+    });
+    it('May return array of items', function () {
+        let tree = new IntervalTree();
+        let ints = [[6,8],[1,4],[5,12],[1,1],[5,7]];
+        for (let i=0; i < ints.length; i++) tree.insert(ints[i],"val"+i)
+
+        let items = tree.items;
+        let keys = [];
+        for (let item of items) {
+            keys.push(item)
+        }
+        expect(items.length).to.equal(5);
+        expect(keys.length).to.equal(5);
+        expect(tree.keys).to.deep.equal([[1,1],[1,4],[5,7],[5,12],[6,8]]);
+    });
     it('May search interval and return array of values', function () {
         let tree = new IntervalTree();
         let ints = [[6,8],[1,4],[5,12],[1,1],[5,7]];

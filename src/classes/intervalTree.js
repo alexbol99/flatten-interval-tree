@@ -34,9 +34,15 @@ const IntervalTree = class IntervalTree {
         return count;
     }
 
+    /**
+     * Returns array of sorted keys in the ascended order
+     * @returns {Array}
+     */
     get keys() {
         let res = [];
-        this.tree_walk(this.root, (node) => res.push(node.item.key.toArray()));
+        this.tree_walk(this.root, (node) => res.push(
+            node.item.key.toArray ? node.item.key.toArray() : node.item.key
+        ));
         return res;
     }
 
@@ -48,11 +54,28 @@ const IntervalTree = class IntervalTree {
 
     get entries() {
         let res = [];
-        this.tree_walk(this.root, (node) => res.push({key: node.item.key.toArray(), value: node.item.value}));
+        this.tree_walk(this.root, (node) => res.push({
+            key: node.item.key.toArray ? node.item.key.toArray() : node.item.key,
+            value: node.item.value
+        }));
         return res;
     }
 
-    get isEmpty() {
+    /**
+     * Returns array of items (<key,value> pairs) in the ascended keys order
+     * @returns {Array}
+     */
+    get items() {
+        const res = [];
+        this.tree_walk(this.root, (node) => res.push(node.item));
+        return res;
+    }
+
+    /**
+     * Returns true if tree is empty
+     * @returns {boolean}
+     */
+    isEmpty() {
         return (this.root == null || this.root == nil_node);
     }
 

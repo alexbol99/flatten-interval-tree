@@ -74,7 +74,7 @@ const Node = class Node {
         this.parent = parent;                 // reference to parent node
         this.color = color;
 
-        this.item = {key: key, value: value};   // key is supposed to be       instance of Interval
+        this.item = {key: key, value: value};   // key is supposed to be instance of Interval
 
         /* If not, this should by an array of two numbers */
         if (key && key instanceof Array && key.length == 2) {
@@ -172,13 +172,33 @@ const IntervalTree = class IntervalTree {
         return count;
     }
 
+    /**
+     * Returns array of sorted keys in the ascended order
+     * @returns {Array}
+     */
     get keys() {
-        let res = [];
-        this.tree_walk(this.root, (node) => res.push(node.item.key.output()));
+        const res = [];
+        this.tree_walk(this.root, (node) => res.push(
+            node.item.key.output ? node.item.key.output() : node.item.key
+        ));
         return res;
     }
 
-    get isEmpty() {
+    /**
+     * Returns array of items (<key,value> pairs) in the ascended keys order
+     * @returns {Array}
+     */
+    get items() {
+        const res = [];
+        this.tree_walk(this.root, (node) => res.push(node.item));
+        return res;
+    }
+
+    /**
+     * Returns true if tree is empty
+     * @returns {boolean}
+     */
+    isEmpty() {
         return (this.root == null || this.root == nil_node);
     }
 
