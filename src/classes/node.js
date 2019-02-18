@@ -7,7 +7,7 @@
 import Interval from './interval.js';
 import {RB_TREE_COLOR_RED, RB_TREE_COLOR_BLACK} from '../utils/constants.js';
 
-const Node = class Node {
+class Node {
     constructor(key = undefined, value = undefined,
                 left = null, right = null, parent = null, color = RB_TREE_COLOR_BLACK) {
         this.left = left;                     // reference to left child node
@@ -81,5 +81,4 @@ const Node = class Node {
     }
 };
 
-// module.exports = Node;
 export default Node;

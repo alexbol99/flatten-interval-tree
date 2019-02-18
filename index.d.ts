@@ -47,7 +47,8 @@ declare class IntervalTree {
 
     readonly size: number;
     readonly keys: Node[];
-    readonly items: Array<{key:Interval, value:Value}>
+    readonly values: Value[];
+    readonly items: Array<{key:Interval, value:Value}>;
 
     isEmpty(): boolean;
     insert(key: Interval | number[], value?: Value) : Node;
@@ -55,5 +56,5 @@ declare class IntervalTree {
     remove(key: Interval | number[], value?: Value) : Node;
     search(interval: Interval | number[]) : Array<Value>;     // Array of value's or key.output()'s
     forEach(callbackfn: (key: Interval, value: Value) => void, thisArg?: any ) : void;
-    map(callbackFn: (value: Value) => any, thisArg?: any ): IntervalTree;
+    map(callbackFn: (value: Value, key?: Interval) => any, thisArg?: any ): IntervalTree;
 }

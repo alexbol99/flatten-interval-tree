@@ -67,7 +67,7 @@ tree.forEach( (key, value) => console.log(value) )
 ```
 
 ## Documentation
-Here may be found full [documentation](https://alexbol99.github.io/flatten-interval-tree/)
+Documentation may be found here: [https://alexbol99.github.io/flatten-interval-tree](https://alexbol99.github.io/flatten-interval-tree/)
 
 ## Tests
 ```bash

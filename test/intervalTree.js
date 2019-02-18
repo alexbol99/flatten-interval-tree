@@ -85,10 +85,22 @@ describe('#IntervalTree', function() {
         expect(keys.length).to.equal(5);
         expect(tree.keys).to.deep.equal([[1,1],[1,4],[5,7],[5,12],[6,8]]);
     });
+    it('May transform tree to another tree using map', function () {
+        let tree1 = new IntervalTree();
+        let ints = [[6,8],[1,4],[5,12],[1,1],[5,7]];
+        for (let i=0; i < ints.length; i++) tree1.insert(ints[i],"val"+i);
+
+        let tree2 = tree1.map( (value, key) => (key.high-key.low) );
+
+        expect(tree2.size).to.equal(5);
+        expect(tree2.keys).to.deep.equal([[1,1],[1,4],[5,7],[5,12],[6,8]]);
+        expect(tree2.values).to.deep.equal([0,3,2,7,2]);
+    });
+
     it('May search interval and return array of values', function () {
         let tree = new IntervalTree();
         let ints = [[6,8],[1,4],[5,12],[1,1],[5,7]];
-        for (let i=0; i < ints.length; i++) tree.insert(ints[i],"val"+i)
+        for (let i=0; i < ints.length; i++) tree.insert(ints[i],"val"+i);
         expect(tree.search([2,3])).to.deep.equal(['val1']);
     });
     it('May return empty array when search interval does not intersect any', function () {
