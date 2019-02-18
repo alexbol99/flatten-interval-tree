@@ -47,7 +47,7 @@ declare class IntervalTree {
   readonly size: number;
   readonly keys: Node[];
   readonly values: any[]
-  readonly entries: Item[];
+  readonly items: Item[];
   readonly isEmpty: boolean;
 
   insert(key: Interval, value?: any): Node;

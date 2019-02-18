@@ -34,24 +34,40 @@ let IntervalTree = class IntervalTree {
         return count;
     }
 
+    /**
+     * Returns array of sorted keys in the ascending order
+     * @returns {Array}
+     */
     get keys() {
         let res = [];
-        this.tree_walk(this.root, (node) => res.push(node.item.key.toArray()));
+        this.tree_walk(this.root, (node) => res.push(node.item.key.output()));
         return res;
     }
-    
+
+    /**
+     * Return array of values in the ascending keys order
+     * @returns {Array}
+     */
     get values() {
         let res = [];
         this.tree_walk(this.root, (node) => res.push(node.item.value));
         return res;
     }
-    
-    get entries() {
+
+    /**
+     * Returns array of items (<key,value> pairs) in the ascended keys order
+     * @returns {Array}
+     */
+    get items() {
         let res = [];
-        this.tree_walk(this.root, (node) => res.push({key: node.item.key.toArray(), value: node.item.value}));
+        this.tree_walk(this.root, (node) => res.push({key: node.item.key.output(), value: node.item.value}));
         return res;
     }
 
+    /**
+     * Returns true if tree is empty
+     * @returns {boolean}
+     */
     get isEmpty() {
         return (this.root == null || this.root == nil_node);
     }
@@ -132,7 +148,7 @@ let IntervalTree = class IntervalTree {
      */
     map(callback) {
         const tree = new IntervalTree();
-        this.tree_walk(this.root, (node) => tree.insert(node.item.key, callback(node.item.value, node.item.key));
+        this.tree_walk(this.root, (node) => tree.insert(node.item.key, callback(node.item.value, node.item.key)));
         return tree;
     }
 
@@ -502,7 +518,7 @@ let IntervalTree = class IntervalTree {
     tree_walk(node, action) {
         if (node != null && node != nil_node) {
             this.tree_walk(node.left, action);
-            // arr.push(node.toArray());
+            // arr.push(node.output());
             action(node);
             this.tree_walk(node.right, action);
         }

@@ -1,12 +1,12 @@
 {
   "name": "flatten-interval-tree",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Interval Tree implementation as augmented binary red-black tree",
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
     "test": "mocha --reporter spec",
-    "generate-docs": "jsdoc -t ./node_modules/minami -d ./docs ./src -r README.md",
+    "generate-docs": "jsdoc -t ./node_modules/minami -d ./docs index.js ./classes -r README.md",
     "cover": "istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec test/*"
   },
   "repository": {

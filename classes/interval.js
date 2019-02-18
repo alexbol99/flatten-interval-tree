@@ -37,7 +37,7 @@ let Interval = class Interval {
         return (this.high < other_interval.low || other_interval.high < this.low);
     }
 
-    toArray() {
+    output() {
         return [this.low, this.high];
     }
 

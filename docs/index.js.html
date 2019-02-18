@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>intervalTree.js - Documentation</title>
+    <title>index.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -24,12 +24,12 @@
 <label for="nav-trigger" class="overlay"></label>
 
 <nav>
-    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Interval.html">Interval</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="IntervalTree.html">IntervalTree</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="IntervalTree.html#exist">exist</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="IntervalTree.html#forEach">forEach</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="IntervalTree.html#insert">insert</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="IntervalTree.html#remove">remove</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="IntervalTree.html#search">search</a></span></li>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Interval.html">Interval</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="IntervalTree.html">IntervalTree</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="IntervalTree.html#exist">exist</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="IntervalTree.html#forEach">forEach</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="IntervalTree.html#insert">insert</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="IntervalTree.html#map">map</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="IntervalTree.html#remove">remove</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="IntervalTree.html#search">search</a></span></li>
 </nav>
 
 <div id="main">
     
-    <h1 class="page-title">intervalTree.js</h1>
+    <h1 class="page-title">index.js</h1>
     
 
     
@@ -44,24 +44,20 @@
  */
 'use strict';
 
-// let Node = require('./classes/node');
-// let {RB_TREE_COLOR_RED, RB_TREE_COLOR_BLACK} = require('./utils/constants');
-
-import Node from './node';
-import colors from '../utils/constants';
+let Node = require('./classes/node');
+let {RB_TREE_COLOR_RED, RB_TREE_COLOR_BLACK} = require('./utils/constants');
 
 let nil_node = new Node();
-let {RB_TREE_COLOR_RED, RB_TREE_COLOR_BLACK} = colors;
 
 /**
  * Implementation of interval binary search tree &lt;br/>
- * Interval tree stores items which are couples of {key:interval, value: value} &lt;br/>
+ * Interval tree may store items which are couples of {key:interval, value: value} &lt;br/>
  * Interval is an object with high and low properties or simply array of numeric [low,high] values &lt;br />
  * If interval is an object, it should implement and expose methods less_than, equals_to, intersect and others,
- * see documentation
+ * see documentation {link}
  * @type {IntervalTree}
  */
-const IntervalTree = class IntervalTree {
+let IntervalTree = class IntervalTree {
     /**
      * Construct new empty instance of IntervalTree
      */
@@ -79,12 +75,40 @@ const IntervalTree = class IntervalTree {
         return count;
     }
 
+    /**
+     * Returns array of sorted keys in the ascending order
+     * @returns {Array}
+     */
     get keys() {
         let res = [];
         this.tree_walk(this.root, (node) => res.push(node.item.key.output()));
         return res;
     }
 
+    /**
+     * Return array of values in the ascending keys order
+     * @returns {Array}
+     */
+    get values() {
+        let res = [];
+        this.tree_walk(this.root, (node) => res.push(node.item.value));
+        return res;
+    }
+
+    /**
+     * Returns array of items (&lt;key,value> pairs) in the ascended keys order
+     * @returns {Array}
+     */
+    get items() {
+        let res = [];
+        this.tree_walk(this.root, (node) => res.push({key: node.item.key.output(), value: node.item.value}));
+        return res;
+    }
+
+    /**
+     * Returns true if tree is empty
+     * @returns {boolean}
+     */
     get isEmpty() {
         return (this.root == null || this.root == nil_node);
     }
@@ -158,7 +182,16 @@ const IntervalTree = class IntervalTree {
      */
     forEach(visitor) {
         this.tree_walk(this.root, (node) => visitor(node.item.key, node.item.value));
-    };
+    }
+    
+    /** Value Mapper. Walk through every node and map node value to another value
+     * @param callback(value, key) - function to be called for each tree item
+     */
+    map(callback) {
+        const tree = new IntervalTree();
+        this.tree_walk(this.root, (node) => tree.insert(node.item.key, callback(node.item.value, node.item.key)));
+        return tree;
+    }
 
     recalc_max(node) {
         let node_current = node;
@@ -526,7 +559,7 @@ const IntervalTree = class IntervalTree {
     tree_walk(node, action) {
         if (node != null &amp;&amp; node != nil_node) {
             this.tree_walk(node.left, action);
-            // arr.push(node.toArray());
+            // arr.push(node.output());
             action(node);
             this.tree_walk(node.right, action);
         }
@@ -573,8 +606,7 @@ const IntervalTree = class IntervalTree {
     };
 };
 
-// module.exports = IntervalTree;
-export default IntervalTree;
+module.exports = IntervalTree;
 </code></pre>
         </article>
     </section>
@@ -587,7 +619,7 @@ export default IntervalTree;
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Feb 01 2019 11:15:30 GMT+0200 (Israel Standard Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Feb 18 2019 12:31:59 GMT+0200 (Jerusalem Standard Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>
