@@ -1,6 +1,6 @@
 {
   "name": "flatten-interval-tree",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "description": "Interval search tree implemented as augmented binary red-black tree",
   "main": "dist/interval-tree.cjs.js",
   "umd:main": "dist/interval-tree.umd.js",
@@ -11,7 +11,8 @@
     "build": "rollup -c rollup.config.js",
     "test": "mocha --require @babel/register --reporter spec",
     "generate-docs": "jsdoc -t ./node_modules/minami -d ./docs ./src -r README.md",
-    "cover": "istanbul cover ./node_modules/mocha/bin/_mocha -- --require @babel/register -R spec test/*"
+    "cover": "istanbul cover ./node_modules/mocha/bin/_mocha -- --require @babel/register -R spec test/*",
+    "publish": "npm publish --tag beta"
   },
   "repository": {
     "type": "git",
