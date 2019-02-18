@@ -18,8 +18,10 @@ declare class Interval {
     equal_to(other_interval: Interval) : boolean;
     intersect(other_interval: Interval) : boolean;
     not_intersect(other_interval: Interval) : boolean;
-    output() : any;
+    toArray() : [number, number];
 }
+
+type Item = {key: Interval, value: Value}
 
 declare class Node {
     constructor(key?: Interval | number[], value?: Value )
@@ -28,7 +30,7 @@ declare class Node {
     right: Node;
     parent: Node;
     color: 1 | 0;
-    item: {key: Interval, value: Value};
+    item: Item;
 
     isNil() : boolean;
     less_than(other_node: Node) : boolean;
@@ -53,4 +55,5 @@ declare class IntervalTree {
     remove(key: Interval | number[], value?: Value) : Node;
     search(interval: Interval | number[]) : Array<Value>;     // Array of value's or key.output()'s
     forEach(callbackfn: (key: Interval, value: Value) => void, thisArg?: any ) : void;
+    map(callbackFn: (value: Value) => any, thisArg?: any ): IntervalTree;
 }
