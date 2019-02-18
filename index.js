@@ -36,7 +36,19 @@ let IntervalTree = class IntervalTree {
 
     get keys() {
         let res = [];
-        this.tree_walk(this.root, (node) => res.push(node.item.key.output()));
+        this.tree_walk(this.root, (node) => res.push(node.item.key.toArray()));
+        return res;
+    }
+    
+    get values() {
+        let res = [];
+        this.tree_walk(this.root, (node) => res.push(node.item.value));
+        return res;
+    }
+    
+    get entries() {
+        let res = [];
+        this.tree_walk(this.root, (node) => res.push({key: node.item.key.toArray(), value: node.item.value}));
         return res;
     }
 
@@ -113,7 +125,16 @@ let IntervalTree = class IntervalTree {
      */
     forEach(visitor) {
         this.tree_walk(this.root, (node) => visitor(node.item.key, node.item.value));
-    };
+    }
+    
+    /** Value Mapper. Walk through every node and map node value to another value
+     * @param callback(value, key) - function to be called for each tree item
+     */
+    map(callback) {
+        const tree = new IntervalTree();
+        this.tree_walk(this.root, (node) => tree.insert(node.item.key, callback(node.item.value, node.item.key));
+        return tree;
+    }
 
     recalc_max(node) {
         let node_current = node;
