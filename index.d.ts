@@ -20,8 +20,8 @@ declare class Interval {
     not_intersect(other_interval: Interval) : boolean;
     output() : [number, number];
 
-    static comparable_max(arg1: Comparable, arg2: Comparable) : Comparable;
-    static comparable_less_than(arg1: Comparable, arg2: Comparable ) : boolean;
+    comparable_max(arg1: Comparable, arg2: Comparable) : Comparable;
+    comparable_less_than(arg1: Comparable, arg2: Comparable ) : boolean;
 }
 
 type Item = {key: Interval, value: Value}

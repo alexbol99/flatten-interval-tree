@@ -1,6 +1,6 @@
 {
   "name": "@flatten-js/interval-tree",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Interval search tree",
   "main": "dist/main.cjs.js",
   "umd:main": "dist/main.umd.js",
@@ -12,7 +12,7 @@
     "test": "mocha --require @babel/register --reporter spec",
     "generate-docs": "jsdoc -t ./node_modules/minami -d ./docs ./src -r README.md",
     "cover": "istanbul cover ./node_modules/mocha/bin/_mocha -- --require @babel/register -R spec test/*",
-    "publish": "npm publish --tag beta"
+    "publish": "npm publish --access public"
   },
   "repository": {
     "type": "git",
