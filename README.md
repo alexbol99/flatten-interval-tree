@@ -1,6 +1,5 @@
 # Interval Tree
-
-[![npm version](https://badge.fury.io/js/flatten-interval-tree.svg)](https://badge.fury.io/js/flatten-interval-tree)
+[![npm version](https://badge.fury.io/js/%40flatten-js%2Finterval-tree.svg)](https://badge.fury.io/js/%40flatten-js%2Finterval-tree)
 [![Build Status](https://travis-ci.org/alexbol99/flatten-interval-tree.svg?branch=master)](https://travis-ci.org/alexbol99/flatten-interval-tree)
 
 This package is an implementation of interval binary search tree according to Cormen et al. Introduction to Algorithms (2009, Section 14.3: Interval trees, pp. 348–354).
@@ -9,7 +8,7 @@ stored in the tree.
 
 This package is a part of [flatten-js](https://github.com/alexbol99/flatten-js) library.
 The package compiled from the same code as previously used package [flatten-interval-tree](https://www.npmjs.com/package/flatten-interval-tree)
-but now in will be published under the scope **@flatten-js/**.
+but now it will be published under the scope **@flatten-js/**.
   
 Package [flatten-interval-tree](https://www.npmjs.com/package/flatten-interval-tree) is not supported and will be deprecated soon.
 
@@ -93,26 +92,26 @@ Returns array of values which keys intersected with given interval. <br/>
 let resp = tree.search(interval)
 ```
 
-### Size (getter)
-Returns number of items stored in the tree
+### Size
+Returns number of items stored in the tree (getter)
 ```javascript
 let size = tree.size
 ```
 
-### Keys (getter)
-Returns tree keys in ascendant order
+### Keys
+Returns tree keys in ascendant order (getter)
 ```javascript
 let keys = tree.keys
 ```
 
-### Values (getter)
-Returns tree values in ascendant keys order
+### Values
+Returns tree values in ascendant keys order (getter)
 ```javascript
 let values = tree.values
 ``` 
 
-### Items (getter)
-Returns items in ascendant keys order
+### Items
+Returns items in ascendant keys order (getter)
 ```javascript
 let items = tree.items
 ```
