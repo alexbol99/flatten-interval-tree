@@ -2,17 +2,20 @@ export default {
     input: 'index.js',
     output: [
         {
-            file: 'dist/interval-tree.cjs.js',
-            format: 'cjs'
+            file: 'dist/main.cjs.js',
+            format: 'cjs',
+            exports: 'named'
         },
         {
-            file: 'dist/interval-tree.esm.js',
-            format: 'esm'
+            file: 'dist/main.esm.js',
+            format: 'esm',
+            exports: 'named'
         },
         {
-            file: 'dist/interval-tree.umd.js',
+            file: 'dist/main.umd.js',
             format: 'umd',
-            name: 'interval-tree'
+            exports: 'named',
+            name: '@flatten-js/interval-tree'
         }
     ]
 };

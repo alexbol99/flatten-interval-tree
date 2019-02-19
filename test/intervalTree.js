@@ -4,6 +4,8 @@
 
 import { expect } from 'chai';
 import IntervalTree from '../index';
+import {Interval} from "../index";
+
 // import IntervalTree from '../dist/interval-tree.esm';
 
 describe('#IntervalTree', function() {
@@ -23,13 +25,20 @@ describe('#IntervalTree', function() {
     it('May insert many entries with key - array of numbers', function () {
         let tree = new IntervalTree();
         let ints = [[6,8],[1,4],[5,12],[1,1],[5,7]];
-        for (let int of ints) tree.insert(int)
+        for (let int of ints) tree.insert(int);
         expect(tree.size).to.equal(5);
+    });
+    it('May insert entries while transforming numeric pair into Interval', function () {
+        let tree = new IntervalTree();
+        let pairs = [[6,8],[1,4],[5,12],[1,1],[5,7]];
+        for (let pair of pairs) tree.insert(new Interval(pair[0], pair[1]));
+        expect(tree.size).to.equal(5);
+        expect(tree.keys).to.deep.equal([[1,1],[1,4],[5,7],[5,12],[6,8]]);
     });
     it('May return array of keys sorted', function () {
         let tree = new IntervalTree();
         let ints = [[6,8],[1,4],[5,12],[1,1],[5,7]];
-        for (let int of ints) tree.insert(int)
+        for (let int of ints) tree.insert(int);
         expect(tree.keys).to.deep.equal([[1,1],[1,4],[5,7],[5,12],[6,8]]);
     });
     it('May test if node entry exist after insertion', function () {

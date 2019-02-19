@@ -18,7 +18,10 @@ declare class Interval {
     equal_to(other_interval: Interval) : boolean;
     intersect(other_interval: Interval) : boolean;
     not_intersect(other_interval: Interval) : boolean;
-    toArray() : [number, number];
+    output() : [number, number];
+
+    static comparable_max(arg1: Comparable, arg2: Comparable) : Comparable;
+    static comparable_less_than(arg1: Comparable, arg2: Comparable ) : boolean;
 }
 
 type Item = {key: Interval, value: Value}

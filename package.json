@@ -1,11 +1,11 @@
 {
-  "name": "flatten-interval-tree",
-  "version": "0.3.6",
-  "description": "Interval search tree implemented as augmented binary red-black tree",
-  "main": "dist/interval-tree.cjs.js",
-  "umd:main": "dist/interval-tree.umd.js",
-  "unpkg": "dist/interval-tree.umd.js",
-  "module": "dist/interval-tree.esm.js",
+  "name": "@flatten-js/interval-tree",
+  "version": "1.0.0",
+  "description": "Interval search tree",
+  "main": "dist/main.cjs.js",
+  "umd:main": "dist/main.umd.js",
+  "unpkg": "dist/main.umd.js",
+  "module": "dist/main.esm.js",
   "types": "index.d.ts",
   "scripts": {
     "build": "rollup -c rollup.config.js",
@@ -22,7 +22,7 @@
     "interval tree",
     "binary search tree"
   ],
-  "author": "“Alex <“alexbol99@gmail.com”> (“https://github.com/alexbol99/flatten-red-black-tree)",
+  "author": "“Alex <“alexbol99@gmail.com”> (“https://github.com/alexbol99/flatten-interval-tree)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/alexbol99/flatten-interval-tree/issues"

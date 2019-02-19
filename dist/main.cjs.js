@@ -1,3 +1,7 @@
+'use strict';
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
 /**
  * Created by Alex Bol on 4/1/2017.
  */
@@ -12,9 +16,9 @@ const Interval = class Interval {
         return this.high;
     }
 
-    interval(low, high) {
-        return new Interval(low, high);
-    }
+    // interval(low, high) {
+    //     return new Interval(low, high);
+    // }
 
     clone() {
         return new Interval(this.low, this.high);
@@ -41,11 +45,11 @@ const Interval = class Interval {
         return [this.low, this.high];
     }
 
-    maximal_val(val1, val2) {
+    static comparable_max(val1, val2) {
         return Math.max(val1, val2);
     }
 
-    val_less_than(val1, val2 ) {     // trait to compare max property with item ?
+    static comparable_less_than(val1, val2 ) {
         return val1 < val2;
     }
 };
@@ -116,27 +120,23 @@ class Node {
         // use key (Interval) max property instead of key.high
         this.max = this.item.key ? this.item.key.max : undefined;
         if (this.right && this.right.max) {
-            let maximal_val = this.item.key.maximal_val;
-            this.max = maximal_val(this.max, this.right.max);
+            this.max = Interval.comparable_max(this.max, this.right.max);
         }
         if (this.left && this.left.max) {
-            let maximal_val = this.item.key.maximal_val;
-            this.max = maximal_val(this.max, this.left.max);
+            this.max = Interval.comparable_max(this.max, this.left.max);
         }
     }
 
     // Other_node does not intersect any node of left subtree, if this.left.max < other_node.item.key.low
     not_intersect_left_subtree(search_node) {
-        let val_less_than = this.item.key.val_less_than;
         let high = this.left.max.high ? this.left.max.high : this.left.max;
-        return val_less_than(high, search_node.item.key.low);
+        return Interval.comparable_less_than(high, search_node.item.key.low);
     }
 
     // Other_node does not intersect right subtree if other_node.item.key.high < this.right.key.low
     not_intersect_right_subtree(search_node) {
-        let val_less_than = this.item.key.val_less_than;
         let low = this.right.max.low ? this.right.max.low : this.right.item.key.low;
-        return val_less_than(search_node.item.key.high, low);
+        return Interval.comparable_less_than(search_node.item.key.high, low);
     }
 }
 
@@ -709,4 +709,5 @@ class IntervalTree {
     };
 }
 
-export default IntervalTree;
+exports.Interval = Interval;
+exports.default = IntervalTree;

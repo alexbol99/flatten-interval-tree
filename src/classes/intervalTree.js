@@ -11,9 +11,7 @@ import {RB_TREE_COLOR_RED, RB_TREE_COLOR_BLACK} from '../utils/constants.js';
 /**
  * Implementation of interval binary search tree <br/>
  * Interval tree stores items which are couples of {key:interval, value: value} <br/>
- * Interval is an object with high and low properties or simply array of pairs [low,high] of numeric values <br />
- * If interval is an object, it should implement and expose methods less_than, equals_to, intersect and others,
- * see documentation
+ * Interval is an object with high and low properties or simply pair [low,high] of numeric values <br />
  * @type {IntervalTree}
  */
 class IntervalTree {
