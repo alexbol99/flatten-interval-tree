@@ -1,9 +1,18 @@
-# flatten-interval-tree
+# Interval Tree
 
 [![npm version](https://badge.fury.io/js/flatten-interval-tree.svg)](https://badge.fury.io/js/flatten-interval-tree)
 [![Build Status](https://travis-ci.org/alexbol99/flatten-js.svg?branch=master)](https://travis-ci.org/alexbol99/flatten-js)
 
 Interval Tree implementation as it is described in Cormen et al. (2009, Section 14.3: Interval trees, pp. 348–354).
+
+## Important note
+
+#### This package is not supported and will be deprecated soon. Consider moving to the scoped version [@flatten-js/interval-tree](https://www.npmjs.com/package/@flatten-js/interval-tree).
+
+## Contacts
+
+Follow me on Twitter [@alex_bol_](https://twitter.com/alex_bol_)
+
 
 ## Installation
 
