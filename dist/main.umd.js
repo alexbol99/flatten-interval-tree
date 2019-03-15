@@ -324,22 +324,14 @@
          * Returns array of entry values which keys intersect with given interval <br/>
          * If no values stored in the tree, returns array of keys which intersect given interval
          * @param interval - search interval, or array [low, high]
+         * @param nodeMapper - maps nodes to value if present, else key
          * @returns {Array}
          */
-        search(interval) {
+        search(interval, nodeMapper = ({item}) => item.value ? item.value : item.key.output()) {
             let search_node = new Node(interval);
             let resp_nodes = [];
             this.tree_search_interval(this.root, search_node, resp_nodes);
-            let resp = [];
-            resp_nodes.forEach((node) => {
-                if (node.item.value) {         // if there are values, return only values
-                    resp.push(node.item.value);
-                }
-                else {                         // otherwise, return keys
-                    resp.push(node.item.key.output());
-                }
-            }, []);
-            return resp;
+            return resp_nodes.map(nodeMapper)
         }
 
         /**
@@ -773,6 +765,7 @@
         };
     }
 
+    exports.Node = Node;
     exports.Interval = Interval;
     exports.default = IntervalTree;
 
