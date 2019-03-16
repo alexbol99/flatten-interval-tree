@@ -112,6 +112,12 @@ describe('#IntervalTree', function() {
         for (let i=0; i < ints.length; i++) tree.insert(ints[i],"val"+i);
         expect(tree.search([2,3])).to.deep.equal(['val1']);
     });
+    it('May search interval and return array of nodes mapped to keys', function () {
+        let tree = new IntervalTree();
+        let ints = [[6,8],[1,4],[5,12],[1,1],[5,7]];
+        for (let i=0; i < ints.length; i++) tree.insert(ints[i],"val"+i);
+        expect(tree.search([2,3], ({item}) => `${item.value}+${item.key.low}+${item.key.high}`)).to.deep.equal(['val1+1+4']);
+    });
     it('May return empty array when search interval does not intersect any', function () {
         let tree = new IntervalTree();
         let ints = [[6,8],[1,2],[7,12],[1,1],[5,7]];
