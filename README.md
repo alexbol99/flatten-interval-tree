@@ -12,6 +12,10 @@ but now it will be published under the scope **@flatten-js/**.
   
 Package [flatten-interval-tree](https://www.npmjs.com/package/flatten-interval-tree) is not supported and will be deprecated soon.
 
+## Contacts
+
+Follow me on Twitter [@alex_bol_](https://twitter.com/alex_bol_)
+
 ## Installation
 ```bash
 npm install --save @flatten-js/interval-tree
@@ -39,8 +43,6 @@ of Interval interface implementation
 ### Example
 
 ```javascript
-import IntervalTree from 'flatten-interval-tree'
-
 let tree = new IntervalTree();
 
 let intervals = [[6,8],[1,4],[5,12],[1,1],[5,7]];
@@ -63,8 +65,6 @@ Create new instance of interval tree
 let tree = new IntervalTree()
 ```
 
-
-
 ### Insert(key[, value])
 Insert new item into the tree. Key is an interval object or pair of numbers [low, high]. <br/>
 Value may represent any value or reference to any object. If value omitted, tree will store and retrieve keys as values. <br/>
@@ -86,7 +86,7 @@ Removes item from the tree. Returns true if item was actually deleted, false if 
 let removed = tree.remove(key, value)
 ```
 
-### Search(interval<, outputMapperFn>)
+### Search(interval[, outputMapperFn])
 Returns array of values which keys intersected with given interval. <br/>
 ```javascript
 let resp = tree.search(interval)

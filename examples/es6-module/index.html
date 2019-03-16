@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- ALl credits to Turf https://github.com/Turfjs/turf/blob/master/examples/es-modules/index.html -->
+    <title>ES Modules</title>
+</head>
+<body>
+    <div id="main">
+        <h2>Great composers</h2>
+        <ul id="list" style="list-style: none">
+
+        </ul>
+        <h2>Composers who lived in 17th century</h2>
+        <ul id="results" style="list-style: none">
+
+        </ul>
+    </div>
+
+    <script type="module">
+        import IntervalTree from "https://unpkg.com/@flatten-js/interval-tree?module";
+
+        const composers = [
+            {name: "Ludwig van Beethoven", period: [1770,1827]},
+            {name: "Johann Sebastian Bach", period: [1685, 1750]},
+            {name: "Wolfgang Amadeus Mozart", period: [1756, 1791]},
+            {name: "Johannes Brahms", period: [1833, 1897]},
+            {name: "Richard Wagner", period: [1813, 1883]},
+            {name: "Claude Debussy", period: [1862, 1918]},
+            {name: "Pyotr Ilyich Tchaikovsky", period: [1840, 1893]},
+            {name: "Frédéric Chopin", period: [1810, 1849]},
+            {name: "Joseph Haydn", period: [1732, 1809]},
+            {name: "Antonio Vivaldi", period: [1678, 1741]}
+        ];
+
+        const compList = composers.reduce( (html,composer) => html + `<li>${composer.name} (${composer.period[0]} - ${composer.period[1]})</li>`, "" );
+        document.getElementById("list").innerHTML = compList;
+
+        // Composers who lived in 17th century
+        const tree = new IntervalTree();
+        for (let composer of composers)
+            tree.insert(composer.period, composer.name);
+
+        const searchRes = tree.search( [1600,1700], (name, period) => {return {name : name, period: period.output()}} );
+
+        const resList = searchRes.reduce( (html, composer) => html + `<li>${composer.name} (${composer.period[0]} - ${composer.period[1]})</li>`, "" );
+        document.getElementById("results").innerHTML = resList;
+    </script>
+</body>
+</html>
