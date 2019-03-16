@@ -95,7 +95,7 @@ const Interval = class Interval {
      * @param val2
      * @returns {number}
      */
-    comparable_max(val1, val2) {
+    static comparable_max(val1, val2) {
         return Math.max(val1, val2);
     }
 
@@ -105,7 +105,7 @@ const Interval = class Interval {
      * @param val2
      * @returns {boolean}
      */
-    comparable_less_than(val1, val2 ) {
+    static comparable_less_than(val1, val2 ) {
         return val1 < val2;
     }
 };

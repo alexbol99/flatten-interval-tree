@@ -48,19 +48,21 @@
 
 
     <section class="readme">
-        <article><h1>@flatten-js/interval-tree</h1><p><a href="https://badge.fury.io/js/flatten-interval-tree"><img src="https://badge.fury.io/js/flatten-interval-tree.svg" alt="npm version"></a>
-<a href="https://travis-ci.org/alexbol99/flatten-js"><img src="https://travis-ci.org/alexbol99/flatten-js.svg?branch=master" alt="Build Status"></a></p>
-<p>Implementation of the interval binary search tree according to Cormen et al. Introduction to Algorithms (2009, Section 14.3: Interval trees, pp. 348–354).
+        <article><h1>Interval Tree</h1><p><a href="https://badge.fury.io/js/%40flatten-js%2Finterval-tree"><img src="https://badge.fury.io/js/%40flatten-js%2Finterval-tree.svg" alt="npm version"></a>
+<a href="https://travis-ci.org/alexbol99/flatten-interval-tree"><img src="https://travis-ci.org/alexbol99/flatten-interval-tree.svg?branch=master" alt="Build Status"></a></p>
+<p>This package is an implementation of interval binary search tree according to Cormen et al. Introduction to Algorithms (2009, Section 14.3: Interval trees, pp. 348–354).
 Cormen shows that insertion, deletion of nodes and range queries take <em>O(log(n))</em> time where n is the number of items
 stored in the tree.</p>
 <p>This package is a part of <a href="https://github.com/alexbol99/flatten-js">flatten-js</a> library.
-The previously used package <strong>flatten-interval-tree</strong> will be deprecated soon.</p>
+The package compiled from the same code as previously used package <a href="https://www.npmjs.com/package/flatten-interval-tree">flatten-interval-tree</a>
+but now it will be published under the scope <strong>@flatten-js/</strong>.</p>
+<p>Package <a href="https://www.npmjs.com/package/flatten-interval-tree">flatten-interval-tree</a> is not supported and will be deprecated soon.</p>
 <h2>Installation</h2><pre class="prettyprint source lang-bash"><code>npm install --save @flatten-js/interval-tree</code></pre><h2>Usage</h2><pre class="prettyprint source lang-javascript"><code>import IntervalTree from '@flatten-js/interval-tree'</code></pre><h3>What is interval</h3><p>Tree stores pairs &lt;key, value&gt; where key is an interval, and value is any value<br/>
 Interval is a pair of numbers or a pair of any comparable objects on which may be defined predicates
 <em>equal</em>, <em>less</em> and method <em>max(p1, p1)</em> that returns maximum in a pair. </p>
 <p>When interval is an object rather than pair of numbers, this object should have properties <em>low</em>, <em>high</em>, <em>max</em>
 and implement methods <em>less_than(), equal_to(), intersect(), not_intersect(), clone(), output()</em>.
-Two static methods <em>comparable_max(), comparable_less_than()</em> define how to compare values in pair. <br/>
+Two methods <em>comparable_max(), comparable_less_than()</em> define how to compare values in pair. <br/>
 This interface is described in typescript definition file <em>index.d.ts</em></p>
 <p>Axis aligned rectangle is an example of such interval.
 We may look at rectangle as an interval between its low left and top right corners.
@@ -88,11 +90,36 @@ Method returns reference to the inserted node</p>
 <pre class="prettyprint source lang-javascript"><code>let node = tree.insert(key, value)</code></pre><h3>Exist(key,value)</h3><p>Method returns true if item {key, value} exists in the tree. <br/>
 Method may be useful if need to support unique items.</p>
 <pre class="prettyprint source lang-javascript"><code>let exist = tree.exist(key, value)</code></pre><h3>Remove(key, value)</h3><p>Removes item from the tree. Returns true if item was actually deleted, false if not found</p>
-<pre class="prettyprint source lang-javascript"><code>let removed = tree.remove(key, value)</code></pre><h3>Search(interval)</h3><p>Returns array of values which keys intersected with given interval. <br/></p>
-<pre class="prettyprint source lang-javascript"><code>let resp = tree.search(interval)</code></pre><h3>Size (getter)</h3><p>Returns number of items stored in the tree</p>
-<pre class="prettyprint source lang-javascript"><code>let size = tree.size</code></pre><h3>Keys (getter)</h3><p>Returns tree keys in ascendant order</p>
-<pre class="prettyprint source lang-javascript"><code>let keys = tree.keys</code></pre><h3>Values (getter)</h3><p>Returns tree values in ascendant keys order</p>
-<pre class="prettyprint source lang-javascript"><code>let values = tree.values</code></pre><h3>Items (getter)</h3><p>Returns items in ascendant keys order</p>
+<pre class="prettyprint source lang-javascript"><code>let removed = tree.remove(key, value)</code></pre><h3>Search(interval&lt;, outputMapperFn&gt;)</h3><p>Returns array of values which keys intersected with given interval. <br/></p>
+<pre class="prettyprint source lang-javascript"><code>let resp = tree.search(interval)</code></pre><p>Optional <em>outputMapperFn(value, key)</em> enables to map search results into custom defined output.
+Example:</p>
+<pre class="prettyprint source lang-javascript"><code>const composers = [
+    {name: &quot;Ludwig van Beethoven&quot;, period: [1770, 1827]},
+    {name: &quot;Johann Sebastian Bach&quot;, period: [1685, 1750]},
+    {name: &quot;Wolfgang Amadeus Mozart&quot;, period: [1756, 1791]},
+    {name: &quot;Johannes Brahms&quot;, period: [1833, 1897]},
+    {name: &quot;Richard Wagner&quot;, period: [1813, 1883]},
+    {name: &quot;Claude Debussy&quot;, period: [1862, 1918]},
+    {name: &quot;Pyotr Ilyich Tchaikovsky&quot;, period: [1840, 1893]},
+    {name: &quot;Frédéric Chopin&quot;, period: [1810, 1849]},
+    {name: &quot;Joseph Haydn&quot;, period: [1732, 1809]},
+    {name: &quot;Antonio Vivaldi&quot;, period: [1678, 1741]}
+];
+const tree = new IntervalTree();
+for (let composer of composers)
+    tree.insert(composer.period, composer.name);
+
+// Great composers who lived in 17th century
+const searchRes = tree.search( [1600,1700],
+    (name, period) => {return `${name} (${period.low}-${period.high})`});
+
+console.log(searchRes)
+
+// expected to be 
+// [ 'Antonio Vivaldi (1678-1741)', 'Johann Sebastian Bach (1685-1750)' ]</code></pre><h3>Size</h3><p>Returns number of items stored in the tree (getter)</p>
+<pre class="prettyprint source lang-javascript"><code>let size = tree.size</code></pre><h3>Keys</h3><p>Returns tree keys in ascendant order (getter)</p>
+<pre class="prettyprint source lang-javascript"><code>let keys = tree.keys</code></pre><h3>Values</h3><p>Returns tree values in ascendant keys order (getter)</p>
+<pre class="prettyprint source lang-javascript"><code>let values = tree.values</code></pre><h3>Items</h3><p>Returns items in ascendant keys order (getter)</p>
 <pre class="prettyprint source lang-javascript"><code>let items = tree.items</code></pre><h3>ForEach(visitor)</h3><p>Enables to traverse the whole tree and perform operation for each item</p>
 <pre class="prettyprint source lang-javascript"><code>tree.forEach( (key, value) => console.log(value) )</code></pre><h3>Map(callback)</h3><p>Creates new tree with same keys using callback to transform (key,value) to a new value</p>
 <pre class="prettyprint source lang-javascript"><code>let tree1 = tree.map((value, key) => (key.high-key.low))</code></pre><h2>Documentation</h2><p>Documentation may be found here: <a href="https://alexbol99.github.io/flatten-interval-tree/">https://alexbol99.github.io/flatten-interval-tree</a></p>
@@ -110,7 +137,7 @@ Method may be useful if need to support unique items.</p>
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue Feb 19 2019 12:57:04 GMT+0200 (Jerusalem Standard Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sat Mar 16 2019 12:06:26 GMT+0200 (Israel Standard Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>

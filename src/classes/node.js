@@ -57,25 +57,25 @@ class Node {
         // use key (Interval) max property instead of key.high
         this.max = this.item.key ? this.item.key.max : undefined;
         if (this.right && this.right.max) {
-            const comparable_max = this.item.key.comparable_max;
+            const comparable_max = this.item.key.constructor.comparable_max;  // static method
             this.max = comparable_max(this.max, this.right.max);
         }
         if (this.left && this.left.max) {
-            const comparable_max = this.item.key.comparable_max;
+            const comparable_max = this.item.key.constructor.comparable_max;  // static method
             this.max = comparable_max(this.max, this.left.max);
         }
     }
 
     // Other_node does not intersect any node of left subtree, if this.left.max < other_node.item.key.low
     not_intersect_left_subtree(search_node) {
-        const comparable_less_than = this.item.key.comparable_less_than;
+        const comparable_less_than = this.item.key.constructor.comparable_less_than;  // static method
         let high = this.left.max.high ? this.left.max.high : this.left.max;
         return comparable_less_than(high, search_node.item.key.low);
     }
 
     // Other_node does not intersect right subtree if other_node.item.key.high < this.right.key.low
     not_intersect_right_subtree(search_node) {
-        const comparable_less_than = this.item.key.comparable_less_than;
+        const comparable_less_than = this.item.key.constructor.comparable_less_than;  // static method
         let low = this.right.max.low ? this.right.max.low : this.right.item.key.low;
         return comparable_less_than(search_node.item.key.high, low);
     }

@@ -120,14 +120,14 @@ class IntervalTree {
      * Returns array of entry values which keys intersect with given interval <br/>
      * If no values stored in the tree, returns array of keys which intersect given interval
      * @param interval - search interval, or array [low, high]
-     * @param nodeMapper - maps nodes to value if present, else key
+     * @param outputMapperFn(value,key) - optional function that maps (value, key) to custom output
      * @returns {Array}
      */
-    search(interval, nodeMapper = ({item}) => item.value ? item.value : item.key.output()) {
+    search(interval, outputMapperFn = (value, key) => value ? value : key.output()) {
         let search_node = new Node(interval);
         let resp_nodes = [];
         this.tree_search_interval(this.root, search_node, resp_nodes);
-        return resp_nodes.map(nodeMapper)
+        return resp_nodes.map(node => outputMapperFn(node.item.value, node.item.key))
     }
 
     /**

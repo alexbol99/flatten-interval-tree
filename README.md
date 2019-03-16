@@ -86,11 +86,40 @@ Removes item from the tree. Returns true if item was actually deleted, false if 
 let removed = tree.remove(key, value)
 ```
 
-### Search(interval)
+### Search(interval<, outputMapperFn>)
 Returns array of values which keys intersected with given interval. <br/>
 ```javascript
 let resp = tree.search(interval)
 ```
+Optional *outputMapperFn(value, key)* enables to map search results into custom defined output.
+Example:
+```javascript
+const composers = [
+    {name: "Ludwig van Beethoven", period: [1770, 1827]},
+    {name: "Johann Sebastian Bach", period: [1685, 1750]},
+    {name: "Wolfgang Amadeus Mozart", period: [1756, 1791]},
+    {name: "Johannes Brahms", period: [1833, 1897]},
+    {name: "Richard Wagner", period: [1813, 1883]},
+    {name: "Claude Debussy", period: [1862, 1918]},
+    {name: "Pyotr Ilyich Tchaikovsky", period: [1840, 1893]},
+    {name: "Frédéric Chopin", period: [1810, 1849]},
+    {name: "Joseph Haydn", period: [1732, 1809]},
+    {name: "Antonio Vivaldi", period: [1678, 1741]}
+];
+const tree = new IntervalTree();
+for (let composer of composers)
+    tree.insert(composer.period, composer.name);
+
+// Great composers who lived in 17th century
+const searchRes = tree.search( [1600,1700],
+    (name, period) => {return `${name} (${period.low}-${period.high})`});
+
+console.log(searchRes)
+
+// expected to be 
+// [ 'Antonio Vivaldi (1678-1741)', 'Johann Sebastian Bach (1685-1750)' ]
+```
+
 
 ### Size
 Returns number of items stored in the tree (getter)

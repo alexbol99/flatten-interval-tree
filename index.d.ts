@@ -20,8 +20,8 @@ declare class Interval {
     not_intersect(other_interval: Interval) : boolean;
     output() : [number, number];
 
-    comparable_max(arg1: Comparable, arg2: Comparable) : Comparable;
-    comparable_less_than(arg1: Comparable, arg2: Comparable ) : boolean;
+    static comparable_max(arg1: Comparable, arg2: Comparable) : Comparable;
+    static comparable_less_than(arg1: Comparable, arg2: Comparable ) : boolean;
 }
 
 type Item = {key: Interval, value: Value}
@@ -57,7 +57,7 @@ declare class IntervalTree {
     insert(key: Interval | number[], value?: Value) : Node;
     exist(key: Interval | number[], value?: Value): boolean;
     remove(key: Interval | number[], value?: Value) : Node;
-    search(interval: Interval | number[]) : Array<Value>;     // Array of value's or key.output()'s
+    search(interval: Interval | number[], outputMapperFn?: (value: Value, key: Interval) => any) : Array<any>;
     forEach(callbackfn: (key: Interval, value: Value) => void, thisArg?: any ) : void;
     map(callbackFn: (value: Value, key?: Interval) => any, thisArg?: any ): IntervalTree;
 }
