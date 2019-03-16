@@ -24,11 +24,11 @@ import IntervalTree from '@flatten-js/interval-tree'
 ### What is interval
 Tree stores pairs <key, value> where key is an interval, and value is any value<br/>
 Interval is a pair of numbers or a pair of any comparable objects on which may be defined predicates
-*equal*, *less* and method *max(p1, p1)* that returns maximum in a pair. 
+*equal*, *less* and method *max(p1, p2)* that returns maximum in a pair. 
 
 When interval is an object rather than pair of numbers, this object should have properties *low*, *high*, *max*
 and implement methods *less_than(), equal_to(), intersect(), not_intersect(), clone(), output()*.
-Two methods *comparable_max(), comparable_less_than()* define how to compare values in pair. <br/>
+Two static methods *comparable_max(), comparable_less_than()* define how to compare values in pair. <br/>
 This interface is described in typescript definition file *index.d.ts*
 
 Axis aligned rectangle is an example of such interval.
