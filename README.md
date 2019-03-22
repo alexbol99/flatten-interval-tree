@@ -2,13 +2,11 @@
 [![npm version](https://badge.fury.io/js/%40flatten-js%2Finterval-tree.svg)](https://badge.fury.io/js/%40flatten-js%2Finterval-tree)
 [![Build Status](https://travis-ci.org/alexbol99/flatten-interval-tree.svg?branch=master)](https://travis-ci.org/alexbol99/flatten-interval-tree)
 
-This package is an implementation of interval binary search tree according to Cormen et al. Introduction to Algorithms (2009, Section 14.3: Interval trees, pp. 348–354).
+The package **@flatten-js/interval-tree** is an implementation of interval binary search tree according to Cormen et al. Introduction to Algorithms (2009, Section 14.3: Interval trees, pp. 348–354).
 Cormen shows that insertion, deletion of nodes and range queries take *O(log(n))* time where n is the number of items
 stored in the tree.
 
 This package is a part of [flatten-js](https://github.com/alexbol99/flatten-js) library.
-The package compiled from the same code as previously used package [flatten-interval-tree](https://www.npmjs.com/package/flatten-interval-tree)
-but now it will be published under the scope **@flatten-js/**.
   
 Package [flatten-interval-tree](https://www.npmjs.com/package/flatten-interval-tree) is not supported and will be deprecated soon.
 

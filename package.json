@@ -1,6 +1,6 @@
 {
   "name": "@flatten-js/interval-tree",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Interval search tree",
   "main": "dist/main.cjs.js",
   "umd:main": "dist/main.umd.js",
@@ -27,7 +27,7 @@
   "bugs": {
     "url": "https://github.com/alexbol99/flatten-interval-tree/issues"
   },
-  "homepage": "https://github.com/alexbol99/flatten-interval-tree/tree/v0.3.0-beta#readme",
+  "homepage": "https://github.com/alexbol99/flatten-interval-tree#readme",
   "dependencies": {},
   "devDependencies": {
     "@babel/cli": "^7.2.3",
