@@ -9,9 +9,9 @@
   "types": "index.d.ts",
   "scripts": {
     "build": "rollup -c rollup.config.js",
-    "test": "mocha --require @babel/register --reporter spec",
+    "test": "nyc --reporter=html --reporter=text mocha --require @babel/register -R spec",
     "generate-docs": "jsdoc -t ./node_modules/minami -d ./docs ./src -r README.md",
-    "cover": "istanbul cover ./node_modules/mocha/bin/_mocha -- --require @babel/register -R spec test/*",
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
     "publish": "npm publish --access public"
   },
   "repository": {
@@ -35,12 +35,13 @@
     "@babel/node": "^7.2.2",
     "@babel/preset-env": "^7.3.1",
     "@babel/register": "^7.0.0",
+    "babel-plugin-istanbul": "^5.1.1",
     "chai": "^3.5.0",
-    "coveralls": "^3.0.2",
-    "istanbul": "^0.4.5",
+    "coveralls": "^3.0.3",
     "jsdoc": "^3.5.5",
     "minami": "^1.2.3",
     "mocha": "^5.2.0",
+    "nyc": "^13.3.0",
     "rollup": "^1.6.0"
   }
 }
