@@ -184,4 +184,27 @@ describe('#IntervalTree', function() {
         tree.remove([7,12],"val2");
         expect(tree.testRedBlackProperty()).to.equal(true);
     });
+    it("Fix issue #9", function() {
+        function setupTreeAndSearch(intervals, searchInterval) {
+            let tree = new IntervalTree();
+
+            for (let i=0; i < intervals.length; i++) {
+                tree.insert(intervals[i],"val"+i);
+            }
+
+            return tree.search(searchInterval);
+        }
+
+        let resp1 = setupTreeAndSearch(
+            [[1,1], [1,4], [5,6], [5.5,7], [7,8]],
+            [5.5, 5.7]
+        );
+        expect(resp1).to.be.deep.equal(["val2", "val3"]);
+
+        let resp2 = setupTreeAndSearch(
+            [[1,1], [1,4], [5,6], [6,7], [7,8]],
+            [5.5, 5.7]
+        );
+        expect(resp2).to.be.deep.equal(["val2"]);
+    })
 });

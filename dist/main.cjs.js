@@ -33,20 +33,19 @@ const Interval = class Interval {
     }
 
     /**
-     * Returns maximum value of the interval
-     * @returns {*|Comparable}
-     */
-    get max() {
-        return this.high;
-    }
-
-
-    /**
      * Clone interval
      * @returns {Interval}
      */
     clone() {
         return new Interval(this.low, this.high);
+    }
+
+    /**
+     * Propery max returns clone of this interval
+     * @returns {Interval}
+     */
+    get max() {
+        return this.clone();   // this.high;
     }
 
     /**
@@ -87,6 +86,18 @@ const Interval = class Interval {
     }
 
     /**
+     * Returns new interval merged with other interval
+     * @param {Interval} interval - Other interval to merge with
+     * @returns {Interval}
+     */
+    merge(other_interval) {
+        return new Interval(
+            this.low === undefined ? other_interval.low : Math.min(this.low, other_interval.low),
+            this.high === undefined ? other_interval.high : Math.max(this.high, other_interval.high)
+        );
+    }
+
+    /**
      * Returns how key should return
      */
     output() {
@@ -95,12 +106,12 @@ const Interval = class Interval {
 
     /**
      * Function returns maximum between two comparable values
-     * @param val1
-     * @param val2
-     * @returns {number}
+     * @param interval1
+     * @param interval2
+     * @returns {Interval}
      */
-    static comparable_max(val1, val2) {
-        return Math.max(val1, val2);
+    static comparable_max(interval1, interval2) {
+        return interval1.merge(interval2);
     }
 
     /**

@@ -11,16 +11,17 @@ declare class Interval {
     low: Comparable;
     high: Comparable;
 
-    readonly  max: Comparable;
+    readonly  max: Interval;
 
     clone(): Interval;
     less_than(other_interval: Interval) : boolean;
     equal_to(other_interval: Interval) : boolean;
     intersect(other_interval: Interval) : boolean;
     not_intersect(other_interval: Interval) : boolean;
+    merge(other_interval: Interval) : Interval;
     output() : [number, number];
 
-    static comparable_max(arg1: Comparable, arg2: Comparable) : Comparable;
+    static comparable_max(arg1: Interval, arg2: Interval) : Interval;
     static comparable_less_than(arg1: Comparable, arg2: Comparable ) : boolean;
 }
 

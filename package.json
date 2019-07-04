@@ -1,15 +1,22 @@
 {
   "name": "@flatten-js/interval-tree",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Interval search tree",
   "main": "dist/main.cjs.js",
   "umd:main": "dist/main.umd.js",
   "unpkg": "dist/main.umd.js",
   "module": "dist/main.esm.js",
   "types": "index.d.ts",
+  "nyc": {
+    "require": [
+      "@babel/register"
+    ],
+    "sourceMap": false,
+    "instrument": false
+  },
   "scripts": {
     "build": "rollup -c rollup.config.js",
-    "test": "nyc --reporter=html --reporter=text mocha --require @babel/register -R spec",
+    "test": "nyc --reporter=html --reporter=text mocha --exit",
     "generate-docs": "jsdoc -t ./node_modules/minami -d ./docs ./src -r README.md",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "publish": "npm publish --access public"
@@ -38,10 +45,10 @@
     "babel-plugin-istanbul": "^5.1.1",
     "chai": "^3.5.0",
     "coveralls": "^3.0.3",
-    "jsdoc": "^3.5.5",
+    "jsdoc": "^3.6.2",
     "minami": "^1.2.3",
     "mocha": "^5.2.0",
-    "nyc": "^13.3.0",
+    "nyc": "^14.1.1",
     "rollup": "^1.6.0"
   }
 }
