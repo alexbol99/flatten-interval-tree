@@ -206,5 +206,11 @@ describe('#IntervalTree', function() {
             [5.5, 5.7]
         );
         expect(resp2).to.be.deep.equal(["val2"]);
-    })
+    });
+    it('Low or high can be 0', function () {
+        let tree = new IntervalTree();
+        let ints = [[0,0],[0,0],[1,1],[0,0]];
+        for (let i=0; i < ints.length; i++) tree.insert(ints[i],"val"+i);
+        expect(tree.search([0,0])).to.deep.equal(['val0','val1','val3']);
+    });
 });
