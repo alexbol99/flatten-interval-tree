@@ -776,9 +776,9 @@
         };
     }
 
+    exports.default = IntervalTree;
     exports.Node = Node;
     exports.Interval = Interval;
-    exports.default = IntervalTree;
 
     Object.defineProperty(exports, '__esModule', { value: true });
 

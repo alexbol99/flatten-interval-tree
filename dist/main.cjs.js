@@ -774,6 +774,6 @@ class IntervalTree {
     };
 }
 
+exports.default = IntervalTree;
 exports.Node = Node;
 exports.Interval = Interval;
-exports.default = IntervalTree;

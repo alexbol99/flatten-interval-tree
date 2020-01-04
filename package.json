@@ -1,6 +1,6 @@
 {
   "name": "@flatten-js/interval-tree",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Interval search tree",
   "main": "dist/main.cjs.js",
   "umd:main": "dist/main.umd.js",
