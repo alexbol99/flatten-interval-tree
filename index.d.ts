@@ -2,8 +2,6 @@
 // Project: https://github.com/alexbol99/flatten-js
 // Definitions by: Alex Bol
 
-export = IntervalTree;
-
 type Comparable = any;      // any object that implements operators '<' and '==' and  method'max'
 type Value = any;
 
@@ -62,3 +60,6 @@ declare class IntervalTree {
     forEach(callbackfn: (key: Interval, value: Value) => void, thisArg?: any ) : void;
     map(callbackFn: (value: Value, key?: Interval) => any, thisArg?: any ): IntervalTree;
 }
+
+export default IntervalTree;
+

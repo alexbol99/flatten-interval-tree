@@ -1,7 +1,9 @@
 {
   "name": "@flatten-js/interval-tree",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Interval search tree",
+  "author": "“Alex <“alexbol99@gmail.com”> (“https://github.com/alexbol99/flatten-interval-tree)",
+  "license": "MIT",
   "main": "dist/main.cjs.js",
   "umd:main": "dist/main.umd.js",
   "unpkg": "dist/main.umd.js",
@@ -19,7 +21,7 @@
     "test": "nyc --reporter=html --reporter=text mocha --exit",
     "generate-docs": "jsdoc -t ./node_modules/minami -d ./docs ./src -r README.md",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
-    "publish": "npm publish --access public"
+    "publish-npm": "npm publish --access public"
   },
   "repository": {
     "type": "git",
@@ -29,8 +31,6 @@
     "interval tree",
     "binary search tree"
   ],
-  "author": "“Alex <“alexbol99@gmail.com”> (“https://github.com/alexbol99/flatten-interval-tree)",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/alexbol99/flatten-interval-tree/issues"
   },
