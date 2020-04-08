@@ -168,7 +168,15 @@
         }
 
         less_than(other_node) {
-            return this.item.key.less_than(other_node.item.key);
+            if (this.item.value && other_node.item.value) {
+                let item_less_than = this.item.value.less_than ? this.item.value.less_than(other_node.item.value) :
+                    this.item.value < other_node.item.value;
+                return this.item.key.less_than(other_node.item.key) ||
+                    this.item.key.equal_to((other_node.item.key)) && item_less_than;
+            }
+            else {
+                return this.item.key.less_than(other_node.item.key);
+            }
         }
 
         equal_to(other_node) {

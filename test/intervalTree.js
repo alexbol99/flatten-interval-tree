@@ -213,4 +213,20 @@ describe('#IntervalTree', function() {
         for (let i=0; i < ints.length; i++) tree.insert(ints[i],"val"+i);
         expect(tree.search([0,0])).to.deep.equal(['val0','val1','val3']);
     });
+    it("Fix issue #15 Unable to remove/find some of the nodes", function() {
+        const intervalTree3 = new IntervalTree();
+
+        intervalTree3.insert([2, 5], 10);
+        intervalTree3.insert([2, 5], 20);
+        intervalTree3.insert([2, 5], 30);
+        intervalTree3.insert([2, 5], 40);
+        intervalTree3.insert([2, 5], 50);
+
+        expect(intervalTree3.exist([2, 5], 10)).to.be.true;
+        expect(intervalTree3.exist([2, 5], 20)).to.be.true;
+        expect(intervalTree3.exist([2, 5], 30)).to.be.true;
+        expect(intervalTree3.exist([2, 5], 40)).to.be.true;
+        expect(intervalTree3.exist([2, 5], 50)).to.be.true;
+        expect(intervalTree3.exist([2, 5], 25)).to.be.false;
+    });
 });
