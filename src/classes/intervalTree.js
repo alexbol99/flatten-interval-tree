@@ -140,7 +140,7 @@ class IntervalTree {
     }
 
     /** Value Mapper. Walk through every node and map node value to another value
-    * @param callback(value, key) - function to be called for each tree item
+    * @param callback(value,key) - function to be called for each tree item
     */
     map(callback) {
         const tree = new IntervalTree();
