@@ -78,9 +78,9 @@ class IntervalTree {
 
     /**
      * Insert new item into interval tree
-     * @param key - interval object or array of two numbers [low, high]
-     * @param value - value representing any object (optional)
-     * @returns {Node} - returns reference to inserted node as an object {key:interval, value: value}
+     * @param {Interval} key - interval object or array of two numbers [low, high]
+     * @param {any} value - value representing any object (optional)
+     * @returns {Node} returns reference to inserted node as an object {key:interval, value: value}
      */
     insert(key, value = key) {
         if (key === undefined) return;
@@ -92,22 +92,22 @@ class IntervalTree {
 
     /**
      * Returns true if item {key,value} exist in the tree
-     * @param key - interval correspondent to keys stored in the tree
-     * @param value - value object to be checked
-     * @returns {boolean} - true if item {key, value} exist in the tree, false otherwise
+     * @param {Interval} key - interval correspondent to keys stored in the tree
+     * @param {any} value - value object to be checked
+     * @returns {boolean} true if item {key, value} exist in the tree, false otherwise
      */
-    exist(key, value) {
+    exist(key, value = key) {
         let search_node = new Node(key, value);
         return this.tree_search(this.root, search_node) ? true : false;
     }
 
     /**
      * Remove entry {key, value} from the tree
-     * @param key - interval correspondent to keys stored in the tree
-     * @param value - - value object
-     * @returns {boolean} - true if item {key, value} deleted, false if not found
+     * @param {Interval} key - interval correspondent to keys stored in the tree
+     * @param {any} value - value object
+     * @returns {boolean} true if item {key, value} deleted, false if not found
      */
-    remove(key, value) {
+    remove(key, value = key) {
         let search_node = new Node(key, value);
         let delete_node = this.tree_search(this.root, search_node);
         if (delete_node) {
@@ -119,11 +119,11 @@ class IntervalTree {
     /**
      * Returns array of entry values which keys intersect with given interval <br/>
      * If no values stored in the tree, returns array of keys which intersect given interval
-     * @param interval - search interval, or array [low, high]
+     * @param {Interval} interval - search interval, or array [low, high]
      * @param outputMapperFn(value,key) - optional function that maps (value, key) to custom output
      * @returns {Array}
      */
-    search(interval, outputMapperFn = (value, key) => value ? value : key.output()) {
+    search(interval, outputMapperFn = (value, key) => value === key ? key.output() : value) {
         let search_node = new Node(interval);
         let resp_nodes = [];
         this.tree_search_interval(this.root, search_node, resp_nodes);

@@ -28,37 +28,37 @@ describe('#RedBlackTree Node', function() {
     it('May compare intervals: [0,1] less than [1,3]', function () {
         let node1 = new Node([0,1]);
         let node2 = new Node([1,3]);
-        expect(node1.less_than(node2)).to.equal(true);
+        expect(node1.less_than(node2)).to.be.true;
     });
     it('May compare intervals: [0,5] less than [1,3]', function () {
         let node1 = new Node([0,5]);
         let node2 = new Node([1,3]);
-        expect(node1.less_than(node2)).to.equal(true);
+        expect(node1.less_than(node2)).to.be.true;
     });
     it('May compare intervals: [0,2] less than [0,3]', function () {
         let node1 = new Node([0,2]);
         let node2 = new Node([0,3]);
-        expect(node1.less_than(node2)).to.equal(true);
+        expect(node1.less_than(node2)).to.be.true;
     });
     it('May compare intervals: [1,4] is not less than [0,3]', function () {
         let node1 = new Node([1,4]);
         let node2 = new Node([0,3]);
-        expect(node1.less_than(node2)).to.equal(false);
+        expect(node1.less_than(node2)).to.be.false;
     });
     it('May compare intervals: [1,4] is not equal to [0,3]', function () {
         let node1 = new Node([1,4]);
         let node2 = new Node([0,3]);
-        expect(node1.equal_to(node2)).to.equal(false);
+        expect(node1.equal_to(node2)).to.be.false;
     });
     it('May compare intervals: [0,3] equal to [0,3]', function () {
         let node1 = new Node([0,3]);
         let node2 = new Node([0,3]);
-        expect(node1.equal_to(node2)).to.equal(true);
+        expect(node1.equal_to(node2)).to.be.true;
     });
     it('May compare {key, value}: {[0,3], "1"} is not equal to {[0,3], "2"', function () {
         let node1 = new Node([0,3],"1");
         let node2 = new Node([0,3], "2");
-        expect(node1.equal_to(node2)).to.equal(false);
+        expect(node1.equal_to(node2)).to.be.false;
     });
 });
 

@@ -229,4 +229,38 @@ describe('#IntervalTree', function() {
         expect(intervalTree3.exist([2, 5], 50)).to.be.true;
         expect(intervalTree3.exist([2, 5], 25)).to.be.false;
     });
+    it("Fix issue #16 Storing '0' as a key value will return a key pair when searching ", function() {
+        const tree = new IntervalTree();
+        tree.insert([0, 0], 0);
+        tree.insert([0, 0], 1);
+
+        let resp1 = tree.search([0, 0])
+        expect(resp1).to.deep.equal([0,1])
+
+        tree.remove([0, 0], 1);
+
+        expect(tree.exist([0, 0], 0)).to.be.true;
+        expect(tree.exist([0, 0], 1)).to.be.false;
+
+        let resp2 = tree.search([0, 0])
+
+        expect(resp2).to.deep.equal([0])
+    })
+    it("May store any falsy values: 0, false, NaN, null ", function() {
+        const tree = new IntervalTree();
+        tree.insert([0, 0], 0);
+        tree.insert([0, 0], false);
+        tree.insert([0, 0], NaN);
+        tree.insert([0, 0], null);
+
+        let resp1 = tree.search([0,0]);
+        expect(resp1).to.deep.equal([0, false, NaN, null]);
+    })
+    it("Cannot store undefined value", function() {
+        const tree = new IntervalTree();
+        tree.insert([0, 0], undefined);
+
+        let resp1 = tree.search([0,0]);
+        expect(resp1).to.deep.equal([[0,0]]);
+    })
 });

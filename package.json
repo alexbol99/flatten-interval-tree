@@ -1,6 +1,6 @@
 {
   "name": "@flatten-js/interval-tree",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "Interval search tree",
   "author": "“Alex <“alexbol99@gmail.com”> (“https://github.com/alexbol99/flatten-interval-tree)",
   "license": "MIT",
@@ -19,7 +19,8 @@
   "scripts": {
     "build": "rollup -c rollup.config.js",
     "test": "nyc --reporter=html --reporter=text mocha --exit",
-    "generate-docs": "jsdoc -t ./node_modules/minami -d ./docs ./src -r README.md",
+    "generate-docs-old": "jsdoc -t ./node_modules/minami -d ./docs ./src -r README.md",
+    "generate-docs": "jsdoc -c ./.jsdoc.json --verbose",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "publish-npm": "npm publish --access public"
   },
