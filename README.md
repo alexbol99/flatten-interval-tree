@@ -9,7 +9,7 @@ stored in the tree.
 
 This package is a part of [flatten-js](https://github.com/alexbol99/flatten-js) library.
   
-Package [flatten-interval-tree](https://www.npmjs.com/package/flatten-interval-tree) is not supported and will be deprecated soon.
+An earlier implementation, in package [flatten-interval-tree](https://www.npmjs.com/package/flatten-interval-tree), is no longer supported and will be deprecated soon. Please use this package instead.
 
 ## Contacts
 
