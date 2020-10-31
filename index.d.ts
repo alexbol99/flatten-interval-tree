@@ -3,10 +3,10 @@
 // Definitions by: Alex Bol
 
 type Comparable = any;      // any object that implements operators '<' and '==' and  method'max'
-type Value = any;
+type Value<T> = T;
 type NumericTuple = [number,number];
 type MappedItem = any;
-type SearchOutput = Array<Value> | Array<Interval> | Array<MappedItem>
+type SearchOutput<T> = Array<Value<T>> | Array<Interval> | Array<MappedItem>
 
 interface IntervalInterface {
     low: Comparable;
@@ -40,42 +40,42 @@ declare class Interval implements IntervalInterface {
     static comparable_less_than(arg1: Comparable, arg2: Comparable ) : boolean;
 }
 
-type Item = {key: Interval, value: Value}
+type Item<T> = {key: Interval, value: Value<T>}
 
-declare class Node {
-    constructor(key?: Interval | NumericTuple, value?: Value )
+declare class Node<T> {
+    constructor(key?: Interval | NumericTuple, value?: Value<T> )
 
-    left: Node;
-    right: Node;
-    parent: Node;
+    left: Node<T>;
+    right: Node<T>;
+    parent: Node<T>;
     color: 1 | 0;
-    item: Item;
+    item: Item<T>;
 
     isNil() : boolean;
-    less_than(other_node: Node) : boolean;
-    equal_to(other_node: Node) : boolean;
-    intersect(other_node: Node) : boolean;
-    copy_data(other_node: Node) : void;
+    less_than(other_node: Node<T>) : boolean;
+    equal_to(other_node: Node<T>) : boolean;
+    intersect(other_node: Node<T>) : boolean;
+    copy_data(other_node: Node<T>) : void;
     update_max() : void;
 }
 
-declare class IntervalTree {
+declare class IntervalTree<T = any> {
     constructor()
 
-    root: Node;
+    root: Node<T>;
 
     readonly size: number;
-    readonly keys: Node[];
-    readonly values: Value[];
-    readonly items: Array<{key:Interval, value:Value}>;
+    readonly keys: Node<T>[];
+    readonly values: Value<T>[];
+    readonly items: Array<{key:Interval, value: Value<T>}>;
 
     isEmpty(): boolean;
-    insert(key: Interval | NumericTuple, value?: Value) : Node;
-    exist(key: Interval | NumericTuple, value?: Value): boolean;
-    remove(key: Interval | NumericTuple, value?: Value) : Node;
-    search(interval: Interval | NumericTuple, outputMapperFn?: (value: Value, key: Interval) => MappedItem) : SearchOutput;
-    forEach(callbackfn: (key: Interval, value: Value) => void, thisArg?: any ) : void;
-    map(callbackFn: (value: Value, key?: Interval) => any, thisArg?: any ): IntervalTree;
+    insert(key: Interval | NumericTuple, value?: Value<T>) : Node<T>;
+    exist(key: Interval | NumericTuple, value?: Value<T>): boolean;
+    remove(key: Interval | NumericTuple, value?: Value<T>) : Node<T>;
+    search(interval: Interval | NumericTuple, outputMapperFn?: (value: Value<T>, key: Interval) => MappedItem) : SearchOutput<T>;
+    forEach(callbackfn: (key: Interval, value: Value<T>) => void, thisArg?: any ) : void;
+    map(callbackFn: (value: Value<T>, key?: Interval) => any, thisArg?: any ): IntervalTree<T>;
 }
 
 export default IntervalTree;
