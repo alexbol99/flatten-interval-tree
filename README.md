@@ -9,7 +9,8 @@ stored in the tree.
 
 This package is a part of [flatten-js](https://github.com/alexbol99/flatten-js) library.
   
-An earlier implementation, in package [flatten-interval-tree](https://www.npmjs.com/package/flatten-interval-tree), is no longer supported and will be deprecated soon. Please use this package instead.
+An earlier implementation, in package [flatten-interval-tree](https://www.npmjs.com/package/flatten-interval-tree), is no longer supported and will be deprecated soon.
+Please use this package ([@flatten-js/interval-tree](https://www.npmjs.com/package/@flatten-js/interval-tree)) instead.
 
 ## Contacts
 
@@ -26,7 +27,10 @@ import IntervalTree from '@flatten-js/interval-tree'
 
 ### Notes
 Tree stores pairs ```<key,value>``` where key is an interval, and value is an object of any type.
-If value omitted, tree stores only keys. Tree cannot store ```undefined``` values.
+If value omitted, tree stores only keys.
+ 
+In a ```<key,value>``` tree none of the ```value``` can be 
+```undefined```.
 
 Interval can be simply a pair of numbers or it can be
 a user-defined object that implements ```IntervalInterface``` described in
@@ -168,3 +172,7 @@ In lieu of a formal style guide, take care to maintain the existing coding style
 ## License
 
 MIT
+
+## Support
+
+<a href="https://www.buymeacoffee.com/alexbol99" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
