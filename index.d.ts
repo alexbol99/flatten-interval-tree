@@ -1,8 +1,8 @@
-// Type definitions for flatten-interval-tree library v1.0.2
+// Type definitions for flatten-interval-tree library
 // Project: https://github.com/alexbol99/flatten-js
 // Definitions by: Alex Bol
 
-type Comparable = any;      // any object that implements operators '<' and '==' and  method'max'
+type Comparable = any;      // any object that implements operators '<' and '==' and  method 'max'
 type Value<T> = T;
 type NumericTuple = [number,number];
 type MappedItem = any;
@@ -74,6 +74,7 @@ declare class IntervalTree<T = any> {
     exist(key: Interval | NumericTuple, value?: Value<T>): boolean;
     remove(key: Interval | NumericTuple, value?: Value<T>) : Node<T>;
     search(interval: Interval | NumericTuple, outputMapperFn?: (value: Value<T>, key: Interval) => MappedItem) : SearchOutput<T>;
+    intersect_any(interval: Interval | NumericTuple) : boolean;
     forEach(callbackfn: (key: Interval, value: Value<T>) => void, thisArg?: any ) : void;
     map(callbackFn: (value: Value<T>, key?: Interval) => any, thisArg?: any ): IntervalTree<T>;
 }

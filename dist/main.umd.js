@@ -364,7 +364,7 @@
         /**
          * Returns array of entry values which keys intersect with given interval <br/>
          * If no values stored in the tree, returns array of keys which intersect given interval
-         * @param {Interval} interval - search interval, or array [low, high]
+         * @param {Interval} interval - search interval, or tuple [low, high]
          * @param outputMapperFn(value,key) - optional function that maps (value, key) to custom output
          * @returns {Array}
          */
@@ -373,6 +373,17 @@
             let resp_nodes = [];
             this.tree_search_interval(this.root, search_node, resp_nodes);
             return resp_nodes.map(node => outputMapperFn(node.item.value, node.item.key))
+        }
+
+        /**
+         * Returns true if intersection between given and any interval stored in the tree found
+         * @param {Interval} interval - search interval or tuple [low, high]
+         * @returns {boolean}
+         */
+        intersect_any(interval) {
+            let search_node = new Node(interval);
+            let found = this.tree_find_any_interval(this.root, search_node);
+            return found;
         }
 
         /**
@@ -642,6 +653,25 @@
                     this.tree_search_interval(node.right, search_node, res);
                 }
             }
+        }
+
+        tree_find_any_interval(node, search_node) {
+            let found = false;
+            if (node != null && node != this.nil_node) {
+                // if (node->left != this.nil_node && node->left->max >= low) {
+                if (node.left != this.nil_node && !node.not_intersect_left_subtree(search_node)) {
+                    found = this.tree_find_any_interval(node.left, search_node);
+                }
+                // if (low <= node->high && node->low <= high) {
+                if (!found) {
+                    found = node.intersect(search_node);
+                }
+                // if (node->right != this.nil_node && node->low <= high) {
+                if (!found && node.right != this.nil_node && !node.not_intersect_right_subtree(search_node)) {
+                    found = this.tree_find_any_interval(node.right, search_node);
+                }
+            }
+            return found;
         }
 
         local_minimum(node) {

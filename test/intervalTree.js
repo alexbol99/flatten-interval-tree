@@ -263,4 +263,44 @@ describe('#IntervalTree', function() {
         let resp1 = tree.search([0,0]);
         expect(resp1).to.deep.equal([[0,0]]);
     })
+    it('May search interval and return true if intersection with any interval found. Issue #26', function () {
+        let tree = new IntervalTree();
+        let intervals = [[7,8],[1,4],[11,12],[1,1],[5,7]];
+        for (let i=0; i < intervals.length; i++) tree.insert(intervals[i],"val"+i);
+        expect(tree.intersect_any([2,3])).to.be.true;
+        expect(tree.intersect_any([4,4])).to.be.true;
+        expect(tree.intersect_any([4,10])).to.be.true;
+        expect(tree.intersect_any([9,10])).to.be.false;
+        expect(tree.intersect_any([-1,0])).to.be.false;
+        expect(tree.intersect_any([15,20])).to.be.false;
+    });
+    it('May search interval and return true if intersection with any interval found. Issue #26', function () {
+        let tree = new IntervalTree();
+        let intervals = [[7,8],[1,4],[11,12],[1,1],[5,7]];
+        for (let i=0; i < intervals.length; i++) tree.insert(intervals[i],"val"+i);
+        expect(tree.intersect_any([2,3])).to.be.true;
+        expect(tree.intersect_any([4,4])).to.be.true;
+        expect(tree.intersect_any([4,10])).to.be.true;
+        expect(tree.intersect_any([9,10])).to.be.false;
+        expect(tree.intersect_any([-1,0])).to.be.false;
+        expect(tree.intersect_any([15,20])).to.be.false;
+    });
+    it('May test if any of great composers lived in second half of XX century', function () {
+        const composers = [
+            {name: "Ludwig van Beethoven", period: [1770,1827]},
+            {name: "Johann Sebastian Bach", period: [1685, 1750]},
+            {name: "Wolfgang Amadeus Mozart", period: [1756, 1791]},
+            {name: "Johannes Brahms", period: [1833, 1897]},
+            {name: "Richard Wagner", period: [1813, 1883]},
+            {name: "Claude Debussy", period: [1862, 1918]},
+            {name: "Pyotr Ilyich Tchaikovsky", period: [1840, 1893]},
+            {name: "Frédéric Chopin", period: [1810, 1849]},
+            {name: "Joseph Haydn", period: [1732, 1809]},
+            {name: "Antonio Vivaldi", period: [1678, 1741]}
+        ];
+        const tree = new IntervalTree();
+        for (let composer of composers)
+            tree.insert(composer.period, composer.name);
+        expect(tree.intersect_any( [1950, 2000])).to.be.false;
+    });
 });

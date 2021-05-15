@@ -121,6 +121,12 @@ console.log(searchRes)
 // [ 'Antonio Vivaldi (1678-1741)', 'Johann Sebastian Bach (1685-1750)' ]
 ```
 
+### Intersect_any(interval)
+Returns true if intersection between given and any interval stored in the tree found
+
+```javascript
+let found = tree.intersect_any(interval)
+```
 
 ### Size
 Returns number of items stored in the tree (getter)
