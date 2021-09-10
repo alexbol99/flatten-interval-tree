@@ -274,17 +274,6 @@ describe('#IntervalTree', function() {
         expect(tree.intersect_any([-1,0])).to.be.false;
         expect(tree.intersect_any([15,20])).to.be.false;
     });
-    it('May search interval and return true if intersection with any interval found. Issue #26', function () {
-        let tree = new IntervalTree();
-        let intervals = [[7,8],[1,4],[11,12],[1,1],[5,7]];
-        for (let i=0; i < intervals.length; i++) tree.insert(intervals[i],"val"+i);
-        expect(tree.intersect_any([2,3])).to.be.true;
-        expect(tree.intersect_any([4,4])).to.be.true;
-        expect(tree.intersect_any([4,10])).to.be.true;
-        expect(tree.intersect_any([9,10])).to.be.false;
-        expect(tree.intersect_any([-1,0])).to.be.false;
-        expect(tree.intersect_any([15,20])).to.be.false;
-    });
     it('May test if any of great composers lived in second half of XX century', function () {
         const composers = [
             {name: "Ludwig van Beethoven", period: [1770,1827]},

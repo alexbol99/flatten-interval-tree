@@ -22,9 +22,11 @@ interface IntervalInterface {
     output() : any;
 }
 
-declare class Interval implements IntervalInterface {
+export declare class Interval implements IntervalInterface {
     low: Comparable;
     high: Comparable;
+
+    constructor(low: Comparable, high: Comparable);
 
     readonly  max: Interval;
 
