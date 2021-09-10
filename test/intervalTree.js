@@ -303,4 +303,22 @@ describe('#IntervalTree', function() {
             tree.insert(composer.period, composer.name);
         expect(tree.intersect_any( [1950, 2000])).to.be.false;
     });
+    it("May inherit Interval class and override its methods ", function() {
+        class TimeInterval extends Interval {
+            not_intersect(other_interval) {
+                return (this.high <= other_interval.low || other_interval.high <= this.low);
+            }
+        }
+        const tree = new IntervalTree();
+        tree.insert(new TimeInterval(7,8));
+        tree.insert(new TimeInterval(1,4));
+        tree.insert(new TimeInterval(11,12));
+        tree.insert(new TimeInterval(5,7));
+
+        const resp1 = tree.search([4,5]);
+        expect(resp1).to.deep.equal([]);
+
+        const resp2 = tree.search([4,11]);
+        expect(resp2).to.deep.equal([[5,7],[7,8]]);
+    })
 });
