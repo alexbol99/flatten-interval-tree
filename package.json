@@ -1,6 +1,6 @@
 {
   "name": "@flatten-js/interval-tree",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "description": "Interval search tree",
   "author": "Alex Bol",
   "license": "MIT",
