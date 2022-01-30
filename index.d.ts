@@ -4,9 +4,9 @@
 
 type Comparable = any;      // any object that implements operators '<' and '==' and  method 'max'
 type Value<T> = T;
-type NumericTuple = [number,number];
+export type NumericTuple = [number,number];
 type MappedItem = any;
-type SearchOutput<T> = Array<Value<T>> | Array<Interval> | Array<MappedItem>
+export type SearchOutput<T> = Array<Value<T>> | Array<Interval> | Array<MappedItem>
 
 interface IntervalInterface {
     low: Comparable;
@@ -44,7 +44,7 @@ export declare class Interval implements IntervalInterface {
 
 type Item<T> = {key: Interval, value: Value<T>}
 
-declare class Node<T> {
+export declare class Node<T> {
     constructor(key?: Interval | NumericTuple, value?: Value<T> )
 
     left: Node<T>;
