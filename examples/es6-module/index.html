@@ -19,6 +19,9 @@
 
     <script type="module">
         import IntervalTree from "https://unpkg.com/@flatten-js/interval-tree?module";
+        import {Node, Interval} from "https://unpkg.com/@flatten-js/interval-tree?module";
+
+        const node = new Node();
 
         const composers = [
             {name: "Ludwig van Beethoven", period: [1770,1827]},
@@ -41,7 +44,9 @@
         for (let composer of composers)
             tree.insert(composer.period, composer.name);
 
-        const searchRes = tree.search( [1600,1700], (name, period) => {return {name : name, period: period.output()}} );
+        // const searchRes = tree.search( [1600,1700], (name, period) => {return {name : name, period: period.output()}} );
+        const interval = new Interval(1600, 1700);
+        const searchRes = tree.search( interval, (name, period) => {return {name : name, period: period.output()}} );
 
         const resList = searchRes.reduce( (html, composer) => html + `<li>${composer.name} (${composer.period[0]} - ${composer.period[1]})</li>`, "" );
         document.getElementById("results").innerHTML = resList;
