@@ -213,8 +213,8 @@ class Node {
     }
 
     copy_data(other_node) {
-        this.item.key = other_node.item.key.clone();
-        this.item.value = other_node.item.value && other_node.item.value.clone ? other_node.item.value.clone() : other_node.item.value;
+        this.item.key = other_node.item.key;
+        this.item.value = other_node.item.value;
     }
 
     update_max() {
