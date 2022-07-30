@@ -316,6 +316,13 @@ class IntervalTree {
     }
 
     /**
+     * Clear tree
+     */
+    clear() {
+        this.root = null;
+    }
+
+    /**
      * Insert new item into interval tree
      * @param {Interval} key - interval object or array of two numbers [low, high]
      * @param {any} value - value representing any object (optional)

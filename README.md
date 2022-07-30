@@ -165,6 +165,12 @@ Creates new tree with same keys using callback to transform (key,value) to a new
 let tree1 = tree.map((value, key) => (key.high-key.low))
 ```
 
+### Clear()
+Clear tree
+```javascript
+tree.clear()
+```
+
 ## Documentation
 Documentation may be found here: [https://alexbol99.github.io/flatten-interval-tree](https://alexbol99.github.io/flatten-interval-tree/)
 
