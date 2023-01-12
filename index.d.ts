@@ -64,7 +64,7 @@ export declare class Node<T> {
 declare class IntervalTree<T = any> {
     constructor()
 
-    root: Node<T>;
+    root: Node<T> | null;
 
     readonly size: number;
     readonly keys: Node<T>[];
