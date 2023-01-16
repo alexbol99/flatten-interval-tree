@@ -64,7 +64,7 @@ export declare class Node<T> {
 declare class IntervalTree<T = any> {
     constructor()
 
-    root: Node<T>;
+    root: Node<T> | null;
 
     readonly size: number;
     readonly keys: Node<T>[];
@@ -72,7 +72,7 @@ declare class IntervalTree<T = any> {
     readonly items: Array<{key:Interval, value: Value<T>}>;
 
     isEmpty(): boolean;
-    clean(): void;
+    clear(): void;
     insert(key: Interval | NumericTuple, value?: Value<T>) : Node<T>;
     exist(key: Interval | NumericTuple, value?: Value<T>): boolean;
     remove(key: Interval | NumericTuple, value?: Value<T>) : Node<T>;
