@@ -99,7 +99,7 @@ class Node {
     // Other_node does not intersect any node of left subtree, if this.left.max < other_node.item.key.low
     not_intersect_left_subtree(search_node) {
         const comparable_less_than = this.item.key.constructor.comparable_less_than;  // static method
-        let high = this.left.max.high !== undefined ? this.left.max.high : this.left.max;
+        let high = this.left.max.high !== undefined ? this.left.max.high : this.left.item.key.high;
         return comparable_less_than(high, search_node.item.key.low);
     }
 
