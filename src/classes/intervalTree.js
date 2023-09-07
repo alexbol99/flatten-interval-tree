@@ -3,6 +3,7 @@
  */
 'use strict';
 
+import Cursor from './cursor.js';
 import Node from './node.js';
 import {RB_TREE_COLOR_RED, RB_TREE_COLOR_BLACK} from '../utils/constants.js';
 
@@ -157,13 +158,23 @@ class IntervalTree {
         this.tree_walk(this.root, (node) => visitor(node.item.key, node.item.value));
     }
 
-    /** Value Mapper. Walk through every node and map node value to another value
-    * @param callback(value,key) - function to be called for each tree item
-    */
+    /**
+     * Value Mapper. Walk through every node and map node value to another value
+     * @param callback(value,key) - function to be called for each tree item
+     */
     map(callback) {
         const tree = new IntervalTree();
         this.tree_walk(this.root, (node) => tree.insert(node.item.key, callback(node.item.value, node.item.key)));
         return tree;
+    }
+
+    /**
+     * @param {Interval} interval - may be null if the cursor is intended to start from the beginning or end
+     * @param outputMapperFn(value,key) - optional function that maps (value, key) to custom output
+     * @returns {Cursor}
+     */
+    cursor(interval, outputMapperFn = (value, key) => value === key ? key.output() : value) {
+        return new Cursor(this, interval, outputMapperFn);
     }
 
     recalc_max(node) {
@@ -444,7 +455,6 @@ class IntervalTree {
         return node_min;
     }
 
-    // not in use
     local_maximum(node) {
         let node_max = node;
         while (node_max.right != null && node_max.right != this.nil_node) {
@@ -471,6 +481,26 @@ class IntervalTree {
             node_successor = parent_node;
         }
         return node_successor;
+    }
+
+    tree_precursor(node) {
+        let node_precursor;
+        let current_node;
+        let parent_node;
+
+        if (node.left != this.nil_node) {
+            node_precursor = this.local_maximum(node.left);
+        }
+        else {
+            current_node = node;
+            parent_node = node.parent;
+            while (parent_node != null && parent_node.left == current_node) {
+                current_node = parent_node;
+                parent_node = parent_node.parent;
+            }
+            node_precursor = parent_node;
+        }
+        return node_precursor;
     }
 
     //           |            right-rotate(T,y)       |
@@ -595,7 +625,7 @@ class IntervalTree {
         }
         height += heightLeft;
         return height;
-    };
+    }
 };
 
 export default IntervalTree;
