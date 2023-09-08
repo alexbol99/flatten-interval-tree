@@ -409,6 +409,36 @@ class IntervalTree {
         }
     }
 
+    tree_search_nearest_forward(node, search_node) {
+        let best;
+        let curr = node;
+        while (curr && curr != this.nil_node) {
+            if (curr.less_than(search_node)) {
+                if (curr.intersect(search_node) && (!best || curr.less_than(best))) best = curr;
+                curr = curr.right;
+            } else {
+                if (!best || curr.less_than(best)) best = curr;
+                curr = curr.left;
+            }
+        }
+        return best || null;
+    }
+
+    tree_search_nearest_backward(node, search_node) {
+        let best;
+        let curr = node;
+        while (curr && curr != this.nil_node) {
+            if (search_node.less_than(curr)) {
+                if (curr.intersect(search_node) && (!best || best.less_than(curr))) best = curr;
+                curr = curr.left;
+            } else {
+                if (!best || best.less_than(curr)) best = curr;
+                curr = curr.right;
+            }
+        }
+        return best || null;
+    }
+
     // Original search_interval method; container res support push() insertion
     // Search all intervals intersecting given one
     tree_search_interval(node, search_node, res) {

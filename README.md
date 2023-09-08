@@ -75,7 +75,7 @@ Method returns reference to the inserted node
 let node = tree.insert(key, value)
 ```
 
-### Exist(key,value)
+### Exist(key, value)
 Method returns true if item {key, value} exists in the tree. <br/>
 Method may be useful if need to support unique items.
 ```javascript
@@ -169,6 +169,28 @@ let tree1 = tree.map((value, key) => (key.high-key.low))
 Clear tree
 ```javascript
 tree.clear()
+```
+
+### Cursor([interval, outputMapperFn])
+Returns a stateful, bi-directional cursor. <br/>
+Call `next` or `prev` on the cursor to navigate to successor and precursor tree 
+nodes and return the corresponding values. <br/>
+In the absence of a starting interval, the cursor will start with a `null` state. <br/>
+If there is no successor (or precursor) node when `next` (or `prev`) is called, the cursor
+will have a `null` state and return `null`. <br/>
+If the cursor has a `null` state, calling `next` will take the cursor to the minimum node in the tree
+while calling `prev` will take the cursor to the maximum node in the tree. <br/>
+```javascript
+let cursor = tree.cursor();
+let next_value = cursor.next();
+```
+Optional *outputMapperFn(value, key)* enables to map search results into custom defined output. <br/>
+Example:
+```javascript
+let cursor = tree.cursor([5,5], (value, key) => key);
+let next_key = cursor.next();
+cursor.prev();
+let prev_key = cursor.prev();
 ```
 
 ## Documentation

@@ -1,5 +1,7 @@
 'use strict';
 
+import Node from './node.js';
+
 /**
  * A stateful, bi-directional cursor for an interval tree <br/>
  * This implementation makes no guarantees in the case of insertions or removals from the underlying interval tree <br/>
@@ -28,10 +30,9 @@ class Cursor {
         if (this.current_node) {
             node_successor = this.tree.tree_successor(this.current_node);
         } else if (this.search_node) {
-            // Get the minimum node that overlaps the search bounds
-            let resp_nodes = [];
-            this.tree_search_interval(this.root, search_node, resp_nodes);
-            node_successor = resp_nodes[0];
+            node_successor = this.tree.tree_search_nearest_forward(this.tree.root, this.search_node);
+            // Prevent the cursor from starting back from the original interval when the cursor finishes
+            this.search_node = null;
         } else if (this.tree.root) {
             // Get the minimum node of the tree
             node_successor = this.tree.local_minimum(this.tree.root);
@@ -54,10 +55,9 @@ class Cursor {
         if (this.current_node) {
             node_precursor = this.tree.tree_precursor(this.current_node);
         } else if (this.search_node) {
-            // Get the maximum node that overlaps the search bounds
-            let resp_nodes = [];
-            this.tree_search_interval(this.root, search_node, resp_nodes);
-            node_precursor = resp_nodes.at(-1);
+            node_precursor = this.tree.tree_search_nearest_backward(this.tree.root, this.search_node);
+            // Prevent the cursor from starting back from the original interval when the cursor finishes
+            this.search_node = null;
         } else if (this.tree.root) {
             // Get the maximum node of the tree
             node_precursor = this.tree.local_maximum(this.tree.root);

@@ -9,7 +9,7 @@ import {Interval} from "../index";
 // import IntervalTree from '../dist/interval-tree.esm';
 
 describe('#IntervalTree', function() {
-    it('Create new instanse of IntervalTree ', function () {
+    it('Create new instance of IntervalTree ', function () {
         let tree = new IntervalTree();
         expect(tree).to.be.an.instanceof(IntervalTree);
     });
