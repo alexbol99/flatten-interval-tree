@@ -171,21 +171,27 @@ Clear tree
 tree.clear()
 ```
 
-### Iterator([interval, outputMapperFn])
-Returns a stateful iterator. <br/>
+### Iterate([interval, outputMapperFn])
+Returns an iterator (and iterable). <br/>
 Call `next` on the iterator to navigate to successor tree nodes and return the corresponding values. <br/>
-In the absence of a starting interval, the iterator will start with a `null` state. <br/>
-If there is no successor node when `next` is called, the iterator will have a `null` state and return `null`. <br/>
-If the iterator has a `null` state, calling `next` will take the iterator to the minimum node in the tree. 
+In the absence of a starting interval, the iterator will start with the lowest interval. <br/>
 ```javascript
-let iterator = tree.iterator();
-let next = iterator.next();
+let iterator = tree.iterate();
+let next = iterator.next().value;
 ```
 Optional *outputMapperFn(value, key)* enables to map search results into custom defined output. <br/>
 Example:
 ```javascript
-let iterator = tree.iterator([5,5], (value, key) => key);
-let next_key = iterator.next();
+let iterator = tree.iterate([5,5], (value, key) => key);
+let next_key = iterator.next().value;
+```
+Supports `for .. of` syntax. <br/>
+Example:
+```javascript
+for (let key of tree.iterate([5,5], (value, key) => key)) {
+    if (key[0] > 8) break;
+    console.log(key);
+}
 ```
 
 ## Documentation

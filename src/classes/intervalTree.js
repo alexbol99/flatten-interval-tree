@@ -3,7 +3,6 @@
  */
 'use strict';
 
-import Iterator from './iterator.js';
 import Node from './node.js';
 import {RB_TREE_COLOR_RED, RB_TREE_COLOR_BLACK} from '../utils/constants.js';
 
@@ -169,12 +168,21 @@ class IntervalTree {
     }
 
     /**
-     * @param {Interval} interval - may be null if the iterator is intended to start from the beginning or end
+     * @param {Interval} interval - optional if the iterator is intended to start from the beginning or end
      * @param outputMapperFn(value,key) - optional function that maps (value, key) to custom output
      * @returns {Iterator}
      */
-    iterator(interval, outputMapperFn = (value, key) => value === key ? key.output() : value) {
-        return new Iterator(this, interval, outputMapperFn);
+    *iterate(interval, outputMapperFn = (value, key) => value === key ? key.output() : value) {
+        let node;
+        if (interval) {
+            node = this.tree_search_nearest_forward(this.root, new Node(interval));
+        } else if (this.root) {
+            node = this.local_minimum(this.root);
+        }
+        while (node) {
+            yield outputMapperFn(node.item.value, node.item.key);
+            node = this.tree_successor(node);
+        }
     }
 
     recalc_max(node) {
