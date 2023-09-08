@@ -424,21 +424,6 @@ class IntervalTree {
         return best || null;
     }
 
-    tree_search_nearest_backward(node, search_node) {
-        let best;
-        let curr = node;
-        while (curr && curr != this.nil_node) {
-            if (search_node.less_than(curr)) {
-                if (curr.intersect(search_node) && (!best || best.less_than(curr))) best = curr;
-                curr = curr.left;
-            } else {
-                if (!best || best.less_than(curr)) best = curr;
-                curr = curr.right;
-            }
-        }
-        return best || null;
-    }
-
     // Original search_interval method; container res support push() insertion
     // Search all intervals intersecting given one
     tree_search_interval(node, search_node, res) {
@@ -485,6 +470,7 @@ class IntervalTree {
         return node_min;
     }
 
+    // not in use
     local_maximum(node) {
         let node_max = node;
         while (node_max.right != null && node_max.right != this.nil_node) {
@@ -511,26 +497,6 @@ class IntervalTree {
             node_successor = parent_node;
         }
         return node_successor;
-    }
-
-    tree_precursor(node) {
-        let node_precursor;
-        let current_node;
-        let parent_node;
-
-        if (node.left != this.nil_node) {
-            node_precursor = this.local_maximum(node.left);
-        }
-        else {
-            current_node = node;
-            parent_node = node.parent;
-            while (parent_node != null && parent_node.left == current_node) {
-                current_node = parent_node;
-                parent_node = parent_node.parent;
-            }
-            node_precursor = parent_node;
-        }
-        return node_precursor;
     }
 
     //           |            right-rotate(T,y)       |
