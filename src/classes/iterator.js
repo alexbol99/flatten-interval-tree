@@ -3,14 +3,14 @@
 import Node from './node.js';
 
 /**
- * A stateful cursor for an interval tree <br/>
+ * A stateful iterator for an interval tree <br/>
  * This implementation makes no guarantees in the case of insertions or removals from the underlying interval tree <br/>
- * @type {Cursor}
+ * @type {Iterator}
  */
-class Cursor {
+class Iterator {
     /**
      * @param {IntervalTree}
-     * @param {Interval} interval - may be null if the cursor is intended to start from the beginning or end
+     * @param {Interval} interval - may be null if the iterator is intended to start from the beginning or end
      * @param outputMapperFn(value,key) - optional function that maps (value, key) to custom output
      */
     constructor(tree, interval, outputMapperFn) {
@@ -31,7 +31,7 @@ class Cursor {
             node_successor = this.tree.tree_successor(this.current_node);
         } else if (this.search_node) {
             node_successor = this.tree.tree_search_nearest_forward(this.tree.root, this.search_node);
-            // Prevent the cursor from starting back from the original interval when the cursor finishes
+            // Prevent the iterator from starting back from the original interval when the iterator finishes
             this.search_node = null;
         } else if (this.tree.root) {
             // Get the minimum node of the tree
@@ -46,4 +46,4 @@ class Cursor {
     }
 };
 
-export default Cursor;
+export default Iterator;

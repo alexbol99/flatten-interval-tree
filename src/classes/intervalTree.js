@@ -3,7 +3,7 @@
  */
 'use strict';
 
-import Cursor from './cursor.js';
+import Iterator from './iterator.js';
 import Node from './node.js';
 import {RB_TREE_COLOR_RED, RB_TREE_COLOR_BLACK} from '../utils/constants.js';
 
@@ -169,12 +169,12 @@ class IntervalTree {
     }
 
     /**
-     * @param {Interval} interval - may be null if the cursor is intended to start from the beginning or end
+     * @param {Interval} interval - may be null if the iterator is intended to start from the beginning or end
      * @param outputMapperFn(value,key) - optional function that maps (value, key) to custom output
-     * @returns {Cursor}
+     * @returns {Iterator}
      */
-    cursor(interval, outputMapperFn = (value, key) => value === key ? key.output() : value) {
-        return new Cursor(this, interval, outputMapperFn);
+    iterator(interval, outputMapperFn = (value, key) => value === key ? key.output() : value) {
+        return new Iterator(this, interval, outputMapperFn);
     }
 
     recalc_max(node) {

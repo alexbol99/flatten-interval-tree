@@ -1,36 +1,36 @@
 import { expect } from 'chai';
 import IntervalTree from '../index';
 
-describe('#Cursor', function() {
+describe('#Iterator', function() {
     it('May find first intersecting interval', function () {
         let tree = new IntervalTree();
         let ints = [[6,8],[1,3],[5,12],[1,1],[5,7]];
         for (let int of ints) tree.insert(int);
-        let cursor = tree.cursor([3,8])
-        expect(cursor.next()).to.deep.equal([1,3])
+        let iterator = tree.iterator([3,8])
+        expect(iterator.next()).to.deep.equal([1,3])
     });
     it('May find first forward interval when there is no intersection', function () {
         let tree = new IntervalTree();
         let ints = [[6,8],[1,3],[5,12],[1,1],[5,7]];
         for (let int of ints) tree.insert(int);
-        let cursor = tree.cursor([4,4])
-        expect(cursor.next()).to.deep.equal([5,7])
+        let iterator = tree.iterator([4,4])
+        expect(iterator.next()).to.deep.equal([5,7])
     });
     it('May find first interval when no interval is passed', function () {
         let tree = new IntervalTree();
         let ints = [[6,8],[1,3],[5,12],[1,1],[5,7]];
         for (let int of ints) tree.insert(int);
-        let cursor = tree.cursor()
-        expect(cursor.next()).to.deep.equal([1,1])
+        let iterator = tree.iterator()
+        expect(iterator.next()).to.deep.equal([1,1])
     });
     it('Returns `null` when it reaches the end', function () {
         let tree = new IntervalTree();
         let ints = [[6,8],[1,3],[5,12],[1,1],[5,7]];
         for (let int of ints) tree.insert(int);
-        let cursor = tree.cursor([8,8])
-        expect(cursor.next()).to.deep.equal([5,12])
-        expect(cursor.next()).to.deep.equal([6,8])
-        expect(cursor.next()).to.deep.equal(null)
+        let iterator = tree.iterator([8,8])
+        expect(iterator.next()).to.deep.equal([5,12])
+        expect(iterator.next()).to.deep.equal([6,8])
+        expect(iterator.next()).to.deep.equal(null)
     });
     it('Supports custom transformed objects', function () {
         const composers = [
@@ -48,9 +48,9 @@ describe('#Cursor', function() {
         const tree = new IntervalTree();
         for (let composer of composers)
             tree.insert(composer.period, composer.name);
-        let cursor = tree.cursor([1600, 1700],
+        let iterator = tree.iterator([1600, 1700],
             (name, period) => {return `${name} (${period.low}-${period.high})`});
-        expect(cursor.next()).to.equal("Antonio Vivaldi (1678-1741)");
-        expect(cursor.next()).to.equal("Johann Sebastian Bach (1685-1750)");
+        expect(iterator.next()).to.equal("Antonio Vivaldi (1678-1741)");
+        expect(iterator.next()).to.equal("Johann Sebastian Bach (1685-1750)");
     });
 });

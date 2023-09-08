@@ -171,21 +171,21 @@ Clear tree
 tree.clear()
 ```
 
-### Cursor([interval, outputMapperFn])
-Returns a stateful cursor. <br/>
-Call `next` on the cursor to navigate to successor tree nodes and return the corresponding values. <br/>
-In the absence of a starting interval, the cursor will start with a `null` state. <br/>
-If there is no successor node when `next` is called, the cursor will have a `null` state and return `null`. <br/>
-If the cursor has a `null` state, calling `next` will take the cursor to the minimum node in the tree. 
+### Iterator([interval, outputMapperFn])
+Returns a stateful iterator. <br/>
+Call `next` on the iterator to navigate to successor tree nodes and return the corresponding values. <br/>
+In the absence of a starting interval, the iterator will start with a `null` state. <br/>
+If there is no successor node when `next` is called, the iterator will have a `null` state and return `null`. <br/>
+If the iterator has a `null` state, calling `next` will take the iterator to the minimum node in the tree. 
 ```javascript
-let cursor = tree.cursor();
-let next = cursor.next();
+let iterator = tree.iterator();
+let next = iterator.next();
 ```
 Optional *outputMapperFn(value, key)* enables to map search results into custom defined output. <br/>
 Example:
 ```javascript
-let cursor = tree.cursor([5,5], (value, key) => key);
-let next_key = cursor.next();
+let iterator = tree.iterator([5,5], (value, key) => key);
+let next_key = iterator.next();
 ```
 
 ## Documentation
