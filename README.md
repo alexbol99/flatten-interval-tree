@@ -75,7 +75,7 @@ Method returns reference to the inserted node
 let node = tree.insert(key, value)
 ```
 
-### Exist(key,value)
+### Exist(key, value)
 Method returns true if item {key, value} exists in the tree. <br/>
 Method may be useful if need to support unique items.
 ```javascript
@@ -169,6 +169,29 @@ let tree1 = tree.map((value, key) => (key.high-key.low))
 Clear tree
 ```javascript
 tree.clear()
+```
+
+### Iterate([interval, outputMapperFn])
+Returns an iterator (and iterable). <br/>
+Call `next` on the iterator to navigate to successor tree nodes and return the corresponding values. <br/>
+In the absence of a starting interval, the iterator will start with the lowest interval. <br/>
+```javascript
+let iterator = tree.iterate();
+let next = iterator.next().value;
+```
+Optional *outputMapperFn(value, key)* enables to map search results into custom defined output. <br/>
+Example:
+```javascript
+let iterator = tree.iterate([5,5], (value, key) => key);
+let next_key = iterator.next().value;
+```
+Supports `for .. of` syntax. <br/>
+Example:
+```javascript
+for (let key of tree.iterate([5,5], (value, key) => key)) {
+    if (key[0] > 8) break;
+    console.log(key);
+}
 ```
 
 ## Documentation

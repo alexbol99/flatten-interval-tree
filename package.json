@@ -11,7 +11,8 @@
   "types": "index.d.ts",
   "nyc": {
     "require": [
-      "@babel/register"
+      "@babel/register",
+      "@babel/polyfill"
     ],
     "sourceMap": false,
     "instrument": false
