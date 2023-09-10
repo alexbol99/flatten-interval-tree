@@ -168,7 +168,7 @@ class IntervalTree {
     }
 
     /**
-     * @param {Interval} interval - optional if the iterator is intended to start from the beginning or end
+     * @param {Interval} interval - optional if the iterator is intended to start from the beginning
      * @param outputMapperFn(value,key) - optional function that maps (value, key) to custom output
      * @returns {Iterator}
      */

@@ -6,7 +6,9 @@ type Comparable = any;      // any object that implements operators '<' and '=='
 type Value<T> = T;
 export type NumericTuple = [number,number];
 type MappedItem = any;
+type OutputMapperFn<T> = (value: Value<T>, key: Interval) => MappedItem
 export type SearchOutput<T> = Array<Value<T>> | Array<Interval> | Array<MappedItem>
+export type IterableOutput<T> = Iterable<Value<T>> | Iterable<Interval> | Iterable<MappedItem>
 
 interface IntervalInterface {
     low: Comparable;
@@ -76,7 +78,8 @@ declare class IntervalTree<T = any> {
     insert(key: Interval | NumericTuple, value?: Value<T>) : Node<T>;
     exist(key: Interval | NumericTuple, value?: Value<T>): boolean;
     remove(key: Interval | NumericTuple, value?: Value<T>) : Node<T>;
-    search(interval: Interval | NumericTuple, outputMapperFn?: (value: Value<T>, key: Interval) => MappedItem) : SearchOutput<T>;
+    search(interval: Interval | NumericTuple, outputMapperFn?: OutputMapperFn<T>) : SearchOutput<T>;
+    iterate(interval?: Interval | NumericTuple, outputMapperFn?: OutputMapperFn<T>) : IterableOutput<T>
     intersect_any(interval: Interval | NumericTuple) : boolean;
     forEach(callbackfn: (key: Interval, value: Value<T>) => void, thisArg?: any ) : void;
     map(callbackFn: (value: Value<T>, key?: Interval) => any, thisArg?: any ): IntervalTree<T>;

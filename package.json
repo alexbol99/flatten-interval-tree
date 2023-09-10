@@ -1,6 +1,6 @@
 {
   "name": "@flatten-js/interval-tree",
-  "version": "1.0.21",
+  "version": "1.1.0",
   "description": "Interval search tree",
   "author": "Alex Bol",
   "license": "MIT",
@@ -40,16 +40,16 @@
   "dependencies": {},
   "devDependencies": {
     "@babel/cli": "^7.2.3",
-    "@babel/core": "^7.2.2",
+    "@babel/core": "^7.22.9",
     "@babel/node": "^7.2.2",
     "@babel/preset-env": "^7.3.1",
     "@babel/register": "^7.0.0",
     "babel-plugin-istanbul": "^5.1.1",
     "chai": "^4.2.0",
-    "coveralls": "^3.0.3",
+    "coveralls": "^3.1.1",
     "jsdoc": "^3.6.2",
     "minami": "^1.2.3",
-    "mocha": "^8.2.0",
+    "mocha": "^10.1.0",
     "nyc": "^15.1.0",
     "rollup": "^3.25.1"
   }
