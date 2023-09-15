@@ -422,8 +422,12 @@ class IntervalTree {
         let curr = node;
         while (curr && curr != this.nil_node) {
             if (curr.less_than(search_node)) {
-                if (curr.intersect(search_node) && (!best || curr.less_than(best))) best = curr;
-                curr = curr.right;
+                if (curr.intersect(search_node)) {
+                    best = curr;
+                    curr = curr.left;
+                } else {
+                    curr = curr.right;
+                }
             } else {
                 if (!best || curr.less_than(best)) best = curr;
                 curr = curr.left;
