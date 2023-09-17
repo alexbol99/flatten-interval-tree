@@ -318,6 +318,13 @@ describe('#IntervalTree', function() {
             let iterator = tree.iterate([3,8]);
             expect(iterator.next().value).to.deep.equal([1,3]);
         });
+        it('Finds the lowest intersecting interval regardless of tree structure', function () {
+            let tree = new IntervalTree();
+            let ints = [[6,8],[5,12],[4,7],[1,5]];
+            for (let int of ints) tree.insert(int);
+            let iterator = tree.iterate([5,5]);
+            expect(iterator.next().value).to.deep.equal([1,5]);
+        });
         it('May find first forward interval when there is no intersection', function () {
             let tree = new IntervalTree();
             let ints = [[6,8],[1,3],[5,12],[1,1],[5,7]];
