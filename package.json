@@ -4,11 +4,17 @@
   "description": "Interval search tree",
   "author": "Alex Bol",
   "license": "MIT",
-  "main": "dist/main.cjs.js",
+  "main": "dist/main.cjs",
   "umd:main": "dist/main.umd.js",
   "unpkg": "dist/main.umd.js",
-  "module": "dist/main.esm.js",
+  "module": "dist/main.mjs",
   "types": "index.d.ts",
+  "exports": {
+    "types": "./index.d.ts",
+    "require": "./dist/main.cjs",
+    "import": "./dist/main.mjs",
+    "default": "./dist/main.umd.js"
+  },
   "nyc": {
     "require": [
       "@babel/register",
