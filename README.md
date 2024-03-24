@@ -2,6 +2,7 @@
 [![npm version](https://badge.fury.io/js/%40flatten-js%2Finterval-tree.svg)](https://badge.fury.io/js/%40flatten-js%2Finterval-tree)
 [![Build Status](https://travis-ci.org/alexbol99/flatten-interval-tree.svg?branch=master)](https://travis-ci.org/alexbol99/flatten-interval-tree)
 [![Coverage Status](https://coveralls.io/repos/github/alexbol99/flatten-interval-tree/badge.svg?branch=master)](https://coveralls.io/github/alexbol99/flatten-interval-tree?branch=master)
+[![@flatten-js/interval-tree](https://snyk.io/advisor/npm-package/@flatten-js/interval-tree/badge.svg)](https://snyk.io/advisor/npm-package/@flatten-js/interval-tree)
 [![Rate on Openbase](https://badges.openbase.com/js/rating/@flatten-js/interval-tree.svg)](https://openbase.com/js/@flatten-js/interval-tree?utm_source=embedded&utm_medium=badge&utm_campaign=rate-badge)
 
 The package **@flatten-js/interval-tree** is an implementation of interval binary search tree according to Cormen et al. Introduction to Algorithms (2009, Section 14.3: Interval trees, pp. 348–354).
