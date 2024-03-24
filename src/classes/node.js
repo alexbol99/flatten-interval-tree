@@ -18,9 +18,11 @@ class Node {
         this.item = {key: key, value: value};   // key is supposed to be instance of Interval
 
         /* If not, this should by an array of two numbers */
-        if (key && key instanceof Array && key.length == 2) {
+        if (key && key instanceof Array && key.length === 2) {
             if (!Number.isNaN(key[0]) && !Number.isNaN(key[1])) {
-                this.item.key = new Interval(Math.min(key[0], key[1]), Math.max(key[0], key[1]));
+                let [low, high] = key
+                if (low > high) [low, high] = [high, low]
+                this.item.key = new Interval(low, high);
             }
         }
 
@@ -52,7 +54,7 @@ class Node {
     _value_equal(other_node) {
         return this.item.value && other_node.item.value && this.item.value.equal_to ?
             this.item.value.equal_to(other_node.item.value) :
-            this.item.value == other_node.item.value;
+            this.item.value === other_node.item.value;
     }
     equal_to(other_node) {
         // if tree stores only keys
@@ -99,6 +101,6 @@ class Node {
         let low = this.right.max.low !== undefined ? this.right.max.low : this.right.item.key.low;
         return comparable_less_than(search_node.item.key.high, low);
     }
-};
+}
 
 export default Node;

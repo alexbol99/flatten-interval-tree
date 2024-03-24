@@ -310,6 +310,19 @@ describe('#IntervalTree', function() {
         const resp2 = tree.search([4,11]);
         expect(resp2).to.deep.equal([[5,7],[7,8]]);
     })
+    it("May store bigint values", () => {
+        const tree = new IntervalTree();
+        tree.insert([2, 5], 10n);
+        expect(tree.search([2,5])).to.deep.equal([10n])
+    })
+    it("May store bigint intervals", () => {
+        const tree = new IntervalTree();
+        const i1 = new Interval(2n, 5n)
+        const i2 = new Interval(3n, 7n)
+        tree.insert(i1, 10);
+        tree.insert(i2, 20);
+        expect(tree.search(new Interval(4n, 6n))).to.deep.equal([10, 20])
+    })
     describe('##Iterator', function() {
         it('May find first intersecting interval', function () {
             let tree = new IntervalTree();
