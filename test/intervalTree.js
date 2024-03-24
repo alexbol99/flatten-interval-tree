@@ -163,7 +163,7 @@ describe('#IntervalTree', function() {
         let height = (tree) => {
             return tree.testBlackHeightProperty(tree.root);
         };
-        let h;
+
         tree.remove([1,1],"val3");
         // h = height(tree);
         expect(height(tree)).to.equal(3);

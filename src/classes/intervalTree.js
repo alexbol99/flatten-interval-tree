@@ -538,7 +538,7 @@ class IntervalTree {
         y.left = x;                 // x becomes left child of y
         x.parent = y;               // and y becomes parent of x
 
-        if (x != null && x !== this.nil_node) {
+        if (x !== null && x !== this.nil_node) {
             x.update_max();
         }
 

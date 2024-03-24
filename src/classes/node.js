@@ -5,7 +5,7 @@
 'use strict';
 
 import Interval from './interval.js';
-import {RB_TREE_COLOR_RED, RB_TREE_COLOR_BLACK} from '../utils/constants.js';
+import {RB_TREE_COLOR_BLACK} from '../utils/constants.js';
 
 class Node {
     constructor(key = undefined, value = undefined,
