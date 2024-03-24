@@ -11,7 +11,7 @@
     /**
      * Interval is a pair of numbers or a pair of any comparable objects on which may be defined predicates
      * *equal*, *less* and method *max(p1, p1)* that returns maximum in a pair.
-     * When interval is an object rather than pair of numbers, this object should have properties *low*, *high*, *max*
+     * When interval is an object rather than a pair of numbers, this object should have properties *low*, *high*, *max*
      * and implement methods *less_than(), equal_to(), intersect(), not_intersect(), clone(), output()*.
      * Two static methods *comparable_max(), comparable_less_than()* define how to compare values in pair. <br/>
      * This interface is described in typescript definition file *index.d.ts*
@@ -57,7 +57,7 @@
          */
         less_than(other_interval) {
             return this.low < other_interval.low ||
-                this.low == other_interval.low && this.high < other_interval.high;
+                this.low === other_interval.low && this.high < other_interval.high;
         }
 
         /**
@@ -66,7 +66,7 @@
          * @returns {boolean}
          */
         equal_to(other_interval) {
-            return this.low == other_interval.low && this.high == other_interval.high;
+            return this.low === other_interval.low && this.high === other_interval.high;
         }
 
         /**
@@ -89,13 +89,15 @@
 
         /**
          * Returns new interval merged with other interval
-         * @param {Interval} interval - Other interval to merge with
+         * @param {Interval} other_interval - Other interval to merge with
          * @returns {Interval}
          */
         merge(other_interval) {
             return new Interval(
-                this.low === undefined ? other_interval.low : Math.min(this.low, other_interval.low),
-                this.high === undefined ? other_interval.high : Math.max(this.high, other_interval.high)
+                this.low === undefined ?
+                    other_interval.low : (this.low < other_interval.low ? this.low : other_interval.low),
+                this.high === undefined ?
+                    other_interval.high : (this.high > other_interval.high ? this.high : other_interval.high)
             );
         }
 
@@ -156,9 +158,11 @@
             this.item = {key: key, value: value};   // key is supposed to be instance of Interval
 
             /* If not, this should by an array of two numbers */
-            if (key && key instanceof Array && key.length == 2) {
+            if (key && key instanceof Array && key.length === 2) {
                 if (!Number.isNaN(key[0]) && !Number.isNaN(key[1])) {
-                    this.item.key = new Interval(Math.min(key[0], key[1]), Math.max(key[0], key[1]));
+                    let [low, high] = key;
+                    if (low > high) [low, high] = [high, low];
+                    this.item.key = new Interval(low, high);
                 }
             }
 
@@ -190,7 +194,7 @@
         _value_equal(other_node) {
             return this.item.value && other_node.item.value && this.item.value.equal_to ?
                 this.item.value.equal_to(other_node.item.value) :
-                this.item.value == other_node.item.value;
+                this.item.value === other_node.item.value;
         }
         equal_to(other_node) {
             // if tree stores only keys
@@ -310,7 +314,7 @@
          * @returns {boolean}
          */
         isEmpty() {
-            return (this.root == null || this.root == this.nil_node);
+            return (this.root == null || this.root === this.nil_node);
         }
 
         /**
@@ -342,7 +346,7 @@
          */
         exist(key, value = key) {
             let search_node = new Node(key, value);
-            return this.tree_search(this.root, search_node) ? true : false;
+            return !!this.tree_search(this.root, search_node);
         }
 
         /**
@@ -381,8 +385,7 @@
          */
         intersect_any(interval) {
             let search_node = new Node(interval);
-            let found = this.tree_find_any_interval(this.root, search_node);
-            return found;
+            return this.tree_find_any_interval(this.root, search_node);
         }
 
         /**
@@ -434,11 +437,11 @@
             let current_node = this.root;
             let parent_node = null;
 
-            if (this.root == null || this.root == this.nil_node) {
+            if (this.root == null || this.root === this.nil_node) {
                 this.root = insert_node;
             }
             else {
-                while (current_node != this.nil_node) {
+                while (current_node !== this.nil_node) {
                     parent_node = current_node;
                     if (insert_node.less_than(current_node)) {
                         current_node = current_node.left;
@@ -468,10 +471,10 @@
             let uncle_node;
 
             current_node = insert_node;
-            while (current_node != this.root && current_node.parent.color == RB_TREE_COLOR_RED) {
-                if (current_node.parent == current_node.parent.parent.left) {   // parent is left child of grandfather
+            while (current_node !== this.root && current_node.parent.color === RB_TREE_COLOR_RED) {
+                if (current_node.parent === current_node.parent.parent.left) {   // parent is left child of grandfather
                     uncle_node = current_node.parent.parent.right;              // right brother of parent
-                    if (uncle_node.color == RB_TREE_COLOR_RED) {             // Case 1. Uncle is red
+                    if (uncle_node.color === RB_TREE_COLOR_RED) {             // Case 1. Uncle is red
                         // re-color father and uncle into black
                         current_node.parent.color = RB_TREE_COLOR_BLACK;
                         uncle_node.color = RB_TREE_COLOR_BLACK;
@@ -479,7 +482,7 @@
                         current_node = current_node.parent.parent;
                     }
                     else {                                                    // Case 2 & 3. Uncle is black
-                        if (current_node == current_node.parent.right) {     // Case 2. Current if right child
+                        if (current_node === current_node.parent.right) {     // Case 2. Current if right child
                             // This case is transformed into Case 3.
                             current_node = current_node.parent;
                             this.rotate_left(current_node);
@@ -492,7 +495,7 @@
                 }
                 else {                                                         // parent is right child of grandfather
                     uncle_node = current_node.parent.parent.left;              // left brother of parent
-                    if (uncle_node.color == RB_TREE_COLOR_RED) {             // Case 4. Uncle is red
+                    if (uncle_node.color === RB_TREE_COLOR_RED) {             // Case 4. Uncle is red
                         // re-color father and uncle into black
                         current_node.parent.color = RB_TREE_COLOR_BLACK;
                         uncle_node.color = RB_TREE_COLOR_BLACK;
@@ -500,7 +503,7 @@
                         current_node = current_node.parent.parent;
                     }
                     else {
-                        if (current_node == current_node.parent.left) {             // Case 5. Current is left child
+                        if (current_node === current_node.parent.left) {             // Case 5. Current is left child
                             // Transform into case 6
                             current_node = current_node.parent;
                             this.rotate_right(current_node);
@@ -520,7 +523,7 @@
             let cut_node;   // node to be cut - either delete_node or successor_node  ("y" from 14.4)
             let fix_node;   // node to fix rb tree property   ("x" from 14.4)
 
-            if (delete_node.left == this.nil_node || delete_node.right == this.nil_node) {  // delete_node has less then 2 children
+            if (delete_node.left === this.nil_node || delete_node.right === this.nil_node) {  // delete_node has less then 2 children
                 cut_node = delete_node;
             }
             else {                                                    // delete_node has 2 children
@@ -528,7 +531,7 @@
             }
 
             // fix_node if single child of cut_node
-            if (cut_node.left != this.nil_node) {
+            if (cut_node.left !== this.nil_node) {
                 fix_node = cut_node.left;
             }
             else {
@@ -540,11 +543,11 @@
                 fix_node.parent = cut_node.parent;
             /*}*/
 
-            if (cut_node == this.root) {
+            if (cut_node === this.root) {
                 this.root = fix_node;
             }
             else {
-                if (cut_node == cut_node.parent.left) {
+                if (cut_node === cut_node.parent.left) {
                     cut_node.parent.left = fix_node;
                 }
                 else {
@@ -558,13 +561,13 @@
             // COPY DATA !!!
             // Delete_node becomes cut_node, it means that we cannot hold reference
             // to node in outer structure and we will have to delete by key, additional search need
-            if (cut_node != delete_node) {
+            if (cut_node !== delete_node) {
                 delete_node.copy_data(cut_node);
                 delete_node.update_max();           // update max property of the cut node at the new place
                 this.recalc_max(delete_node);       // update max property upward from delete_node to root
             }
 
-            if (/*fix_node != this.nil_node && */cut_node.color == RB_TREE_COLOR_BLACK) {
+            if (/*fix_node != this.nil_node && */cut_node.color === RB_TREE_COLOR_BLACK) {
                 this.delete_fixup(fix_node);
             }
         }
@@ -573,23 +576,23 @@
             let current_node = fix_node;
             let brother_node;
 
-            while (current_node != this.root && current_node.parent != null && current_node.color == RB_TREE_COLOR_BLACK) {
-                if (current_node == current_node.parent.left) {          // fix node is left child
+            while (current_node !== this.root && current_node.parent != null && current_node.color === RB_TREE_COLOR_BLACK) {
+                if (current_node === current_node.parent.left) {          // fix node is left child
                     brother_node = current_node.parent.right;
-                    if (brother_node.color == RB_TREE_COLOR_RED) {   // Case 1. Brother is red
+                    if (brother_node.color === RB_TREE_COLOR_RED) {   // Case 1. Brother is red
                         brother_node.color = RB_TREE_COLOR_BLACK;         // re-color brother
                         current_node.parent.color = RB_TREE_COLOR_RED;    // re-color father
                         this.rotate_left(current_node.parent);
                         brother_node = current_node.parent.right;                      // update brother
                     }
                     // Derive to cases 2..4: brother is black
-                    if (brother_node.left.color == RB_TREE_COLOR_BLACK &&
-                        brother_node.right.color == RB_TREE_COLOR_BLACK) {  // case 2: both nephews black
+                    if (brother_node.left.color === RB_TREE_COLOR_BLACK &&
+                        brother_node.right.color === RB_TREE_COLOR_BLACK) {  // case 2: both nephews black
                         brother_node.color = RB_TREE_COLOR_RED;              // re-color brother
                         current_node = current_node.parent;                  // continue iteration
                     }
                     else {
-                        if (brother_node.right.color == RB_TREE_COLOR_BLACK) {   // case 3: left nephew red, right nephew black
+                        if (brother_node.right.color === RB_TREE_COLOR_BLACK) {   // case 3: left nephew red, right nephew black
                             brother_node.color = RB_TREE_COLOR_RED;          // re-color brother
                             brother_node.left.color = RB_TREE_COLOR_BLACK;   // re-color nephew
                             this.rotate_right(brother_node);
@@ -606,20 +609,20 @@
                 }
                 else {                                             // fix node is right child
                     brother_node = current_node.parent.left;
-                    if (brother_node.color == RB_TREE_COLOR_RED) {   // Case 1. Brother is red
+                    if (brother_node.color === RB_TREE_COLOR_RED) {   // Case 1. Brother is red
                         brother_node.color = RB_TREE_COLOR_BLACK;         // re-color brother
                         current_node.parent.color = RB_TREE_COLOR_RED;    // re-color father
                         this.rotate_right(current_node.parent);
                         brother_node = current_node.parent.left;                        // update brother
                     }
                     // Go to cases 2..4
-                    if (brother_node.left.color == RB_TREE_COLOR_BLACK &&
-                        brother_node.right.color == RB_TREE_COLOR_BLACK) {   // case 2
+                    if (brother_node.left.color === RB_TREE_COLOR_BLACK &&
+                        brother_node.right.color === RB_TREE_COLOR_BLACK) {   // case 2
                         brother_node.color = RB_TREE_COLOR_RED;             // re-color brother
                         current_node = current_node.parent;                              // continue iteration
                     }
                     else {
-                        if (brother_node.left.color == RB_TREE_COLOR_BLACK) {  // case 3: right nephew red, left nephew black
+                        if (brother_node.left.color === RB_TREE_COLOR_BLACK) {  // case 3: right nephew red, left nephew black
                             brother_node.color = RB_TREE_COLOR_RED;            // re-color brother
                             brother_node.right.color = RB_TREE_COLOR_BLACK;    // re-color nephew
                             this.rotate_left(brother_node);
@@ -640,7 +643,7 @@
         }
 
         tree_search(node, search_node) {
-            if (node == null || node == this.nil_node)
+            if (node == null || node === this.nil_node)
                 return undefined;
 
             if (search_node.equal_to(node)) {
@@ -657,7 +660,7 @@
         tree_search_nearest_forward(node, search_node) {
             let best;
             let curr = node;
-            while (curr && curr != this.nil_node) {
+            while (curr && curr !== this.nil_node) {
                 if (curr.less_than(search_node)) {
                     if (curr.intersect(search_node)) {
                         best = curr;
@@ -676,9 +679,9 @@
         // Original search_interval method; container res support push() insertion
         // Search all intervals intersecting given one
         tree_search_interval(node, search_node, res) {
-            if (node != null && node != this.nil_node) {
+            if (node != null && node !== this.nil_node) {
                 // if (node->left != this.nil_node && node->left->max >= low) {
-                if (node.left != this.nil_node && !node.not_intersect_left_subtree(search_node)) {
+                if (node.left !== this.nil_node && !node.not_intersect_left_subtree(search_node)) {
                     this.tree_search_interval(node.left, search_node, res);
                 }
                 // if (low <= node->high && node->low <= high) {
@@ -686,7 +689,7 @@
                     res.push(node);
                 }
                 // if (node->right != this.nil_node && node->low <= high) {
-                if (node.right != this.nil_node && !node.not_intersect_right_subtree(search_node)) {
+                if (node.right !== this.nil_node && !node.not_intersect_right_subtree(search_node)) {
                     this.tree_search_interval(node.right, search_node, res);
                 }
             }
@@ -694,17 +697,14 @@
 
         tree_find_any_interval(node, search_node) {
             let found = false;
-            if (node != null && node != this.nil_node) {
-                // if (node->left != this.nil_node && node->left->max >= low) {
-                if (node.left != this.nil_node && !node.not_intersect_left_subtree(search_node)) {
+            if (node != null && node !== this.nil_node) {
+                if (node.left !== this.nil_node && !node.not_intersect_left_subtree(search_node)) {
                     found = this.tree_find_any_interval(node.left, search_node);
                 }
-                // if (low <= node->high && node->low <= high) {
                 if (!found) {
                     found = node.intersect(search_node);
                 }
-                // if (node->right != this.nil_node && node->low <= high) {
-                if (!found && node.right != this.nil_node && !node.not_intersect_right_subtree(search_node)) {
+                if (!found && node.right !== this.nil_node && !node.not_intersect_right_subtree(search_node)) {
                     found = this.tree_find_any_interval(node.right, search_node);
                 }
             }
@@ -713,7 +713,7 @@
 
         local_minimum(node) {
             let node_min = node;
-            while (node_min.left != null && node_min.left != this.nil_node) {
+            while (node_min.left != null && node_min.left !== this.nil_node) {
                 node_min = node_min.left;
             }
             return node_min;
@@ -722,7 +722,7 @@
         // not in use
         local_maximum(node) {
             let node_max = node;
-            while (node_max.right != null && node_max.right != this.nil_node) {
+            while (node_max.right != null && node_max.right !== this.nil_node) {
                 node_max = node_max.right;
             }
             return node_max;
@@ -733,13 +733,13 @@
             let current_node;
             let parent_node;
 
-            if (node.right != this.nil_node) {
+            if (node.right !== this.nil_node) {
                 node_successor = this.local_minimum(node.right);
             }
             else {
                 current_node = node;
                 parent_node = node.parent;
-                while (parent_node != null && parent_node.right == current_node) {
+                while (parent_node != null && parent_node.right === current_node) {
                     current_node = parent_node;
                     parent_node = parent_node.parent;
                 }
@@ -760,16 +760,16 @@
 
             x.right = y.left;           // b goes to x.right
 
-            if (y.left != this.nil_node) {
+            if (y.left !== this.nil_node) {
                 y.left.parent = x;     // x becomes parent of b
             }
             y.parent = x.parent;       // move parent
 
-            if (x == this.root) {
+            if (x === this.root) {
                 this.root = y;           // y becomes root
             }
             else {                        // y becomes child of x.parent
-                if (x == x.parent.left) {
+                if (x === x.parent.left) {
                     x.parent.left = y;
                 }
                 else {
@@ -779,12 +779,12 @@
             y.left = x;                 // x becomes left child of y
             x.parent = y;               // and y becomes parent of x
 
-            if (x != null && x != this.nil_node) {
+            if (x != null && x !== this.nil_node) {
                 x.update_max();
             }
 
             y = x.parent;
-            if (y != null && y != this.nil_node) {
+            if (y != null && y !== this.nil_node) {
                 y.update_max();
             }
         }
@@ -794,16 +794,16 @@
 
             y.left = x.right;           // b goes to y.left
 
-            if (x.right != this.nil_node) {
+            if (x.right !== this.nil_node) {
                 x.right.parent = y;        // y becomes parent of b
             }
             x.parent = y.parent;          // move parent
 
-            if (y == this.root) {        // x becomes root
+            if (y === this.root) {        // x becomes root
                 this.root = x;
             }
             else {                        // y becomes child of x.parent
-                if (y == y.parent.left) {
+                if (y === y.parent.left) {
                     y.parent.left = x;
                 }
                 else {
@@ -813,18 +813,18 @@
             x.right = y;                 // y becomes right child of x
             y.parent = x;               // and x becomes parent of y
 
-            if (y != null && y != this.nil_node) {
+            if (y !== null && y !== this.nil_node) {
                 y.update_max();
             }
 
             x = y.parent;
-            if (x != null && x != this.nil_node) {
+            if (x != null && x !== this.nil_node) {
                 x.update_max();
             }
         }
 
         tree_walk(node, action) {
-            if (node != null && node != this.nil_node) {
+            if (node != null && node !== this.nil_node) {
                 this.tree_walk(node.left, action);
                 // arr.push(node.toArray());
                 action(node);
@@ -836,8 +836,8 @@
         testRedBlackProperty() {
             let res = true;
             this.tree_walk(this.root, function (node) {
-                if (node.color == RB_TREE_COLOR_RED) {
-                    if (!(node.left.color == RB_TREE_COLOR_BLACK && node.right.color == RB_TREE_COLOR_BLACK)) {
+                if (node.color === RB_TREE_COLOR_RED) {
+                    if (!(node.left.color === RB_TREE_COLOR_BLACK && node.right.color === RB_TREE_COLOR_BLACK)) {
                         res = false;
                     }
                 }
@@ -850,22 +850,22 @@
             let height = 0;
             let heightLeft = 0;
             let heightRight = 0;
-            if (node.color == RB_TREE_COLOR_BLACK) {
+            if (node.color === RB_TREE_COLOR_BLACK) {
                 height++;
             }
-            if (node.left != this.nil_node) {
+            if (node.left !== this.nil_node) {
                 heightLeft = this.testBlackHeightProperty(node.left);
             }
             else {
                 heightLeft = 1;
             }
-            if (node.right != this.nil_node) {
+            if (node.right !== this.nil_node) {
                 heightRight = this.testBlackHeightProperty(node.right);
             }
             else {
                 heightRight = 1;
             }
-            if (heightLeft != heightRight) {
+            if (heightLeft !== heightRight) {
                 throw new Error('Red-black height property violated');
             }
             height += heightLeft;

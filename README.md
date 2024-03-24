@@ -28,19 +28,16 @@ import IntervalTree from '@flatten-js/interval-tree'
 
 ### Notes
 Tree stores pairs ```<key,value>``` where key is an interval, and value is an object of any type.
-If value omitted, tree stores only keys.
- 
-In a ```<key,value>``` tree none of the ```value``` can be 
-```undefined```.
+If value omitted, tree stores only keys. ```value``` cannot be ```undefined```.
 
-Interval can be simply a pair of numbers or it can be
-a user-defined object that implements ```IntervalInterface``` described in
+Interval can be a pair of numbers or an object that implements ```IntervalInterface``` described in
 typescript declaration file ```index.d.ts```.
 
 Axis aligned rectangle is an example of such interval.
 We may look at rectangle as an interval between its low left and top right corners.
-See **Box** class in [flatten-js](https://github.com/alexbol99/flatten-js) library as an example 
-of ```IntervalInterface``` implementation.
+It makes possible to use interval tree in spatial queries.
+See **Box** class in [flatten-js](https://github.com/alexbol99/flatten-js) library for such
+implementation.
 
 ### Example
 
@@ -77,13 +74,13 @@ let node = tree.insert(key, value)
 
 ### Exist(key, value)
 Method returns true if item {key, value} exists in the tree. <br/>
-Method may be useful if need to support unique items.
+
 ```javascript
 let exist = tree.exist(key, value)
 ```
 
 ### Remove(key, value)
-Removes item from the tree. Returns true if item was actually deleted, false if not found
+Removes item from the tree. Returns true if item was found and deleted, false if not found
 ```javascript
 let removed = tree.remove(key, value)
 ```
@@ -123,7 +120,7 @@ console.log(searchRes)
 ```
 
 ### Intersect_any(interval)
-Returns true if intersection between given and any interval stored in the tree found
+Returns true if intersection found between given interval and any of intervals stored in the tree
 
 ```javascript
 let found = tree.intersect_any(interval)

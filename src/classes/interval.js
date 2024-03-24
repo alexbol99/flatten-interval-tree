@@ -5,7 +5,7 @@
 /**
  * Interval is a pair of numbers or a pair of any comparable objects on which may be defined predicates
  * *equal*, *less* and method *max(p1, p1)* that returns maximum in a pair.
- * When interval is an object rather than pair of numbers, this object should have properties *low*, *high*, *max*
+ * When interval is an object rather than a pair of numbers, this object should have properties *low*, *high*, *max*
  * and implement methods *less_than(), equal_to(), intersect(), not_intersect(), clone(), output()*.
  * Two static methods *comparable_max(), comparable_less_than()* define how to compare values in pair. <br/>
  * This interface is described in typescript definition file *index.d.ts*
@@ -51,7 +51,7 @@ const Interval = class Interval {
      */
     less_than(other_interval) {
         return this.low < other_interval.low ||
-            this.low == other_interval.low && this.high < other_interval.high;
+            this.low === other_interval.low && this.high < other_interval.high;
     }
 
     /**
@@ -60,7 +60,7 @@ const Interval = class Interval {
      * @returns {boolean}
      */
     equal_to(other_interval) {
-        return this.low == other_interval.low && this.high == other_interval.high;
+        return this.low === other_interval.low && this.high === other_interval.high;
     }
 
     /**
@@ -83,13 +83,15 @@ const Interval = class Interval {
 
     /**
      * Returns new interval merged with other interval
-     * @param {Interval} interval - Other interval to merge with
+     * @param {Interval} other_interval - Other interval to merge with
      * @returns {Interval}
      */
     merge(other_interval) {
         return new Interval(
-            this.low === undefined ? other_interval.low : Math.min(this.low, other_interval.low),
-            this.high === undefined ? other_interval.high : Math.max(this.high, other_interval.high)
+            this.low === undefined ?
+                other_interval.low : (this.low < other_interval.low ? this.low : other_interval.low),
+            this.high === undefined ?
+                other_interval.high : (this.high > other_interval.high ? this.high : other_interval.high)
         );
     }
 
