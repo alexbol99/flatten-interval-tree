@@ -2,8 +2,15 @@
 // Project: https://github.com/alexbol99/flatten-js
 // Definitions by: Alex Bol
 
-type Comparable = any;      // any object that implements operators '<' and '==' and  method 'max'
-type Value<T> = T;
+/// <reference lib="es2015" />
+
+type Comparable = any;      // any object that implements operators '<' and '==' and method 'max'
+
+// Define Value<T> with the required.less_than method if T is not a primitive
+type PrimitiveComparable = number | string | bigint;
+type LessThanFn<T> = (this: T, other: T) => boolean;
+export type Value<T> = T extends PrimitiveComparable ? T : T & { less_than: LessThanFn<T> };
+
 export type NumericTuple = [number,number];
 type MappedItem = any;
 type OutputMapperFn<T> = (value: Value<T>, key: Interval) => MappedItem

@@ -327,7 +327,7 @@
         /**
          * Insert new item into interval tree
          * @param {Interval} key - interval object or array of two numbers [low, high]
-         * @param {any} value - value representing any object (optional)
+         * @param {Value<T>} value - value representing any object (optional)
          * @returns {Node} returns reference to inserted node as an object {key:interval, value: value}
          */
         insert(key, value = key) {
@@ -341,7 +341,7 @@
         /**
          * Returns true if item {key,value} exist in the tree
          * @param {Interval} key - interval correspondent to keys stored in the tree
-         * @param {any} value - value object to be checked
+         * @param {Value<T>} value - value object to be checked
          * @returns {boolean} true if item {key, value} exist in the tree, false otherwise
          */
         exist(key, value = key) {
@@ -352,7 +352,7 @@
         /**
          * Remove entry {key, value} from the tree
          * @param {Interval} key - interval correspondent to keys stored in the tree
-         * @param {any} value - value object
+         * @param {Value<T>} value - value object
          * @returns {boolean} true if item {key, value} deleted, false if not found
          */
         remove(key, value = key) {
@@ -779,7 +779,7 @@
             y.left = x;                 // x becomes left child of y
             x.parent = y;               // and y becomes parent of x
 
-            if (x != null && x !== this.nil_node) {
+            if (x !== null && x !== this.nil_node) {
                 x.update_max();
             }
 
