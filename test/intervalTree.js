@@ -323,7 +323,7 @@ describe('#IntervalTree', function() {
         tree.insert(i2, 20);
         expect(tree.search(new Interval(4n, 6n))).to.deep.equal([10, 20])
     })
-    it("Can can store custom object with less_than function #54", () => {
+    it("Can store custom object with less_than function #54", () => {
         const tree = new IntervalTree();
         const less_than = function (other) {
             return this.value < other.value;
@@ -341,6 +341,9 @@ describe('#IntervalTree', function() {
         expect(tree.exist([2, 5], data[1])).to.be.true;
         expect(tree.exist([2, 5], data[2])).to.be.true;
         expect(tree.exist([2, 5], data[0])).to.be.true;
+
+        tree.remove([2,5], data[0]);
+        expect(tree.exist([2, 5], data[0])).to.be.false;
     })
     describe('##Iterator', function() {
         it('May find first intersecting interval', function () {
