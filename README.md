@@ -1,6 +1,5 @@
 # Interval Tree
 [![npm version](https://badge.fury.io/js/%40flatten-js%2Finterval-tree.svg)](https://badge.fury.io/js/%40flatten-js%2Finterval-tree)
-[![CI](https://github.com/alexbol99/flatten-interval-tree/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/alexbol99/flatten-interval-tree/actions/workflows/ci.yml)
 [![@flatten-js/interval-tree](https://snyk.io/advisor/npm-package/@flatten-js/interval-tree/badge.svg)](https://snyk.io/advisor/npm-package/@flatten-js/interval-tree)
 
 The package **@flatten-js/interval-tree** is an implementation of interval binary search tree according to Cormen et al. Introduction to Algorithms (2009, Section 14.3: Interval trees, pp. 348–354).
@@ -9,7 +8,7 @@ stored in the tree.
 
 This package is a part of [flatten-js](https://github.com/alexbol99/flatten-js) library.
   
-An earlier implementation, in package [flatten-interval-tree](https://www.npmjs.com/package/flatten-interval-tree), is no longer supported and will be deprecated soon.
+An earlier implementation, [flatten-interval-tree](https://www.npmjs.com/package/flatten-interval-tree), is deprecated.
 Please use this package ([@flatten-js/interval-tree](https://www.npmjs.com/package/@flatten-js/interval-tree)) instead.
 
 ## Contacts
