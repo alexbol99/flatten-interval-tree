@@ -23,7 +23,7 @@ describe('#RedBlackTree Node', function() {
     });
     it('May create new instance of Node', function () {
         let node = new Node([1,3], "1");
-        expect(node.item).to.be.deep.equal({key:{low:1, high:3}, value:"1"});
+        expect(node.item).to.be.deep.equal({key:{low:1, high:3}, values:["1"]});
     });
     it('May compare intervals: [0,1] less than [1,3]', function () {
         let node1 = new Node([0,1]);
@@ -55,10 +55,10 @@ describe('#RedBlackTree Node', function() {
         let node2 = new Node([0,3]);
         expect(node1.equal_to(node2)).to.be.true;
     });
-    it('May compare {key, value}: {[0,3], "1"} is not equal to {[0,3], "2"', function () {
+    it('May compare {key, value}: {[0,3], "1"} is equal to {[0,3], "2"} when comparing by key only', function () {
         let node1 = new Node([0,3],"1");
         let node2 = new Node([0,3], "2");
-        expect(node1.equal_to(node2)).to.be.false;
+        expect(node1.equal_to(node2)).to.be.true;
     });
 });
 

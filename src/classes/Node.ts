@@ -10,7 +10,7 @@ class Node<V = any> {
     right: Node<V> | null;
     parent: Node<V> | null;
     color: NodeColor;
-    item: { key: Interval; value: V };
+    item: { key: Interval; values: V[] };
     max: Interval | undefined;
 
     constructor(
@@ -26,7 +26,10 @@ class Node<V = any> {
         this.parent = parent;
         this.color = color;
 
-        this.item = { key: key as any, value: value as any };
+        this.item = { key: key as any, values: [] };
+        if (value !== undefined) {
+            this.item.values.push(value as any);
+        }
 
         /* If key is an array of two numbers, convert to Interval */
         if (key && Array.isArray(key) && key.length === 2) {
@@ -43,52 +46,30 @@ class Node<V = any> {
     isNil(): boolean {
         return (
             this.item.key === undefined &&
-            this.item.value === undefined &&
+            this.item.values.length === 0 &&
             this.left === null &&
             this.right === null &&
             this.color === RB_TREE_COLOR_BLACK
         );
     }
 
-    _value_less_than(other_node: Node<V>): boolean {
-        const thisValue = this.item.value as any;
-        const otherValue = other_node.item.value as any;
-
-        return thisValue && otherValue && thisValue.less_than
-            ? thisValue.less_than(otherValue)
-            : thisValue < otherValue;
-    }
 
     less_than(other_node: Node<V>): boolean {
-        // if tree stores only keys
-        if (this.item.value === (this.item.key as any) && other_node.item.value === (other_node.item.key as any)) {
-            return this.item.key.less_than(other_node.item.key);
-        } else {
-            // if tree stores keys and values
-            return (
-                this.item.key.less_than(other_node.item.key) ||
-                (this.item.key.equal_to(other_node.item.key) && this._value_less_than(other_node))
-            );
-        }
+        // Compare nodes by key only; values are stored in a bucket
+        return this.item.key.less_than(other_node.item.key);
     }
 
     _value_equal(other_node: Node<V>): boolean {
-        const thisValue = this.item.value as any;
-        const otherValue = other_node.item.value as any;
-
-        return thisValue && otherValue && thisValue.equal_to
-            ? thisValue.equal_to(otherValue)
-            : thisValue === otherValue;
+        // Deprecated in bucket mode; kept for backward compatibility if ever used
+        // Compare first elements if exist
+        const a = this.item.values[0] as any;
+        const b = other_node.item.values[0] as any;
+        return a && b && a.equal_to ? a.equal_to(b) : a === b;
     }
 
     equal_to(other_node: Node<V>): boolean {
-        // if tree stores only keys
-        if (this.item.value === (this.item.key as any) && other_node.item.value === (other_node.item.key as any)) {
-            return this.item.key.equal_to(other_node.item.key);
-        } else {
-            // if tree stores keys and values
-            return this.item.key.equal_to(other_node.item.key) && this._value_equal(other_node);
-        }
+        // Nodes are equal if keys are equal; values are kept in a bucket
+        return this.item.key.equal_to(other_node.item.key);
     }
 
     intersect(other_node: Node<V>): boolean {
@@ -97,7 +78,7 @@ class Node<V = any> {
 
     copy_data(other_node: Node<V>): void {
         this.item.key = other_node.item.key;
-        this.item.value = other_node.item.value;
+        this.item.values = other_node.item.values.slice();
     }
 
     update_max(): void {

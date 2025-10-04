@@ -117,7 +117,10 @@ class Node {
         this.right = right;
         this.parent = parent;
         this.color = color;
-        this.item = { key: key, value: value };
+        this.item = { key: key, values: [] };
+        if (value !== undefined) {
+            this.item.values.push(value);
+        }
         /* If key is an array of two numbers, convert to Interval */
         if (key && Array.isArray(key) && key.length === 2) {
             if (!Number.isNaN(key[0]) && !Number.isNaN(key[1])) {
@@ -131,52 +134,32 @@ class Node {
     }
     isNil() {
         return (this.item.key === undefined &&
-            this.item.value === undefined &&
+            this.item.values.length === 0 &&
             this.left === null &&
             this.right === null &&
             this.color === RB_TREE_COLOR_BLACK);
     }
-    _value_less_than(other_node) {
-        const thisValue = this.item.value;
-        const otherValue = other_node.item.value;
-        return thisValue && otherValue && thisValue.less_than
-            ? thisValue.less_than(otherValue)
-            : thisValue < otherValue;
-    }
     less_than(other_node) {
-        // if tree stores only keys
-        if (this.item.value === this.item.key && other_node.item.value === other_node.item.key) {
-            return this.item.key.less_than(other_node.item.key);
-        }
-        else {
-            // if tree stores keys and values
-            return (this.item.key.less_than(other_node.item.key) ||
-                (this.item.key.equal_to(other_node.item.key) && this._value_less_than(other_node)));
-        }
+        // Compare nodes by key only; values are stored in a bucket
+        return this.item.key.less_than(other_node.item.key);
     }
     _value_equal(other_node) {
-        const thisValue = this.item.value;
-        const otherValue = other_node.item.value;
-        return thisValue && otherValue && thisValue.equal_to
-            ? thisValue.equal_to(otherValue)
-            : thisValue === otherValue;
+        // Deprecated in bucket mode; kept for backward compatibility if ever used
+        // Compare first elements if exist
+        const a = this.item.values[0];
+        const b = other_node.item.values[0];
+        return a && b && a.equal_to ? a.equal_to(b) : a === b;
     }
     equal_to(other_node) {
-        // if tree stores only keys
-        if (this.item.value === this.item.key && other_node.item.value === other_node.item.key) {
-            return this.item.key.equal_to(other_node.item.key);
-        }
-        else {
-            // if tree stores keys and values
-            return this.item.key.equal_to(other_node.item.key) && this._value_equal(other_node);
-        }
+        // Nodes are equal if keys are equal; values are kept in a bucket
+        return this.item.key.equal_to(other_node.item.key);
     }
     intersect(other_node) {
         return this.item.key.intersect(other_node.item.key);
     }
     copy_data(other_node) {
         this.item.key = other_node.item.key;
-        this.item.value = other_node.item.value;
+        this.item.values = other_node.item.values.slice();
     }
     update_max() {
         // use key (Interval) max property instead of key.high
@@ -226,7 +209,7 @@ class IntervalTree {
      */
     get size() {
         let count = 0;
-        this.tree_walk(this.root, () => count++);
+        this.tree_walk(this.root, (node) => count += node.item.values.length);
         return count;
     }
     /**
@@ -244,7 +227,10 @@ class IntervalTree {
      */
     get values() {
         const res = [];
-        this.tree_walk(this.root, (node) => res.push(node.item.value));
+        this.tree_walk(this.root, (node) => {
+            for (const v of node.item.values)
+                res.push(v);
+        });
         return res;
     }
     /**
@@ -253,10 +239,12 @@ class IntervalTree {
      */
     get items() {
         const res = [];
-        this.tree_walk(this.root, (node) => res.push({
-            key: node.item.key.output ? node.item.key.output() : node.item.key,
-            value: node.item.value,
-        }));
+        this.tree_walk(this.root, (node) => {
+            const keyOut = node.item.key.output ? node.item.key.output() : node.item.key;
+            for (const v of node.item.values) {
+                res.push({ key: keyOut, value: v });
+            }
+        });
         return res;
     }
     /**
@@ -281,6 +269,12 @@ class IntervalTree {
     insert(key, value = key) {
         if (key === undefined)
             return;
+        // If node with the same key exists, append value to its bucket
+        const existing = this.tree_search(this.root, new Node(key));
+        if (existing) {
+            existing.item.values.push(value);
+            return existing;
+        }
         const insert_node = new Node(key, value, this.nil_node, this.nil_node, null, RB_TREE_COLOR_RED);
         this.tree_insert(insert_node);
         this.recalc_max(insert_node);
@@ -293,9 +287,14 @@ class IntervalTree {
      * @returns true if item {key, value} exist in the tree, false otherwise
      */
     exist(key, value = key) {
-        const search_node = new Node(key, value);
-        const found = this.tree_search(this.root, search_node);
-        return !!found;
+        const node = this.tree_search(this.root, new Node(key));
+        if (!node)
+            return false;
+        // If value is omitted (or equals key by default), treat as key existence
+        if (arguments.length < 2 || value === key)
+            return true;
+        // Check if value exists in the bucket
+        return node.item.values.some((v) => (v && v.equal_to ? v.equal_to(value) : v === value));
     }
     /**
      * Remove entry {key, value} from the tree
@@ -304,12 +303,25 @@ class IntervalTree {
      * @returns deleted node or undefined if not found
      */
     remove(key, value = key) {
-        const search_node = new Node(key, value);
-        const delete_node = this.tree_search(this.root, search_node);
-        if (delete_node) {
-            this.tree_delete(delete_node);
+        const node = this.tree_search(this.root, new Node(key));
+        if (!node)
+            return undefined;
+        // If value omitted, remove entire node
+        if (arguments.length < 2) {
+            this.tree_delete(node);
+            return node;
         }
-        return delete_node;
+        // Remove one matching value from bucket
+        const idx = node.item.values.findIndex((v) => (v && v.equal_to ? v.equal_to(value) : v === value));
+        if (idx >= 0) {
+            node.item.values.splice(idx, 1);
+            // If bucket is now empty, remove node from tree
+            if (node.item.values.length === 0) {
+                this.tree_delete(node);
+            }
+            return node;
+        }
+        return undefined;
     }
     /**
      * Returns array of entry values which keys intersect with given interval
@@ -322,7 +334,13 @@ class IntervalTree {
         const search_node = new Node(interval);
         const resp_nodes = [];
         this.tree_search_interval(this.root, search_node, resp_nodes);
-        return resp_nodes.map((node) => outputMapperFn(node.item.value, node.item.key));
+        const res = [];
+        for (const node of resp_nodes) {
+            for (const v of node.item.values) {
+                res.push(outputMapperFn(v, node.item.key));
+            }
+        }
+        return res;
     }
     /**
      * Returns true if intersection between given and any interval stored in the tree found
@@ -339,7 +357,10 @@ class IntervalTree {
      * @param visitor - function to be called for each tree item
      */
     forEach(visitor) {
-        this.tree_walk(this.root, (node) => visitor(node.item.key, node.item.value));
+        this.tree_walk(this.root, (node) => {
+            for (const v of node.item.values)
+                visitor(node.item.key, v);
+        });
     }
     /**
      * Value Mapper. Walk through every node and map node value to another value
@@ -347,7 +368,11 @@ class IntervalTree {
      */
     map(callback) {
         const tree = new IntervalTree();
-        this.tree_walk(this.root, (node) => tree.insert(node.item.key, callback(node.item.value, node.item.key)));
+        this.tree_walk(this.root, (node) => {
+            for (const v of node.item.values) {
+                tree.insert(node.item.key, callback(v, node.item.key));
+            }
+        });
         return tree;
     }
     /**
@@ -365,7 +390,9 @@ class IntervalTree {
             node = this.local_minimum(this.root);
         }
         while (node) {
-            yield outputMapperFn(node.item.value, node.item.key);
+            for (const v of node.item.values) {
+                yield outputMapperFn(v, node.item.key);
+            }
             node = this.tree_successor(node);
         }
     }

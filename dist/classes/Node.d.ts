@@ -10,12 +10,11 @@ declare class Node<V = any> {
     color: NodeColor;
     item: {
         key: Interval;
-        value: V;
+        values: V[];
     };
     max: Interval | undefined;
     constructor(key?: Interval | [number, number] | undefined, value?: V | undefined, left?: Node<V> | null, right?: Node<V> | null, parent?: Node<V> | null, color?: NodeColor);
     isNil(): boolean;
-    _value_less_than(other_node: Node<V>): boolean;
     less_than(other_node: Node<V>): boolean;
     _value_equal(other_node: Node<V>): boolean;
     equal_to(other_node: Node<V>): boolean;
