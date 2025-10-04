@@ -1,6 +1,6 @@
 # Interval Tree
 [![npm version](https://badge.fury.io/js/%40flatten-js%2Finterval-tree.svg)](https://badge.fury.io/js/%40flatten-js%2Finterval-tree)
-[![Coverage Status](https://coveralls.io/repos/github/alexbol99/flatten-interval-tree/badge.svg?branch=master)](https://coveralls.io/github/alexbol99/flatten-interval-tree?branch=master)
+[![CI](https://github.com/alexbol99/flatten-interval-tree/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/alexbol99/flatten-interval-tree/actions/workflows/ci.yml)
 [![@flatten-js/interval-tree](https://snyk.io/advisor/npm-package/@flatten-js/interval-tree/badge.svg)](https://snyk.io/advisor/npm-package/@flatten-js/interval-tree)
 
 The package **@flatten-js/interval-tree** is an implementation of interval binary search tree according to Cormen et al. Introduction to Algorithms (2009, Section 14.3: Interval trees, pp. 348–354).
@@ -26,13 +26,13 @@ import IntervalTree from '@flatten-js/interval-tree'
 ```
 
 ### Notes
-Tree stores pairs ```<key,value>``` where key is an interval, and value is an object of any type.
-If value omitted, tree stores only keys. ```value``` cannot be ```undefined```.
+Tree stores pairs `<key, value>` where key is an interval, and value is an object of any type.
+If value is omitted, the tree stores the key itself as the value for convenience, so searches and iteration still return the key (you can always provide your own mapper).
 
-**Interval** can be a pair of numbers or an object that implements ```IntervalInterface``` described in
-typescript declaration file ```index.d.ts```.
+Keys with the same interval are now bucketed into a single node. This means multiple values can be stored under one identical key without requiring values to be comparable.
+No custom comparator is required for values. Equality for values is by strict equality (`===`) unless your value implements an `equal_to(other)` method.
 
-**Value** can be an object of the primitive type (*number, string, bigint*) or any object that support `less_than` method
+**Interval** can be a pair of numbers `[low, high]` (numeric pairs are normalized so that low <= high), or an object that implements the Interval interface described in the TypeScript typings.
 
 Axis aligned rectangle is an example of such interval.
 We may look at rectangle as an interval between its low left and top right corners.
@@ -66,24 +66,31 @@ let tree = new IntervalTree()
 ```
 
 ### Insert(key[, value])
-Insert new item into the tree. Key is an interval object or pair of numbers [low, high]. <br/>
-Value may represent any value or reference to any object. If value omitted, tree will store and retrieve keys as values. <br/>
-Method returns reference to the inserted node
+Insert a new item into the tree. Key is an interval object or a pair of numbers `[low, high]` (numeric pairs are normalized so that `low <= high`).
+If `value` is omitted, the key itself is stored as the value for convenience.
+If a node with an identical key already exists, the value is appended to that node’s bucket.
+Returns a reference to the inserted node.
 ```javascript
 let node = tree.insert(key, value)
 ```
 
-### Exist(key, value)
-Method returns true if item {key, value} exists in the tree. <br/>
-
+### Exist(key[, value])
+Returns `true` if the item exists in the tree.
+- Called as `exist(key)`, it checks whether a node with the given key exists (bucket may contain one or more values).
+- Called as `exist(key, value)`, it checks whether the specific value exists inside the bucket of that key (strict equality unless the value implements `equal_to`).
 ```javascript
-let exist = tree.exist(key, value)
+let existsKey = tree.exist(key)
+let existsPair = tree.exist(key, value)
 ```
 
-### Remove(key, value)
-Removes item from the tree. Returns true if item was found and deleted, false if not found
+### Remove(key[, value])
+Removes entries from the tree.
+- Called as `remove(key)`, it removes the entire node for that key (i.e., the whole bucket).
+- Called as `remove(key, value)`, it removes a single matching value from the bucket; if the bucket becomes empty, the node is removed.
+Returns the removed node if something was deleted, or `undefined` if nothing was found.
 ```javascript
-let removed = tree.remove(key, value)
+let removedNode = tree.remove(key)
+let removedPairNode = tree.remove(key, value)
 ```
 
 ### Search(interval[, outputMapperFn])
