@@ -22,11 +22,12 @@
     "README.md",
     "LICENSE"
   ],
+  "sideEffects": false,
   "scripts": {
     "clean": "rm -rf dist",
     "type-check": "tsc --noEmit",
     "build": "npm run clean && rollup -c",
-    "test": "mocha --require ts-node/register --extensions ts,js 'test/**/*.js'",
+    "test": "npm run build && mocha --extensions js 'test/**/*.js'",
     "test:watch": "mocha --require ts-node/register --extensions ts,js --watch 'test/**/*.js'",
     "coverage": "c8 --reporter=html --reporter=text mocha --require ts-node/register 'test/**/*.js'",
     "prepublishOnly": "npm run build && npm test"
@@ -62,5 +63,8 @@
   },
   "engines": {
     "node": ">=16.0.0"
+  },
+  "dependencies": {
+    "tslib": "^2.8.1"
   }
 }

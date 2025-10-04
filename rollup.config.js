@@ -6,6 +6,7 @@ export default [
     // ESM build
     {
         input: 'src/index.ts',
+        external: ['tslib'],
         output: {
             file: 'dist/main.mjs',
             format: 'esm',
@@ -25,6 +26,7 @@ export default [
     // CommonJS build
     {
         input: 'src/index.ts',
+        external: ['tslib'],
         output: {
             file: 'dist/main.cjs',
             format: 'cjs',
@@ -40,11 +42,13 @@ export default [
     // UMD build (browser)
     {
         input: 'src/index.ts',
+        external: ['tslib'],
         output: {
             file: 'dist/main.umd.js',
             format: 'umd',
             name: 'IntervalTree',
-            sourcemap: true
+            sourcemap: true,
+            exports: 'named'
         },
         plugins: [
             nodeResolve(),

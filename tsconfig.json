@@ -22,7 +22,8 @@
     
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "importHelpers": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "test", "examples"],

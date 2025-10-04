@@ -3,8 +3,7 @@
  */
 
 import { expect } from 'chai';
-import IntervalTree from '../index.js';
-import {Interval} from "../index.js";
+import IntervalTree, { Interval } from '../dist/main.mjs';
 
 // import IntervalTree from '../dist/interval-tree.esm';
 
