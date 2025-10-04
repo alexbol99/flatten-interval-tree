@@ -322,25 +322,25 @@ describe('#IntervalTree', function() {
         tree.insert(i2, 20);
         expect(tree.search(new Interval(4n, 6n))).to.deep.equal([10, 20])
     })
-    it("Can store custom object with less_than function #54", () => {
+    it("Can store custom objects without custom comparator #54", () => {
         const tree = new IntervalTree();
-        const less_than = function (other) {
-            return this.value < other.value;
-        };
         const data = [
-            {name: "A", value: 111, less_than},
-            {name: "B", value: 333, less_than},
-            {name: "C", value: 222, less_than},
+            {name: "A", value: 111},
+            {name: "B", value: 333},
+            {name: "C", value: 222},
         ];
 
+        // Insert multiple objects with the same key; they should bucket under a single node
         tree.insert([2, 5], data[0]);
         tree.insert([2, 5], data[1]);
         tree.insert([2, 5], data[2]);
 
+        // Existence checks by object identity (no less_than required)
         expect(tree.exist([2, 5], data[1])).to.be.true;
         expect(tree.exist([2, 5], data[2])).to.be.true;
         expect(tree.exist([2, 5], data[0])).to.be.true;
 
+        // Remove a specific object from the bucket, others remain
         tree.remove([2,5], data[0]);
         expect(tree.exist([2, 5], data[0])).to.be.false;
     })
@@ -416,4 +416,113 @@ describe('#IntervalTree', function() {
             expect(iterator.next().value).to.equal("Johann Sebastian Bach (1685-1750)");
         });
     });
+});
+
+
+
+// Edge cases merged from former test/edgeCases.js
+describe('#IntervalTree edge cases', function () {
+  it('Buckets multiple values for the same key and counts size across bucket', function () {
+    const tree = new IntervalTree();
+    tree.insert([2, 5], 'a');
+    tree.insert([2, 5], 'b');
+    tree.insert([2, 5], 'c');
+    // Inserting key only adds key as value
+    tree.insert([7, 9]);
+
+    expect(tree.size).to.equal(4); // 3 values under [2,5] + 1 value equal to key [7,9]
+    expect(tree.keys).to.deep.equal([[2,5],[7,9]]);
+
+    // Items should include each value paired with the same key
+    const items = tree.items;
+    const bucketVals = items.filter(it => it.key[0] === 2 && it.key[1] === 5).map(it => it.value);
+    expect(bucketVals).to.have.members(['a','b','c']);
+  });
+
+  it('Removal: remove(key, value) removes a single occurrence; remove(key) deletes entire node when bucket empty', function () {
+    const tree = new IntervalTree();
+    tree.insert([2, 5], 'x');
+    tree.insert([2, 5], 'y');
+    tree.insert([2, 5], 'y'); // duplicate value
+
+    expect(tree.exist([2,5], 'x')).to.be.true;
+    expect(tree.exist([2,5], 'y')).to.be.true;
+    expect(tree.exist([2,5])).to.be.true; // key existence
+
+    // Remove one y
+    tree.remove([2,5], 'y');
+    expect(tree.exist([2,5], 'x')).to.be.true;
+    expect(tree.exist([2,5], 'y')).to.be.true; // one y remains
+
+    // Remove node entirely
+    tree.remove([2,5]);
+    expect(tree.exist([2,5])).to.be.false;
+    expect(tree.size).to.equal(0);
+  });
+
+  it('Iteration yields values in key order and preserves insertion order within a bucket', function () {
+    const tree = new IntervalTree();
+    tree.insert([5, 7], 'a1');
+    tree.insert([1, 3], 'b1');
+    tree.insert([5, 7], 'a2');
+    tree.insert([1, 3], 'b2');
+
+    const results = [];
+    for (const v of tree.iterate()) {
+      results.push(v);
+    }
+    // Key order: [1,3] then [5,7]; insertion order within each bucket
+    expect(results).to.deep.equal(['b1','b2','a1','a2']);
+  });
+
+  it('Normalizes reversed numeric interval input [high, low] -> [low, high]', function () {
+    const tree = new IntervalTree();
+    tree.insert([9, 2], 'v');
+    expect(tree.keys).to.deep.equal([[2,9]]);
+    expect(tree.search([2,9])).to.deep.equal(['v']);
+  });
+
+  it('insert(undefined) is ignored and does not modify the tree', function () {
+    const tree = new IntervalTree();
+    // @ts-ignore intentionally pass undefined at runtime
+    const res = tree.insert(undefined);
+    expect(res).to.equal(undefined);
+    expect(tree.size).to.equal(0);
+    expect(tree.keys).to.deep.equal([]);
+  });
+
+  it('clear() empties the tree and allows subsequent inserts', function () {
+    const tree = new IntervalTree();
+    tree.insert([2, 3], 'a');
+    tree.insert([4, 5], 'b');
+    expect(tree.size).to.equal(2);
+
+    tree.clear();
+    expect(tree.isEmpty()).to.be.true;
+    expect(tree.size).to.equal(0);
+
+    tree.insert([7, 8], 'c');
+    expect(tree.isEmpty()).to.be.false;
+    expect(tree.keys).to.deep.equal([[7,8]]);
+  });
+
+  it('search with custom mapper receives both value and key', function () {
+    const tree = new IntervalTree();
+    tree.insert([10, 12], { id: 1 });
+    tree.insert([11, 13], { id: 2 });
+    const out = tree.search([11, 11.5], (value, key) => ({ id: value.id, len: Number(key.high) - Number(key.low) }));
+    expect(out).to.deep.equal([{ id: 1, len: 2 }, { id: 2, len: 2 }]);
+  });
+
+  it('BigInt keys: reversed tuple normalized and intersects properly', function () {
+    const tree = new IntervalTree();
+    tree.insert([8, 2]); // numeric
+    tree.insert(new Interval(3n, 6n), 'bi');
+    const res = tree.search(new Interval(4n, 5n));
+    // Default mapper returns the original value. For the numeric key inserted without a value,
+    // the stored value is the original array [8,2], while the node key is normalized to [2,8].
+    // So we expect the numeric key array and the bigint-tagged value.
+    expect(res).to.deep.equal([[8,2], 'bi']);
+    expect(tree.keys[0]).to.deep.equal([2,8]);
+  });
 });
