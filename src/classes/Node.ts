@@ -2,7 +2,7 @@
  * Created by Alex Bol on 4/1/2017.
  */
 
-import Interval from './Interval';
+import Interval, { IntervalBase } from './Interval';
 import { RB_TREE_COLOR_BLACK, type NodeColor } from '../utils/constants';
 
 class Node<V = any> {
@@ -10,11 +10,11 @@ class Node<V = any> {
     right: Node<V> | null;
     parent: Node<V> | null;
     color: NodeColor;
-    item: { key: Interval; values: V[] };
-    max: Interval | undefined;
+    item: { key: IntervalBase; values: V[] };
+    max: IntervalBase | undefined;
 
     constructor(
-        key: Interval | [number, number] | undefined = undefined,
+        key: IntervalBase | [number, number] | undefined = undefined,
         value: V | undefined = undefined as any,
         left: Node<V> | null = null,
         right: Node<V> | null = null,
@@ -86,11 +86,11 @@ class Node<V = any> {
         this.max = this.item.key ? this.item.key.max : undefined;
 
         if (this.right && this.right.max) {
-            this.max = Interval.comparable_max(this.max!, this.right.max);
+            this.max = this.max ? this.max.merge(this.right.max) : this.right.max;
         }
 
         if (this.left && this.left.max) {
-            this.max = Interval.comparable_max(this.max!, this.left.max);
+            this.max = this.max ? this.max.merge(this.left.max) : this.left.max;
         }
     }
 
@@ -99,7 +99,7 @@ class Node<V = any> {
         const high = (this.left!.max as any).high !== undefined
             ? (this.left!.max as any).high
             : this.left!.max;
-        return Interval.comparable_less_than(high, search_node.item.key.low);
+        return this.item.key.value_less_than(high as any, search_node.item.key.low as any);
     }
 
     // Other_node does not intersect right subtree
@@ -107,7 +107,7 @@ class Node<V = any> {
         const low = (this.right!.max as any).low !== undefined
             ? (this.right!.max as any).low
             : this.right!.item.key.low;
-        return Interval.comparable_less_than(search_node.item.key.high, low);
+        return this.item.key.value_less_than(search_node.item.key.high as any, low as any);
     }
 }
 

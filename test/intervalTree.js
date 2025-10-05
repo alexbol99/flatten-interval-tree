@@ -3,7 +3,7 @@
  */
 
 import { expect } from 'chai';
-import IntervalTree, { Interval } from '../dist/main.mjs';
+import IntervalTree, { Interval, TimeInterval, Interval2D } from '../dist/main.mjs';
 
 // import IntervalTree from '../dist/interval-tree.esm';
 
@@ -525,4 +525,58 @@ describe('#IntervalTree edge cases', function () {
     expect(res).to.deep.equal([[8,2], 'bi']);
     expect(tree.keys[0]).to.deep.equal([2,8]);
   });
+});
+
+
+// Additional tests for TimeInterval (Date-based intervals)
+describe('#IntervalTree TimeInterval', function () {
+    it('Supports insertion and search with TimeInterval (Date)', function () {
+        const tree = new IntervalTree();
+        const a1 = new Date('2020-01-01T00:00:00Z');
+        const a2 = new Date('2020-01-31T00:00:00Z');
+        const b1 = new Date('2020-01-15T00:00:00Z');
+        const b2 = new Date('2020-02-15T00:00:00Z');
+        tree.insert(new TimeInterval(a1, a2), 'A');
+        tree.insert(new TimeInterval(b1, b2), 'B');
+
+        const q1 = new Date('2020-01-10T00:00:00Z');
+        const q2 = new Date('2020-01-20T00:00:00Z');
+        const res = tree.search(new TimeInterval(q1, q2));
+        expect(res).to.deep.equal(['A', 'B']);
+    });
+});
+
+// Additional tests for Interval2D (2D lexicographic intervals)
+describe('#IntervalTree Interval2D', function () {
+    it('Supports insertion and search with Interval2D', function () {
+        const tree = new IntervalTree();
+        const r1 = new Interval2D([0, 0], [10, 10]);
+        const r2 = new Interval2D([5, 5], [15, 15]);
+        const r3 = new Interval2D([20, 0], [25, 5]);
+        tree.insert(r1, 'R1');
+        tree.insert(r2, 'R2');
+        tree.insert(r3, 'R3');
+
+        const q = new Interval2D([7, 7], [8, 8]);
+        const res = tree.search(q);
+        expect(res).to.deep.equal(['R1', 'R2']);
+    });
+
+    it('Outputs keys as pairs of 2D points and preserves order', function () {
+        const tree = new IntervalTree();
+        tree.insert(new Interval2D([0, 0], [1, 1]), 'a');
+        tree.insert(new Interval2D([0, 1], [1, 2]), 'b');
+        tree.insert(new Interval2D([1, 0], [2, 0]), 'c');
+        const keys = tree.keys;
+        expect(keys[0]).to.deep.equal([[0,0],[1,1]]);
+        expect(keys[1]).to.deep.equal([[0,1],[1,2]]);
+        expect(keys[2]).to.deep.equal([[1,0],[2,0]]);
+    });
+
+    it('Non-intersecting query returns empty array', function () {
+        const tree = new IntervalTree();
+        tree.insert(new Interval2D([0, 0], [1, 1]), 'a');
+        const res = tree.search(new Interval2D([2, 0], [3, 1]));
+        expect(res).to.deep.equal([]);
+    });
 });

@@ -2,11 +2,12 @@
  * Shared type definitions for the interval-tree library
  */
 
-import type Interval from './classes/Interval';
+import type { IntervalBase } from './classes/Interval';
 
-// Primitive values that can be compared with < and === in this library
-export type Comparable = number | bigint | string;
+// Values that can be compared in this library
+// Includes primitives, Date, and simple tuple used by Interval2D
+export type Comparable = number | bigint | string | Date | [number, number];
 
 // Input type accepted by IntervalTree methods where an interval can be either
-// an Interval instance or a tuple [low, high]
-export type IntervalInput = Interval | [number, number];
+// an Interval instance (any concrete variant) or a tuple [low, high] for default 1D
+export type IntervalInput = IntervalBase | [number, number];

@@ -2,87 +2,63 @@
  * Created by Alex Bol on 4/1/2017.
  */
 /**
- * Interval is a pair of numbers or a pair of any comparable objects on which may be defined predicates
- * *equal*, *less* and method *max(p1, p1)* that returns maximum in a pair.
- * When interval is an object rather than a pair of numbers, this object should have properties *low*, *high*, *max*
- * and implement methods *less_than(), equal_to(), intersect(), not_intersect(), clone(), output()*.
- * Two static methods *comparable_max(), comparable_less_than()* define how to compare values in pair. <br/>
- * This interface is described in typescript definition file *index.d.ts*
+ * Interval abstractions used by the interval tree.
  *
- * Axis aligned rectangle is an example of such interval.
- * We may look at rectangle as an interval between its low left and top right corners.
- * See **Box** class in [flatten-js](https://github.com/alexbol99/flatten-js) library as the example
- * of Interval interface implementation
+ * This module defines an abstract IntervalBase and several concrete interval types.
+ * An interval represents a closed range [low, high] over a comparable domain. The base
+ * class provides default semantics for 1D comparable endpoints (number, bigint, string, Date):
+ * - Ordering: lexicographic by (low, then high) via less_than and equal_to.
+ * - Intersection: two intervals intersect if neither ends strictly before the other.
+ * - Augmentation: merge(other) returns a new interval spanning the union of ranges; this is
+ *   used by the tree to maintain augmented "max" values (computed by merging), not via any
+ *   static helpers.
+ * - Serialization: output() returns a tuple [low, high] for external APIs.
+ *
+ * Specializations can override comparison and other behaviors:
+ * - Interval (default export): 1D interval with default comparable endpoints.
+ * - TimeInterval: 1D interval whose endpoints are Date objects.
+ * - Interval2D: lexicographic 2D interval with endpoints as points [x, y]; overrides
+ *   comparison and intersection in the lexicographic plane.
+ *
+ * Consumers may pass either:
+ * - A concrete IntervalBase instance (e.g., new TimeInterval(...), new Interval2D(...)), or
+ * - A numeric pair [low, high], which the tree converts to the default 1D Interval.
+ *
+ * See the TypeScript types in src/types.ts for Comparable and accepted IntervalInput forms.
  */
 import type { Comparable } from '../types';
-declare class Interval {
+export declare abstract class IntervalBase {
     low: Comparable;
     high: Comparable;
-    /**
-     * Accept two comparable values and creates new instance of interval
-     * Predicate Interval.comparable_less(low, high) supposed to return true on these values
-     * @param low
-     * @param high
-     */
     constructor(low: Comparable, high: Comparable);
-    /**
-     * Clone interval
-     * @returns {Interval}
-     */
-    clone(): Interval;
-    /**
-     * Property max returns clone of this interval
-     * @returns {Interval}
-     */
-    get max(): Interval;
-    /**
-     * Predicate returns true if this interval less than other interval
-     * @param other_interval
-     * @returns {boolean}
-     */
-    less_than(other_interval: Interval): boolean;
-    /**
-     * Predicate returns true if this interval equals to other interval
-     * @param other_interval
-     * @returns {boolean}
-     */
-    equal_to(other_interval: Interval): boolean;
-    /**
-     * Predicate returns true if this interval intersects other interval
-     * @param other_interval
-     * @returns {boolean}
-     */
-    intersect(other_interval: Interval): boolean;
-    /**
-     * Predicate returns true if this interval does not intersect other interval
-     * @param other_interval
-     * @returns {boolean}
-     */
-    not_intersect(other_interval: Interval): boolean;
-    /**
-     * Returns new interval merged with other interval
-     * @param {Interval} other_interval - Other interval to merge with
-     * @returns {Interval}
-     */
-    merge(other_interval: Interval): Interval;
-    /**
-     * Returns how key should be output
-     */
+    abstract clone(): IntervalBase;
+    get max(): IntervalBase;
+    less_than(other_interval: IntervalBase): boolean;
+    equal_to(other_interval: IntervalBase): boolean;
+    intersect(other_interval: IntervalBase): boolean;
+    not_intersect(other_interval: IntervalBase): boolean;
+    merge(other_interval: IntervalBase): IntervalBase;
     output(): [Comparable, Comparable];
-    /**
-     * Function returns maximum between two comparable values
-     * @param interval1
-     * @param interval2
-     * @returns {Interval}
-     */
-    static comparable_max(interval1: Interval, interval2: Interval): Interval;
-    /**
-     * Predicate returns true if first value less than second value
-     * @param val1
-     * @param val2
-     * @returns {boolean}
-     */
-    static comparable_less_than(val1: Comparable, val2: Comparable): boolean;
+    value_less_than(val1: Comparable, val2: Comparable): boolean;
+}
+declare class Interval extends IntervalBase {
+    clone(): Interval;
+}
+export declare class TimeInterval extends IntervalBase {
+    constructor(low: Date, high: Date);
+    clone(): TimeInterval;
+}
+export declare class Interval2D extends IntervalBase {
+    constructor(low: [number, number], high: [number, number]);
+    private static pointLess;
+    private static pointEq;
+    clone(): Interval2D;
+    less_than(other: IntervalBase): boolean;
+    equal_to(other: IntervalBase): boolean;
+    not_intersect(other: IntervalBase): boolean;
+    merge(other: IntervalBase): Interval2D;
+    value_less_than(val1: [number, number], val2: [number, number]): boolean;
+    output(): [[number, number], [number, number]];
 }
 export default Interval;
 //# sourceMappingURL=Interval.d.ts.map

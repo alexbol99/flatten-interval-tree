@@ -58,6 +58,39 @@ let sorted_intervals = tree.keys;              //  expected array [[1,1],[1,4],[
 let values_in_range = tree.search([2,3]);     //  expected array ['val1']
 ```
 
+## Interval types
+The library now supports multiple interval classes:
+- Interval (default export): 1D interval whose endpoints are comparable (number, bigint, string, Date).
+- TimeInterval: a 1D interval specialized for Date endpoints.
+- Interval2D: a lexicographic 2D interval whose endpoints are points [x, y].
+
+Notes:
+- The default behavior remains unchanged: passing a numeric pair [low, high] will be normalized and converted into a default 1D Interval.
+- To use custom types, construct and pass the concrete interval class instance:
+
+```javascript
+import IntervalTree, { TimeInterval, Interval2D } from '@flatten-js/interval-tree';
+
+const tree = new IntervalTree();
+
+// Time intervals
+const a = new TimeInterval(new Date('2020-01-01'), new Date('2020-01-31'));
+const b = new TimeInterval(new Date('2020-01-15'), new Date('2020-02-15'));
+
+tree.insert(a, 'A');
+tree.insert(b, 'B');
+
+const hits = tree.search(new TimeInterval(new Date('2020-01-10'), new Date('2020-01-20')));
+// hits -> ['A','B']
+
+// 2D intervals (lexicographic ordering)
+const r1 = new Interval2D([0, 0], [10, 10]);
+const r2 = new Interval2D([5, 5], [15, 15]);
+
+tree.insert(r1, 'R1');
+tree.insert(r2, 'R2');
+```
+
 ### Constructor
 Create new instance of interval tree
 ```javascript
@@ -216,3 +249,5 @@ MIT
 ## Support
 
 <a href="https://www.buymeacoffee.com/alexbol99" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
+
+

@@ -1,97 +1,117 @@
 /**
  * Created by Alex Bol on 4/1/2017.
  */
-class Interval {
-    /**
-     * Accept two comparable values and creates new instance of interval
-     * Predicate Interval.comparable_less(low, high) supposed to return true on these values
-     * @param low
-     * @param high
-     */
+// Abstract base for intervals. Concrete variants extend this.
+class IntervalBase {
     constructor(low, high) {
         this.low = low;
         this.high = high;
     }
-    /**
-     * Clone interval
-     * @returns {Interval}
-     */
-    clone() {
-        return new Interval(this.low, this.high);
-    }
-    /**
-     * Property max returns clone of this interval
-     * @returns {Interval}
-     */
     get max() {
         return this.clone();
     }
-    /**
-     * Predicate returns true if this interval less than other interval
-     * @param other_interval
-     * @returns {boolean}
-     */
+    // Default numeric/date comparison (lexicographic by low then high)
     less_than(other_interval) {
         return this.low < other_interval.low ||
             (this.low === other_interval.low && this.high < other_interval.high);
     }
-    /**
-     * Predicate returns true if this interval equals to other interval
-     * @param other_interval
-     * @returns {boolean}
-     */
     equal_to(other_interval) {
         return this.low === other_interval.low && this.high === other_interval.high;
     }
-    /**
-     * Predicate returns true if this interval intersects other interval
-     * @param other_interval
-     * @returns {boolean}
-     */
     intersect(other_interval) {
         return !this.not_intersect(other_interval);
     }
-    /**
-     * Predicate returns true if this interval does not intersect other interval
-     * @param other_interval
-     * @returns {boolean}
-     */
     not_intersect(other_interval) {
         return (this.high < other_interval.low || other_interval.high < this.low);
     }
-    /**
-     * Returns new interval merged with other interval
-     * @param {Interval} other_interval - Other interval to merge with
-     * @returns {Interval}
-     */
     merge(other_interval) {
-        return new Interval(this.low === undefined ?
-            other_interval.low : (this.low < other_interval.low ? this.low : other_interval.low), this.high === undefined ?
-            other_interval.high : (this.high > other_interval.high ? this.high : other_interval.high));
+        // By default choose min low, max high using < and >
+        const low = (this.low === undefined)
+            ? other_interval.low
+            : ((this.low < other_interval.low) ? this.low : other_interval.low);
+        const high = (this.high === undefined)
+            ? other_interval.high
+            : ((this.high > other_interval.high) ? this.high : other_interval.high);
+        // Return instance of the same concrete class
+        const cloned = this.clone();
+        cloned.low = low;
+        cloned.high = high;
+        return cloned;
     }
-    /**
-     * Returns how key should be output
-     */
     output() {
         return [this.low, this.high];
     }
-    /**
-     * Function returns maximum between two comparable values
-     * @param interval1
-     * @param interval2
-     * @returns {Interval}
-     */
-    static comparable_max(interval1, interval2) {
-        return interval1.merge(interval2);
-    }
-    /**
-     * Predicate returns true if first value less than second value
-     * @param val1
-     * @param val2
-     * @returns {boolean}
-     */
-    static comparable_less_than(val1, val2) {
+    // Instance-level comparator so child classes can customize value comparison semantics
+    value_less_than(val1, val2) {
         return val1 < val2;
+    }
+}
+// 1D numeric/date interval (default)
+class Interval extends IntervalBase {
+    clone() {
+        return new Interval(this.low, this.high);
+    }
+}
+// Time interval using JS Date (inherits default behavior as Date supports < and >)
+class TimeInterval extends IntervalBase {
+    constructor(low, high) {
+        super(low, high);
+    }
+    clone() {
+        return new TimeInterval(this.low, this.high);
+    }
+}
+// 2D interval with lexicographic comparison for points [x, y]
+class Interval2D extends IntervalBase {
+    constructor(low, high) {
+        super(low, high);
+    }
+    static pointLess(a, b) {
+        return a[0] < b[0] || (a[0] === b[0] && a[1] < b[1]);
+    }
+    static pointEq(a, b) {
+        return a[0] === b[0] && a[1] === b[1];
+    }
+    clone() {
+        return new Interval2D(this.low, this.high);
+    }
+    less_than(other) {
+        const a = this.low;
+        const b = other.low;
+        if (Interval2D.pointLess(a, b))
+            return true;
+        if (Interval2D.pointEq(a, b)) {
+            const ah = this.high;
+            const bh = other.high;
+            return Interval2D.pointLess(ah, bh);
+        }
+        return false;
+    }
+    equal_to(other) {
+        return Interval2D.pointEq(this.low, other.low) &&
+            Interval2D.pointEq(this.high, other.high);
+    }
+    not_intersect(other) {
+        // Non-intersection in lexicographic 2D ordering (simplistic): treat ranges in the ordered space
+        const highLess = Interval2D.pointLess(this.high, other.low);
+        const otherHighLess = Interval2D.pointLess(other.high, this.low);
+        return highLess || otherHighLess;
+    }
+    merge(other) {
+        const lowA = this.low;
+        const lowB = other.low;
+        const highA = this.high;
+        const highB = other.high;
+        const low = Interval2D.pointLess(lowA, lowB) ? lowA : lowB;
+        const high = Interval2D.pointLess(highA, highB) ? highB : highA;
+        return new Interval2D(low, high);
+    }
+    // Override value comparator to handle 2D points lexicographically
+    value_less_than(val1, val2) {
+        return Interval2D.pointLess(val1, val2);
+    }
+    output() {
+        return [this.low, this.high];
     }
 }
 
@@ -165,10 +185,10 @@ class Node {
         // use key (Interval) max property instead of key.high
         this.max = this.item.key ? this.item.key.max : undefined;
         if (this.right && this.right.max) {
-            this.max = Interval.comparable_max(this.max, this.right.max);
+            this.max = this.max ? this.max.merge(this.right.max) : this.right.max;
         }
         if (this.left && this.left.max) {
-            this.max = Interval.comparable_max(this.max, this.left.max);
+            this.max = this.max ? this.max.merge(this.left.max) : this.left.max;
         }
     }
     // Other_node does not intersect any node of left subtree
@@ -176,14 +196,14 @@ class Node {
         const high = this.left.max.high !== undefined
             ? this.left.max.high
             : this.left.max;
-        return Interval.comparable_less_than(high, search_node.item.key.low);
+        return this.item.key.value_less_than(high, search_node.item.key.low);
     }
     // Other_node does not intersect right subtree
     not_intersect_right_subtree(search_node) {
         const low = this.right.max.low !== undefined
             ? this.right.max.low
             : this.right.item.key.low;
-        return Interval.comparable_less_than(search_node.item.key.high, low);
+        return this.item.key.value_less_than(search_node.item.key.high, low);
     }
 }
 
@@ -851,5 +871,5 @@ class IntervalTree {
     }
 }
 
-export { Interval, IntervalTree, Node, IntervalTree as default };
+export { Interval, Interval2D, IntervalBase, IntervalTree, Node, TimeInterval, IntervalTree as default };
 //# sourceMappingURL=main.mjs.map
