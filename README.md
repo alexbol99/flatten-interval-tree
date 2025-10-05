@@ -15,6 +15,11 @@ Please use this package ([@flatten-js/interval-tree](https://www.npmjs.com/packa
 
 Follow me on Twitter [@alex_bol_](https://twitter.com/alex_bol_)
 
+## Status
+This is a pre-release: v2.0.0-alpha. It introduces bucketed values per key, new interval types (TimeInterval, Interval2D), and improved typings. See the migration guidance and detailed changes in [RELEASE_NOTES.md](./RELEASE_NOTES.md). For API docs and live examples, visit:
+- API docs: https://alexbol99.github.io/flatten-interval-tree/
+- Live examples: https://alexbol99.github.io/flatten-interval-tree/examples.html
+
 ## Installation
 ```bash
 npm install --save @flatten-js/interval-tree

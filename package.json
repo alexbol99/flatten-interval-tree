@@ -1,6 +1,6 @@
 {
   "name": "@flatten-js/interval-tree",
-  "version": "2.0.0-alpha.1",
+  "version": "2.0.0-alpha",
   "description": "Interval search tree with TypeScript support",
   "author": "Alex Bol",
   "license": "MIT",
@@ -31,6 +31,7 @@
     "test:watch": "mocha --require ts-node/register --extensions ts --watch 'test/**/*.ts'",
     "coverage": "c8 --reporter=html --reporter=text mocha --require ts-node/register --extensions ts 'test/**/*.ts'",
     "docs": "typedoc",
+    "release:alpha": "npm run build && npm test && npm run docs && npm publish --tag alpha",
     "prepublishOnly": "npm run build && npm test"
   },
   "repository": {
@@ -48,6 +49,15 @@
     "url": "https://github.com/alexbol99/flatten-interval-tree/issues"
   },
   "homepage": "https://github.com/alexbol99/flatten-interval-tree#readme",
+  "funding": {
+    "type": "buymeacoffee",
+    "url": "https://www.buymeacoffee.com/alexbol99"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "unpkg": "./dist/main.umd.js",
+  "jsdelivr": "./dist/main.umd.js",
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^15.3.1",
     "@rollup/plugin-terser": "^0.4.4",
