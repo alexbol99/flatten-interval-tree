@@ -347,13 +347,6 @@ class IntervalTree {
         }
         return undefined;
     }
-    /**
-     * Returns array of entry values which keys intersect with given interval
-     * If no values stored in the tree, returns array of keys which intersect given interval
-     * @param interval - search interval, or tuple [low, high]
-     * @param outputMapperFn - optional function that maps (value, key) to custom output
-     * @returns {Array}
-     */
     search(interval, outputMapperFn = (value, key) => value === key ? key.output() : value) {
         const search_node = new Node(interval);
         const resp_nodes = [];
@@ -399,12 +392,6 @@ class IntervalTree {
         });
         return tree;
     }
-    /**
-     * Iterator
-     * @param interval - optional if the iterator is intended to start from the beginning
-     * @param outputMapperFn - optional function that maps (value, key) to custom output
-     * @returns {Iterator}
-     */
     *iterate(interval, outputMapperFn = (value, key) => value === key ? key.output() : value) {
         let node = null;
         if (interval) {

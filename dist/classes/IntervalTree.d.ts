@@ -2,14 +2,14 @@
  * Created by Alex Bol on 3/31/2017.
  */
 import Node from './Node';
-import Interval from './Interval';
+import { IntervalBase } from './Interval';
 import type { IntervalInput } from '../types';
 /**
  * Implementation of interval binary search tree
  * Interval tree stores items which are couples of {key:interval, value: value}
  * Interval is an object with high and low properties or simply pair [low,high] of numeric values
  */
-declare class IntervalTree<V = any> {
+declare class IntervalTree<V = unknown> {
     root: Node<V> | null;
     nil_node: Node<V>;
     /**
@@ -76,7 +76,8 @@ declare class IntervalTree<V = any> {
      * @param outputMapperFn - optional function that maps (value, key) to custom output
      * @returns {Array}
      */
-    search(interval: IntervalInput, outputMapperFn?: (value: V, key: Interval) => any): any[];
+    search(interval: IntervalInput): V[];
+    search<T>(interval: IntervalInput, outputMapperFn: (value: V, key: IntervalBase) => T): T[];
     /**
      * Returns true if intersection between given and any interval stored in the tree found
      * @param interval - search interval or tuple [low, high]
@@ -88,19 +89,21 @@ declare class IntervalTree<V = any> {
      * Method calls a callback function with two parameters (key, value)
      * @param visitor - function to be called for each tree item
      */
-    forEach(visitor: (key: Interval, value: V) => void): void;
+    forEach(visitor: (key: IntervalBase, value: V) => void): void;
     /**
      * Value Mapper. Walk through every node and map node value to another value
      * @param callback - function to be called for each tree item
      */
-    map<U>(callback: (value: V, key: Interval) => U): IntervalTree<U>;
+    map<U>(callback: (value: V, key: IntervalBase) => U): IntervalTree<U>;
     /**
      * Iterator
      * @param interval - optional if the iterator is intended to start from the beginning
      * @param outputMapperFn - optional function that maps (value, key) to custom output
      * @returns {Iterator}
      */
-    iterate(interval?: IntervalInput, outputMapperFn?: (value: V, key: Interval) => any): IterableIterator<any>;
+    iterate(): IterableIterator<V>;
+    iterate(interval: IntervalInput): IterableIterator<V>;
+    iterate<T>(interval: IntervalInput | undefined, outputMapperFn: (value: V, key: IntervalBase) => T): IterableIterator<T>;
     /**
      * Recalculate max property upward from given node to root
      * @param node - starting node

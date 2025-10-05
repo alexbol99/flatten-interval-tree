@@ -3,7 +3,7 @@
  */
 
 import Node from './Node';
-import Interval from './Interval';
+import { IntervalBase } from './Interval';
 import { RB_TREE_COLOR_BLACK, RB_TREE_COLOR_RED } from '../utils/constants';
 import type { IntervalInput } from '../types';
 
@@ -12,7 +12,7 @@ import type { IntervalInput } from '../types';
  * Interval tree stores items which are couples of {key:interval, value: value}
  * Interval is an object with high and low properties or simply pair [low,high] of numeric values
  */
-class IntervalTree<V = any> {
+class IntervalTree<V = unknown> {
     root: Node<V> | null;
     nil_node: Node<V>;
 
@@ -157,9 +157,12 @@ class IntervalTree<V = any> {
      * @param outputMapperFn - optional function that maps (value, key) to custom output
      * @returns {Array}
      */
+    // Overloads for better type inference
+    search(interval: IntervalInput): V[];
+    search<T>(interval: IntervalInput, outputMapperFn: (value: V, key: IntervalBase) => T): T[];
     search(
         interval: IntervalInput,
-        outputMapperFn: (value: V, key: Interval) => any = (value, key) =>
+        outputMapperFn: (value: V, key: IntervalBase) => any = (value, key) =>
             value === (key as any) ? key.output() : value
     ): any[] {
         const search_node = new Node<V>(interval);
@@ -189,7 +192,7 @@ class IntervalTree<V = any> {
      * Method calls a callback function with two parameters (key, value)
      * @param visitor - function to be called for each tree item
      */
-    forEach(visitor: (key: Interval, value: V) => void): void {
+    forEach(visitor: (key: IntervalBase, value: V) => void): void {
         this.tree_walk(this.root, (node) => {
             for (const v of node.item.values) visitor(node.item.key, v);
         });
@@ -199,7 +202,7 @@ class IntervalTree<V = any> {
      * Value Mapper. Walk through every node and map node value to another value
      * @param callback - function to be called for each tree item
      */
-    map<U>(callback: (value: V, key: Interval) => U): IntervalTree<U> {
+    map<U>(callback: (value: V, key: IntervalBase) => U): IntervalTree<U> {
         const tree = new IntervalTree<U>();
         this.tree_walk(this.root, (node) => {
             for (const v of node.item.values) {
@@ -215,9 +218,13 @@ class IntervalTree<V = any> {
      * @param outputMapperFn - optional function that maps (value, key) to custom output
      * @returns {Iterator}
      */
+    // Overloads for better type inference
+    iterate(): IterableIterator<V>;
+    iterate(interval: IntervalInput): IterableIterator<V>;
+    iterate<T>(interval: IntervalInput | undefined, outputMapperFn: (value: V, key: IntervalBase) => T): IterableIterator<T>;
     *iterate(
         interval?: IntervalInput,
-        outputMapperFn: (value: V, key: Interval) => any = (value, key) =>
+        outputMapperFn: (value: V, key: IntervalBase) => any = (value, key) =>
             value === (key as any) ? key.output() : value
     ): IterableIterator<any> {
         let node: Node<V> | null = null;
