@@ -232,7 +232,17 @@ for (let key of tree.iterate([5,5], (value, key) => key)) {
 ```
 
 ## Documentation
-Documentation may be found here: [https://alexbol99.github.io/flatten-interval-tree](https://alexbol99.github.io/flatten-interval-tree/)
+API reference is now generated with TypeDoc and published to GitHub Pages.
+- Live examples: https://alexbol99.github.io/flatten-interval-tree/examples.html
+- API docs: https://alexbol99.github.io/flatten-interval-tree/
+
+Styling: The docs use TypeDoc’s default theme with a custom stylesheet (typedoc.theme.css) for improved typography, spacing, a branded accent color, and automatic dark mode. The top navigation also links to GitHub and the live examples page.
+
+To build docs locally:
+```bash
+npm run docs
+```
+The output is written into the docs/ folder.
 
 ## Tests
 ```bash

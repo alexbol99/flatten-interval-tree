@@ -30,6 +30,7 @@
     "test": "npm run build && mocha --extensions js 'test/**/*.js'",
     "test:watch": "mocha --require ts-node/register --extensions ts,js --watch 'test/**/*.js'",
     "coverage": "c8 --reporter=html --reporter=text mocha --require ts-node/register 'test/**/*.js'",
+    "docs": "typedoc",
     "prepublishOnly": "npm run build && npm test"
   },
   "repository": {
@@ -59,7 +60,8 @@
     "mocha": "^10.2.0",
     "rollup": "^4.9.4",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.3"
+    "typedoc": "^0.27.7",
+    "typescript": "^5.7.2"
   },
   "engines": {
     "node": ">=16.0.0"

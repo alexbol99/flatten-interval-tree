@@ -1,0 +1,123 @@
+/* Custom theme tweaks for TypeDoc output
+   This stylesheet is injected via TypeDoc's customCss option.
+   It keeps the default layout but improves typography, spacing, and colors,
+   and provides an automatic dark theme using prefers-color-scheme. */
+
+:root {
+  --ifm-font-family-base: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  --ifm-font-family-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --tdoc-accent: #0ea5e9; /* sky-500 */
+  --tdoc-accent-600: #0284c7; /* sky-600 */
+  --tdoc-fg: #0b1220;
+  --tdoc-fg-muted: #4b5563;
+  --tdoc-bg: #ffffff;
+  --tdoc-code-bg: #0f172a0d; /* slate-900 @ 5% */
+  --tdoc-border: #e5e7eb;
+  --tdoc-maxw: 1100px;
+}
+
+/* Base typography */
+body, .col-content, .tsd-typography {
+  font-family: var(--ifm-font-family-base);
+  color: var(--tdoc-fg);
+  background: var(--tdoc-bg);
+}
+
+.tsd-page-title, .tsd-typography h1, .tsd-typography h2, .tsd-typography h3,
+.tsd-typography h4, .tsd-typography h5, .tsd-typography h6 {
+  scroll-margin-top: 80px;
+}
+
+.tsd-typography h1 { font-size: 2rem; margin: 1.25rem 0 0.75rem; }
+.tsd-typography h2 { font-size: 1.5rem; margin: 1rem 0 0.5rem; }
+.tsd-typography h3 { font-size: 1.25rem; margin: 0.875rem 0 0.5rem; }
+
+/* Content width */
+.container-main, .container { max-width: var(--tdoc-maxw); }
+
+/* Links & accents */
+a { color: var(--tdoc-accent); }
+a:hover { color: var(--tdoc-accent-600); }
+
+.tsd-breadcrumb a, .tsd-index-accordion h3 > a { color: inherit; }
+
+/* Sidebar/nav polish */
+.tsd-navigation a:hover {
+  background: color-mix(in srgb, var(--tdoc-accent) 12%, transparent);
+}
+
+/* Code blocks */
+pre, code, .hljs, .tsd-typography code {
+  font-family: var(--ifm-font-family-mono);
+}
+
+pre code {
+  background: var(--tdoc-code-bg);
+  display: block;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--tdoc-border);
+  overflow: auto;
+}
+
+.tsd-typography code:not(pre code) {
+  background: var(--tdoc-code-bg);
+  border: 1px solid var(--tdoc-border);
+  padding: 0.1rem 0.35rem;
+  border-radius: 6px;
+}
+
+/* Tables */
+.tsd-typography table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid var(--tdoc-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.tsd-typography table thead th {
+  background: color-mix(in srgb, var(--tdoc-accent) 8%, var(--tdoc-bg));
+}
+.tsd-typography table th, .tsd-typography table td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--tdoc-border);
+}
+
+/* Badges/labels */
+.tsd-signature, .tsd-panel {
+  border-radius: 10px;
+  border: 1px solid var(--tdoc-border);
+}
+
+/* Search input */
+#tsd-search input {
+  border-radius: 8px !important;
+}
+
+/* Footer */
+.tsd-generator {
+  opacity: 0.8;
+}
+
+/* Dark mode: follows user preference */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --tdoc-fg: #e5e7eb;
+    --tdoc-fg-muted: #9ca3af;
+    --tdoc-bg: #0b1220; /* deep navy */
+    --tdoc-code-bg: #ffffff0f;
+    --tdoc-border: #1f2937;
+    --tdoc-accent: #38bdf8; /* sky-400 */
+    --tdoc-accent-600: #0ea5e9; /* sky-500 */
+  }
+  .tsd-page-toolbar, .tsd-navigation, body, .col-content {
+    background: var(--tdoc-bg);
+    color: var(--tdoc-fg);
+  }
+  .tsd-navigation a:hover {
+    background: color-mix(in srgb, var(--tdoc-accent) 18%, transparent);
+  }
+  pre code, .tsd-typography code:not(pre code) {
+    border-color: var(--tdoc-border);
+  }
+}
