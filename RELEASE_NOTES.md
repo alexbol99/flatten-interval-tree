@@ -19,7 +19,7 @@ This document summarizes the changes on branch `2.0.0-alpha` compared to `master
    - `exist(key, value)` checks if the specific value exists in the bucket by strict equality (`===`) unless the value implements `equal_to(other)`.
    - `remove(key)` removes the entire node (all values in the bucket).
    - `remove(key, value)` removes only that value; if the bucket becomes empty the node is removed.
-   - Impact: If your code depended on having separate nodes for equal keys or on value comparator semantics, adjust accordingly.
+   - Impact: If your code depends on having separate nodes for equal keys or on value comparator semantics, adjust accordingly.
 
 2. Interval comparison and augmentation semantics
    - Removed static comparison helpers from the interval classes. Comparison is now delegated to instance-level methods on `IntervalBase` and its subclasses.
