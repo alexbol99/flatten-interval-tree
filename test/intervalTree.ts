@@ -3,7 +3,7 @@
  */
 
 import { expect } from 'chai';
-import IntervalTree, { Interval, TimeInterval, Interval2D } from '../dist/main.mjs';
+import IntervalTree, { Interval, Interval2D } from '../dist/main.mjs';
 import type { IntervalInput } from "../src";
 
 // import IntervalTree from '../dist/interval-tree.esm';
@@ -265,16 +265,16 @@ describe('#IntervalTree', function() {
         expect(tree.intersect_any( [1950, 2000])).to.be.false;
     });
     it("May inherit Interval class and override its methods ", function() {
-        class MyTimeInterval extends Interval {
+        class MyCustomInterval extends Interval {
             not_intersect(other_interval: Interval) {
                 return (this.high as any) <= (other_interval.low as any) || (other_interval.high as any) <= (this.low as any);
             }
         }
         const tree = new IntervalTree<[number, number]>();
-        tree.insert(new MyTimeInterval(7,8));
-        tree.insert(new MyTimeInterval(1,4));
-        tree.insert(new MyTimeInterval(11,12));
-        tree.insert(new MyTimeInterval(5,7));
+        tree.insert(new MyCustomInterval(7,8));
+        tree.insert(new MyCustomInterval(1,4));
+        tree.insert(new MyCustomInterval(11,12));
+        tree.insert(new MyCustomInterval(5,7));
 
         const resp1 = tree.search([4,5]);
         expect(resp1).to.deep.equal([]);
@@ -401,71 +401,6 @@ describe('#IntervalTree', function() {
 });
 
 
-// Additional tests for TimeInterval (Date-based intervals)
-describe('#IntervalTree TimeInterval', function () {
-    it('Supports insertion and search with TimeInterval (Date)', function () {
-        const tree = new IntervalTree<string>();
-        const a1 = new Date('2020-01-01T00:00:00Z');
-        const a2 = new Date('2020-01-31T00:00:00Z');
-        const b1 = new Date('2020-01-15T00:00:00Z');
-        const b2 = new Date('2020-02-15T00:00:00Z');
-        tree.insert(new TimeInterval(a1, a2), 'A');
-        tree.insert(new TimeInterval(b1, b2), 'B');
-
-        const q1 = new Date('2020-01-10T00:00:00Z');
-        const q2 = new Date('2020-01-20T00:00:00Z');
-        const res = tree.search(new TimeInterval(q1, q2));
-        expect(res).to.deep.equal(['A', 'B']);
-    });
-
-    it('Find a free timeslot in a schedule (60 minutes)', function () {
-        const tree = new IntervalTree<string>();
-        const day = (s: string) => new Date(s);
-
-        // Working hours: 09:00–17:00 UTC
-        const workStart = day('2020-01-01T09:00:00Z');
-        const workEnd = day('2020-01-01T17:00:00Z');
-
-        // Busy meetings
-        tree.insert(new TimeInterval(day('2020-01-01T09:00:00Z'), day('2020-01-01T10:00:00Z')), 'M1');
-        tree.insert(new TimeInterval(day('2020-01-01T10:30:00Z'), day('2020-01-01T11:00:00Z')), 'M2');
-        tree.insert(new TimeInterval(day('2020-01-01T12:00:00Z'), day('2020-01-01T13:30:00Z')), 'M3');
-
-        // Find the first 60-min free slot
-        const busy = tree.search(new TimeInterval(workStart, workEnd), (_v, k) => k as any as TimeInterval) as any as TimeInterval[];
-        busy.sort((a, b) => (a.low as Date).getTime() - (b.low as Date).getTime());
-
-        const merged: TimeInterval[] = [];
-        for (const iv of busy) {
-            if (merged.length === 0) { merged.push(iv); continue; }
-            const last = merged[merged.length - 1];
-            if ((iv.low as Date) <= (last.high as Date)) {
-                // merge
-                const hi = (iv.high as Date) > (last.high as Date) ? iv.high as Date : last.high as Date;
-                merged[merged.length - 1] = new TimeInterval(last.low as Date, hi);
-            } else {
-                merged.push(iv);
-            }
-        }
-
-        const needMs = 60 * 60 * 1000;
-        let freeStart: Date | null = null;
-        let freeEnd: Date | null = null;
-        let cursor = workStart;
-        for (const b of merged) {
-            if ((b.low as Date).getTime() - cursor.getTime() >= needMs) {
-                freeStart = cursor; freeEnd = new Date(cursor.getTime() + needMs); break;
-            }
-            cursor = new Date(Math.max(cursor.getTime(), (b.high as Date).getTime()));
-        }
-        if (!freeStart && workEnd.getTime() - cursor.getTime() >= needMs) {
-            freeStart = cursor; freeEnd = new Date(cursor.getTime() + needMs);
-        }
-
-        expect(freeStart!.toISOString()).to.equal('2020-01-01T11:00:00.000Z');
-        expect(freeEnd!.toISOString()).to.equal('2020-01-01T12:00:00.000Z');
-    });
-});
 
 // Additional tests for Interval2D (2D lexicographic intervals)
 describe('#IntervalTree Interval2D', function () {

@@ -46,7 +46,7 @@ class IntervalBase {
         return [this.low, this.high];
     }
     // Instance-level comparator so child classes can customize value comparison semantics
-    value_less_than(val1, val2) {
+    comparable_less_than(val1, val2) {
         return val1 < val2;
     }
 }
@@ -54,15 +54,6 @@ class IntervalBase {
 class Interval extends IntervalBase {
     clone() {
         return new Interval(this.low, this.high);
-    }
-}
-// Time interval using JS Date (inherits default behavior as Date supports < and >)
-class TimeInterval extends IntervalBase {
-    constructor(low, high) {
-        super(low, high);
-    }
-    clone() {
-        return new TimeInterval(this.low, this.high);
     }
 }
 // 2D interval with lexicographic comparison for points [x, y]
@@ -111,7 +102,7 @@ class Interval2D extends IntervalBase {
         return new Interval2D(low, high);
     }
     // Override value comparator to handle 2D points lexicographically
-    value_less_than(val1, val2) {
+    comparable_less_than(val1, val2) {
         return Interval2D.pointLess(val1, val2);
     }
     output() {
@@ -200,14 +191,14 @@ class Node {
         const high = this.left.max.high !== undefined
             ? this.left.max.high
             : this.left.max;
-        return this.item.key.value_less_than(high, search_node.item.key.low);
+        return this.item.key.comparable_less_than(high, search_node.item.key.low);
     }
     // Other_node does not intersect right subtree
     not_intersect_right_subtree(search_node) {
         const low = this.right.max.low !== undefined
             ? this.right.max.low
             : this.right.item.key.low;
-        return this.item.key.value_less_than(search_node.item.key.high, low);
+        return this.item.key.comparable_less_than(search_node.item.key.high, low);
     }
 }
 
@@ -867,6 +858,5 @@ exports.Interval2D = Interval2D;
 exports.IntervalBase = IntervalBase;
 exports.IntervalTree = IntervalTree;
 exports.Node = Node;
-exports.TimeInterval = TimeInterval;
 exports.default = IntervalTree;
 //# sourceMappingURL=main.cjs.map

@@ -17,12 +17,11 @@
  *
  * Specializations can override comparison and other behaviors:
  * - Interval (default export): 1D interval with default comparable endpoints.
- * - TimeInterval: 1D interval whose endpoints are Date objects.
  * - Interval2D: lexicographic 2D interval with endpoints as points [x, y]; overrides
  *   comparison and intersection in the lexicographic plane.
  *
  * Consumers may pass either:
- * - A concrete IntervalBase instance (e.g., new TimeInterval(...), new Interval2D(...)), or
+ * - A concrete IntervalBase instance (e.g., new Interval2D(...)), or
  * - A numeric pair [low, high], which the tree converts to the default 1D Interval.
  *
  * See the TypeScript types in src/types.ts for Comparable and accepted IntervalInput forms.
@@ -85,7 +84,7 @@ export abstract class IntervalBase {
     }
     
     // Instance-level comparator so child classes can customize value comparison semantics
-    value_less_than(val1: Comparable, val2: Comparable): boolean {
+    comparable_less_than(val1: Comparable, val2: Comparable): boolean {
         return (val1 as any) < (val2 as any);
     }
 }
@@ -97,15 +96,6 @@ class Interval extends IntervalBase {
     }
 }
 
-// Time interval using JS Date (inherits default behavior as Date supports < and >)
-export class TimeInterval extends IntervalBase {
-    constructor(low: Date, high: Date) {
-        super(low, high);
-    }
-    clone(): TimeInterval {
-        return new TimeInterval(this.low as Date, this.high as Date);
-    }
-}
 
 // 2D interval with lexicographic comparison for points [x, y]
 export class Interval2D extends IntervalBase {
@@ -160,7 +150,7 @@ export class Interval2D extends IntervalBase {
     }
 
     // Override value comparator to handle 2D points lexicographically
-    value_less_than(val1: [number, number], val2: [number, number]): boolean {
+    comparable_less_than(val1: [number, number], val2: [number, number]): boolean {
         return Interval2D.pointLess(val1, val2);
     }
 

@@ -16,7 +16,7 @@ Please use this package ([@flatten-js/interval-tree](https://www.npmjs.com/packa
 Follow me on Twitter [@alex_bol_](https://twitter.com/alex_bol_)
 
 ## Status
-This is a pre-release: v2.0.0-alpha. It introduces bucketed values per key, new interval types (TimeInterval, Interval2D), and improved typings. See the migration guidance and detailed changes in [RELEASE_NOTES.md](./RELEASE_NOTES.md). For API docs and live examples, visit:
+This is a pre-release: v2.0.0-alpha. It introduces bucketed values per key, Interval2D, and improved typings. See the migration guidance and detailed changes in [RELEASE_NOTES.md](./RELEASE_NOTES.md). For API docs and live examples, visit:
 - API docs: https://alexbol99.github.io/flatten-interval-tree/
 - Live examples: https://alexbol99.github.io/flatten-interval-tree/examples.html
 
@@ -25,8 +25,10 @@ This is a pre-release: v2.0.0-alpha. It introduces bucketed values per key, new 
 npm install --save @flatten-js/interval-tree
 ```
 ## Usage
-```javascript
+```ts
 import IntervalTree from '@flatten-js/interval-tree'
+// TypeScript: specify value type for better hints
+const tree = new IntervalTree<string>();
 ```
 
 ### Notes
@@ -46,47 +48,39 @@ implementation.
 
 ### Example
 
-```javascript
-let tree = new IntervalTree();
+```ts
+import IntervalTree from '@flatten-js/interval-tree';
 
-let intervals = [[6,8],[1,4],[5,12],[1,1],[5,7]];
+const tree = new IntervalTree<string>();
+
+const intervals: Array<[number, number]> = [[6,8],[1,4],[5,12],[1,1],[5,7]];
 
 // Insert interval as a key and string "val0", "val1" etc. as a value 
-for (let i=0; i < intervals.length; i++) {
-    tree.insert(intervals[i],"val"+i);
-}
+intervals.forEach((iv, i) => {
+    tree.insert(iv, "val"+i);
+});
 
 // Get array of keys sorted in ascendant order
-let sorted_intervals = tree.keys;              //  expected array [[1,1],[1,4],[5,7],[5,12],[6,8]]
+const sorted_intervals = tree.keys;              //  expected array [[1,1],[1,4],[5,7],[5,12],[6,8]]
 
 // Search items which keys intersect with given interval, and return array of values
-let values_in_range = tree.search([2,3]);     //  expected array ['val1']
+const values_in_range = tree.search([2,3]);     //  expected array ['val1']
 ```
 
 ## Interval types
-The library now supports multiple interval classes:
+The library supports multiple interval classes:
 - Interval (default export): 1D interval whose endpoints are comparable (number, bigint, string, Date).
-- TimeInterval: a 1D interval specialized for Date endpoints.
 - Interval2D: a lexicographic 2D interval whose endpoints are points [x, y].
 
 Notes:
 - The default behavior remains unchanged: passing a numeric pair [low, high] will be normalized and converted into a default 1D Interval.
+- Date endpoints are supported by the default Interval (no special class required).
 - To use custom types, construct and pass the concrete interval class instance:
 
-```javascript
-import IntervalTree, { TimeInterval, Interval2D } from '@flatten-js/interval-tree';
+```ts
+import IntervalTree, { Interval2D } from '@flatten-js/interval-tree';
 
-const tree = new IntervalTree();
-
-// Time intervals
-const a = new TimeInterval(new Date('2020-01-01'), new Date('2020-01-31'));
-const b = new TimeInterval(new Date('2020-01-15'), new Date('2020-02-15'));
-
-tree.insert(a, 'A');
-tree.insert(b, 'B');
-
-const hits = tree.search(new TimeInterval(new Date('2020-01-10'), new Date('2020-01-20')));
-// hits -> ['A','B']
+const tree = new IntervalTree<string>();
 
 // 2D intervals (lexicographic ordering)
 const r1 = new Interval2D([0, 0], [10, 10]);
@@ -97,9 +91,14 @@ tree.insert(r2, 'R2');
 ```
 
 ### Constructor
-Create new instance of interval tree
-```javascript
-let tree = new IntervalTree()
+Create a new instance of the interval tree. In TypeScript, you may optionally specify the value type V for stronger type hints.
+```ts
+// Without explicit value type (values default to unknown/any as inferred)
+const tree = new IntervalTree();
+
+// With explicit value type V
+const treeStrings = new IntervalTree<string>();
+const treeObjects = new IntervalTree<{ id: number; name: string }>();
 ```
 
 ### Insert(key[, value])
@@ -107,17 +106,17 @@ Insert a new item into the tree. Key is an interval object or a pair of numbers 
 If `value` is omitted, the key itself is stored as the value for convenience.
 If a node with an identical key already exists, the value is appended to that node’s bucket.
 Returns a reference to the inserted node.
-```javascript
-let node = tree.insert(key, value)
+```ts
+const node = tree.insert(key, value)
 ```
 
 ### Exist(key[, value])
 Returns `true` if the item exists in the tree.
 - Called as `exist(key)`, it checks whether a node with the given key exists (bucket may contain one or more values).
 - Called as `exist(key, value)`, it checks whether the specific value exists inside the bucket of that key (strict equality unless the value implements `equal_to`).
-```javascript
-let existsKey = tree.exist(key)
-let existsPair = tree.exist(key, value)
+```ts
+const existsKey = tree.exist(key)
+const existsPair = tree.exist(key, value)
 ```
 
 ### Remove(key[, value])
@@ -125,15 +124,15 @@ Removes entries from the tree.
 - Called as `remove(key)`, it removes the entire node for that key (i.e., the whole bucket).
 - Called as `remove(key, value)`, it removes a single matching value from the bucket; if the bucket becomes empty, the node is removed.
 Returns the removed node if something was deleted, or `undefined` if nothing was found.
-```javascript
-let removedNode = tree.remove(key)
-let removedPairNode = tree.remove(key, value)
+```ts
+const removedNode = tree.remove(key)
+const removedPairNode = tree.remove(key, value)
 ```
 
 ### Search(interval[, outputMapperFn])
 Returns array of values which keys intersected with given interval. <br/>
 ```javascript
-let resp = tree.search(interval)
+const resp = tree.search(interval)
 ```
 Optional *outputMapperFn(value, key)* enables to map search results into custom defined output.
 Example:
@@ -151,7 +150,7 @@ const composers = [
     {name: "Antonio Vivaldi", period: [1678, 1741]}
 ];
 const tree = new IntervalTree();
-for (let composer of composers)
+for (const composer of composers)
     tree.insert(composer.period, composer.name);
 
 // Great composers who lived in 17th century
@@ -168,31 +167,31 @@ console.log(searchRes)
 Returns true if intersection found between given interval and any of intervals stored in the tree
 
 ```javascript
-let found = tree.intersect_any(interval)
+const found = tree.intersect_any(interval)
 ```
 
 ### Size
 Returns number of items stored in the tree (getter)
 ```javascript
-let size = tree.size
+const size = tree.size
 ```
 
 ### Keys
 Returns tree keys in ascendant order (getter)
 ```javascript
-let keys = tree.keys
+const keys = tree.keys
 ```
 
 ### Values
 Returns tree values in ascendant keys order (getter)
 ```javascript
-let values = tree.values
+const values = tree.values
 ``` 
 
 ### Items
 Returns items in ascendant keys order (getter)
 ```javascript
-let items = tree.items
+const items = tree.items
 ```
 
 ### ForEach(visitor)

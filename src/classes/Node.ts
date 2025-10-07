@@ -99,7 +99,7 @@ class Node<V = any> {
         const high = (this.left!.max as any).high !== undefined
             ? (this.left!.max as any).high
             : this.left!.max;
-        return this.item.key.value_less_than(high as any, search_node.item.key.low as any);
+        return this.item.key.comparable_less_than(high as any, search_node.item.key.low as any);
     }
 
     // Other_node does not intersect right subtree
@@ -107,7 +107,7 @@ class Node<V = any> {
         const low = (this.right!.max as any).low !== undefined
             ? (this.right!.max as any).low
             : this.right!.item.key.low;
-        return this.item.key.value_less_than(search_node.item.key.high as any, low as any);
+        return this.item.key.comparable_less_than(search_node.item.key.high as any, low as any);
     }
 }
 
