@@ -1,6 +1,5 @@
 # Interval Tree
 [![npm version](https://badge.fury.io/js/%40flatten-js%2Finterval-tree.svg)](https://badge.fury.io/js/%40flatten-js%2Finterval-tree)
-[![Coverage Status](https://coveralls.io/repos/github/alexbol99/flatten-interval-tree/badge.svg?branch=master)](https://coveralls.io/github/alexbol99/flatten-interval-tree?branch=master)
 [![@flatten-js/interval-tree](https://snyk.io/advisor/npm-package/@flatten-js/interval-tree/badge.svg)](https://snyk.io/advisor/npm-package/@flatten-js/interval-tree)
 
 The package **@flatten-js/interval-tree** is an implementation of interval binary search tree according to Cormen et al. Introduction to Algorithms (2009, Section 14.3: Interval trees, pp. 348–354).
@@ -9,30 +8,38 @@ stored in the tree.
 
 This package is a part of [flatten-js](https://github.com/alexbol99/flatten-js) library.
   
-An earlier implementation, in package [flatten-interval-tree](https://www.npmjs.com/package/flatten-interval-tree), is no longer supported and will be deprecated soon.
+An earlier implementation, [flatten-interval-tree](https://www.npmjs.com/package/flatten-interval-tree), is deprecated.
 Please use this package ([@flatten-js/interval-tree](https://www.npmjs.com/package/@flatten-js/interval-tree)) instead.
 
 ## Contacts
 
 Follow me on Twitter [@alex_bol_](https://twitter.com/alex_bol_)
 
+## Status
+This is a pre-release: v2.0.0-alpha. It introduces bucketed values per key, Interval2D, and improved typings. See the migration guidance and detailed changes in [RELEASE_NOTES.md](./RELEASE_NOTES.md). For API docs and live examples, visit:
+- API docs: https://alexbol99.github.io/flatten-interval-tree/
+- Live examples: https://alexbol99.github.io/flatten-interval-tree/examples.html
+- Join the alpha testing discussion: https://github.com/alexbol99/flatten-interval-tree/discussions
+
 ## Installation
 ```bash
 npm install --save @flatten-js/interval-tree
 ```
 ## Usage
-```javascript
+```ts
 import IntervalTree from '@flatten-js/interval-tree'
+// TypeScript: specify value type for better hints
+const tree = new IntervalTree<string>();
 ```
 
 ### Notes
-Tree stores pairs ```<key,value>``` where key is an interval, and value is an object of any type.
-If value omitted, tree stores only keys. ```value``` cannot be ```undefined```.
+Tree stores pairs `<key, value>` where key is an interval, and value is an object of any type.
+If value is omitted, the tree stores the key itself as the value for convenience, so searches and iteration still return the key (you can always provide your own mapper).
 
-**Interval** can be a pair of numbers or an object that implements ```IntervalInterface``` described in
-typescript declaration file ```index.d.ts```.
+Keys with the same interval are now bucketed into a single node. This means multiple values can be stored under one identical key without requiring values to be comparable.
+No custom comparator is required for values. Equality for values is by strict equality (`===`) unless your value implements an `equal_to(other)` method.
 
-**Value** can be an object of the primitive type (*number, string, bigint*) or any object that support `less_than` method
+**Interval** can be a pair of numbers `[low, high]` (numeric pairs are normalized so that low <= high), or an object that implements the Interval interface described in the TypeScript typings.
 
 Axis aligned rectangle is an example of such interval.
 We may look at rectangle as an interval between its low left and top right corners.
@@ -42,54 +49,91 @@ implementation.
 
 ### Example
 
-```javascript
-let tree = new IntervalTree();
+```ts
+import IntervalTree from '@flatten-js/interval-tree';
 
-let intervals = [[6,8],[1,4],[5,12],[1,1],[5,7]];
+const tree = new IntervalTree<string>();
+
+const intervals: Array<[number, number]> = [[6,8],[1,4],[5,12],[1,1],[5,7]];
 
 // Insert interval as a key and string "val0", "val1" etc. as a value 
-for (let i=0; i < intervals.length; i++) {
-    tree.insert(intervals[i],"val"+i);
-}
+intervals.forEach((iv, i) => {
+    tree.insert(iv, "val"+i);
+});
 
 // Get array of keys sorted in ascendant order
-let sorted_intervals = tree.keys;              //  expected array [[1,1],[1,4],[5,7],[5,12],[6,8]]
+const sorted_intervals = tree.keys;              //  expected array [[1,1],[1,4],[5,7],[5,12],[6,8]]
 
 // Search items which keys intersect with given interval, and return array of values
-let values_in_range = tree.search([2,3]);     //  expected array ['val1']
+const values_in_range = tree.search([2,3]);     //  expected array ['val1']
+```
+
+## Interval types
+The library supports multiple interval classes:
+- Interval (default export): 1D interval whose endpoints are comparable (number, bigint, string, Date).
+- Interval2D: a lexicographic 2D interval whose endpoints are points [x, y].
+
+Notes:
+- The default behavior remains unchanged: passing a numeric pair [low, high] will be normalized and converted into a default 1D Interval.
+- Date endpoints are supported by the default Interval (no special class required).
+- To use custom types, construct and pass the concrete interval class instance:
+
+```ts
+import IntervalTree, { Interval2D } from '@flatten-js/interval-tree';
+
+const tree = new IntervalTree<string>();
+
+// 2D intervals (lexicographic ordering)
+const r1 = new Interval2D([0, 0], [10, 10]);
+const r2 = new Interval2D([5, 5], [15, 15]);
+
+tree.insert(r1, 'R1');
+tree.insert(r2, 'R2');
 ```
 
 ### Constructor
-Create new instance of interval tree
-```javascript
-let tree = new IntervalTree()
+Create a new instance of the interval tree. In TypeScript, you may optionally specify the value type V for stronger type hints.
+```ts
+// Without explicit value type (values default to unknown/any as inferred)
+const tree = new IntervalTree();
+
+// With explicit value type V
+const treeStrings = new IntervalTree<string>();
+const treeObjects = new IntervalTree<{ id: number; name: string }>();
 ```
 
 ### Insert(key[, value])
-Insert new item into the tree. Key is an interval object or pair of numbers [low, high]. <br/>
-Value may represent any value or reference to any object. If value omitted, tree will store and retrieve keys as values. <br/>
-Method returns reference to the inserted node
-```javascript
-let node = tree.insert(key, value)
+Insert a new item into the tree. Key is an interval object or a pair of numbers `[low, high]` (numeric pairs are normalized so that `low <= high`).
+If `value` is omitted, the key itself is stored as the value for convenience.
+If a node with an identical key already exists, the value is appended to that node’s bucket.
+Returns a reference to the inserted node.
+```ts
+const node = tree.insert(key, value)
 ```
 
-### Exist(key, value)
-Method returns true if item {key, value} exists in the tree. <br/>
-
-```javascript
-let exist = tree.exist(key, value)
+### Exist(key[, value])
+Returns `true` if the item exists in the tree.
+- Called as `exist(key)`, it checks whether a node with the given key exists (bucket may contain one or more values).
+- Called as `exist(key, value)`, it checks whether the specific value exists inside the bucket of that key (strict equality unless the value implements `equal_to`).
+```ts
+const existsKey = tree.exist(key)
+const existsPair = tree.exist(key, value)
 ```
 
-### Remove(key, value)
-Removes item from the tree. Returns true if item was found and deleted, false if not found
-```javascript
-let removed = tree.remove(key, value)
+### Remove(key[, value])
+Removes entries from the tree.
+- Called as `remove(key)`, it removes the entire node for that key (i.e., the whole bucket).
+- Called as `remove(key, value)`, it removes a single matching value from the bucket; if the bucket becomes empty, the node is removed.
+Returns the removed node if something was deleted, or `undefined` if nothing was found.
+```ts
+const removedNode = tree.remove(key)
+const removedPairNode = tree.remove(key, value)
 ```
 
 ### Search(interval[, outputMapperFn])
 Returns array of values which keys intersected with given interval. <br/>
 ```javascript
-let resp = tree.search(interval)
+const resp = tree.search(interval)
 ```
 Optional *outputMapperFn(value, key)* enables to map search results into custom defined output.
 Example:
@@ -107,7 +151,7 @@ const composers = [
     {name: "Antonio Vivaldi", period: [1678, 1741]}
 ];
 const tree = new IntervalTree();
-for (let composer of composers)
+for (const composer of composers)
     tree.insert(composer.period, composer.name);
 
 // Great composers who lived in 17th century
@@ -124,31 +168,31 @@ console.log(searchRes)
 Returns true if intersection found between given interval and any of intervals stored in the tree
 
 ```javascript
-let found = tree.intersect_any(interval)
+const found = tree.intersect_any(interval)
 ```
 
 ### Size
 Returns number of items stored in the tree (getter)
 ```javascript
-let size = tree.size
+const size = tree.size
 ```
 
 ### Keys
 Returns tree keys in ascendant order (getter)
 ```javascript
-let keys = tree.keys
+const keys = tree.keys
 ```
 
 ### Values
 Returns tree values in ascendant keys order (getter)
 ```javascript
-let values = tree.values
+const values = tree.values
 ``` 
 
 ### Items
 Returns items in ascendant keys order (getter)
 ```javascript
-let items = tree.items
+const items = tree.items
 ```
 
 ### ForEach(visitor)
@@ -193,7 +237,17 @@ for (let key of tree.iterate([5,5], (value, key) => key)) {
 ```
 
 ## Documentation
-Documentation may be found here: [https://alexbol99.github.io/flatten-interval-tree](https://alexbol99.github.io/flatten-interval-tree/)
+API reference is now generated with TypeDoc and published to GitHub Pages.
+- Live examples: https://alexbol99.github.io/flatten-interval-tree/examples.html
+- API docs: https://alexbol99.github.io/flatten-interval-tree/
+
+Styling: The docs use TypeDoc’s default theme with a custom stylesheet (typedoc.theme.css) for improved typography, spacing, a branded accent color, and automatic dark mode. The top navigation also links to GitHub and the live examples page.
+
+To build docs locally:
+```bash
+npm run docs
+```
+The output is written into the docs/ folder.
 
 ## Tests
 ```bash
@@ -210,3 +264,5 @@ MIT
 ## Support
 
 <a href="https://www.buymeacoffee.com/alexbol99" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
+
+
