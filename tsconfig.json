@@ -30,8 +30,9 @@
   
   "ts-node": {
     "transpileOnly": true,
+    "esm": true,
     "compilerOptions": {
-      "module": "commonjs"
+      "module": "ESNext"
     }
   }
 }

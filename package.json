@@ -27,9 +27,9 @@
     "clean": "rm -rf dist",
     "type-check": "tsc --noEmit",
     "build": "npm run clean && rollup -c && node scripts/postbuild.mjs",
-    "test": "npm run build && mocha --require ts-node/register --extensions ts 'test/**/*.ts'",
-    "test:watch": "mocha --require ts-node/register --extensions ts --watch 'test/**/*.ts'",
-    "coverage": "c8 --reporter=html --reporter=text mocha --require ts-node/register --extensions ts 'test/**/*.ts'",
+    "test": "npm run build && node --loader ts-node/esm ./node_modules/mocha/bin/mocha.js --extensions ts 'test/**/*.ts'",
+    "test:watch": "node --loader ts-node/esm ./node_modules/mocha/bin/mocha.js --extensions ts --watch 'test/**/*.ts'",
+    "coverage": "c8 --reporter=html --reporter=text node --loader ts-node/esm ./node_modules/mocha/bin/mocha.js --extensions ts 'test/**/*.ts'",
     "docs": "typedoc",
     "release:alpha": "npm run build && npm test && npm run docs && npm publish --tag alpha",
     "prepublishOnly": "npm run build && npm test"
