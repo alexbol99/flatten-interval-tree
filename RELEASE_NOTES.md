@@ -10,6 +10,10 @@ This document summarizes the changes on branch `2.0.0-alpha` compared to `master
 - Features: Additional interval types (`Interval2D`), iterator enhancements, better typings, BigInt support path.
 - DX/Docs: TypeScript-first build, TypeDoc docs with a custom theme and live RunKit examples.
 
+### Feedback and testing
+Please try the alpha build and share your feedback in GitHub Discussions:
+https://github.com/alexbol99/flatten-interval-tree/discussions
+
 ---
 
 ## Breaking Changes
