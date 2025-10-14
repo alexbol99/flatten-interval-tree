@@ -1,8 +1,8 @@
-# Release Notes: 2.0.0-alpha vs master
+# Release Notes: 2.0.0
 
-Date: 2025-10-06
+Date: 2025-10-14
 
-This document summarizes the changes on branch `2.0.0-alpha` compared to `master`. It highlights breaking changes, new features, improvements, documentation updates, and migration guidance.
+This document summarizes the changes included in the v2.0.0 release. It highlights breaking changes, new features, improvements, documentation updates, and migration guidance.
 
 ## TL;DR
 - Breaking: Keys with identical intervals are now bucketed into one node; value equality is by identity (or custom `equal_to`).

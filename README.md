@@ -13,13 +13,10 @@ Please use this package ([@flatten-js/interval-tree](https://www.npmjs.com/packa
 
 ## Contacts
 
-Follow me on Twitter [@alex_bol_](https://twitter.com/alex_bol_)
+LinkedIn: [Alexander Bol](https://www.linkedin.com/in/alexanderbol/)
 
-## Status
-This is a pre-release: v2.0.0-alpha. It introduces bucketed values per key, Interval2D, and improved typings. See the migration guidance and detailed changes in [RELEASE_NOTES.md](./RELEASE_NOTES.md). For API docs and live examples, visit:
-- API docs: https://alexbol99.github.io/flatten-interval-tree/
-- Live examples: https://alexbol99.github.io/flatten-interval-tree/examples.html
-- Join the alpha testing discussion: https://github.com/alexbol99/flatten-interval-tree/discussions
+X (Twitter) [@alex_bol_](https://twitter.com/alex_bol_)
+
 
 ## Installation
 ```bash
@@ -39,13 +36,9 @@ If value is omitted, the tree stores the key itself as the value for convenience
 Keys with the same interval are now bucketed into a single node. This means multiple values can be stored under one identical key without requiring values to be comparable.
 No custom comparator is required for values. Equality for values is by strict equality (`===`) unless your value implements an `equal_to(other)` method.
 
-**Interval** can be a pair of numbers `[low, high]` (numeric pairs are normalized so that low <= high), or an object that implements the Interval interface described in the TypeScript typings.
-
-Axis aligned rectangle is an example of such interval.
-We may look at rectangle as an interval between its low left and top right corners.
-It makes possible to use interval tree in spatial queries.
-See **Box** class in [flatten-js](https://github.com/alexbol99/flatten-js) library for such
-implementation.
+**Interval** can be a pair of numbers `[low, high]` (numeric pairs are normalized so that low <= high).
+User may also implement their own Interval class as an extension of the **IntervalBase** class.
+See Interval2d class in Interval.ts for an example of such extension.
 
 ### Example
 
@@ -73,14 +66,10 @@ The library supports multiple interval classes:
 - Interval (default export): 1D interval whose endpoints are comparable (number, bigint, string, Date).
 - Interval2D: a lexicographic 2D interval whose endpoints are points [x, y].
 
-Notes:
-- The default behavior remains unchanged: passing a numeric pair [low, high] will be normalized and converted into a default 1D Interval.
-- Date endpoints are supported by the default Interval (no special class required).
-- To use custom types, construct and pass the concrete interval class instance:
-
 ```ts
 import IntervalTree, { Interval2D } from '@flatten-js/interval-tree';
 
+// example of Interval2d tree which stores string values
 const tree = new IntervalTree<string>();
 
 // 2D intervals (lexicographic ordering)
