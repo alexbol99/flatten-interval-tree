@@ -1,0 +1,16 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": ["src/index.ts"],
+  "out": "docs",
+  "name": "@flatten-js/interval-tree",
+  "includeVersion": true,
+  "readme": "README.md",
+  "plugin": [],
+  "categorizeByGroup": true,
+  "githubPages": false,
+  "customCss": "typedoc.theme.css",
+  "navigationLinks": {
+    "GitHub": "https://github.com/alexbol99/flatten-interval-tree",
+    "Live examples": "https://alexbol99.github.io/flatten-interval-tree/examples.html"
+  }
+}

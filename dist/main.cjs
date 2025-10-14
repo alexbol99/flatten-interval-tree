@@ -5,253 +5,234 @@ Object.defineProperty(exports, '__esModule', { value: true });
 /**
  * Created by Alex Bol on 4/1/2017.
  */
-
-/**
- * Interval is a pair of numbers or a pair of any comparable objects on which may be defined predicates
- * *equal*, *less* and method *max(p1, p1)* that returns maximum in a pair.
- * When interval is an object rather than a pair of numbers, this object should have properties *low*, *high*, *max*
- * and implement methods *less_than(), equal_to(), intersect(), not_intersect(), clone(), output()*.
- * Two static methods *comparable_max(), comparable_less_than()* define how to compare values in pair. <br/>
- * This interface is described in typescript definition file *index.d.ts*
- *
- * Axis aligned rectangle is an example of such interval.
- * We may look at rectangle as an interval between its low left and top right corners.
- * See **Box** class in [flatten-js](https://github.com/alexbol99/flatten-js) library as the example
- * of Interval interface implementation
- * @type {Interval}
- */
-const Interval = class Interval {
-    /**
-     * Accept two comparable values and creates new instance of interval
-     * Predicate Interval.comparable_less(low, high) supposed to return true on these values
-     * @param low
-     * @param high
-     */
+// Abstract base for intervals. Concrete variants extend this.
+class IntervalBase {
     constructor(low, high) {
         this.low = low;
         this.high = high;
     }
-
-    /**
-     * Clone interval
-     * @returns {Interval}
-     */
-    clone() {
-        return new Interval(this.low, this.high);
-    }
-
-    /**
-     * Propery max returns clone of this interval
-     * @returns {Interval}
-     */
     get max() {
-        return this.clone();   // this.high;
+        return this.clone();
     }
-
-    /**
-     * Predicate returns true is this interval less than other interval
-     * @param other_interval
-     * @returns {boolean}
-     */
+    // Default numeric/date comparison (lexicographic by low then high)
     less_than(other_interval) {
         return this.low < other_interval.low ||
-            this.low === other_interval.low && this.high < other_interval.high;
+            (this.low === other_interval.low && this.high < other_interval.high);
     }
-
-    /**
-     * Predicate returns true is this interval equals to other interval
-     * @param other_interval
-     * @returns {boolean}
-     */
     equal_to(other_interval) {
         return this.low === other_interval.low && this.high === other_interval.high;
     }
-
-    /**
-     * Predicate returns true if this interval intersects other interval
-     * @param other_interval
-     * @returns {boolean}
-     */
     intersect(other_interval) {
         return !this.not_intersect(other_interval);
     }
-
-    /**
-     * Predicate returns true if this interval does not intersect other interval
-     * @param other_interval
-     * @returns {boolean}
-     */
     not_intersect(other_interval) {
         return (this.high < other_interval.low || other_interval.high < this.low);
     }
-
-    /**
-     * Returns new interval merged with other interval
-     * @param {Interval} other_interval - Other interval to merge with
-     * @returns {Interval}
-     */
     merge(other_interval) {
-        return new Interval(
-            this.low === undefined ?
-                other_interval.low : (this.low < other_interval.low ? this.low : other_interval.low),
-            this.high === undefined ?
-                other_interval.high : (this.high > other_interval.high ? this.high : other_interval.high)
-        );
+        // By default choose min low, max high using < and >
+        const low = (this.low === undefined)
+            ? other_interval.low
+            : ((this.low < other_interval.low) ? this.low : other_interval.low);
+        const high = (this.high === undefined)
+            ? other_interval.high
+            : ((this.high > other_interval.high) ? this.high : other_interval.high);
+        // Return instance of the same concrete class
+        const cloned = this.clone();
+        cloned.low = low;
+        cloned.high = high;
+        return cloned;
     }
-
-    /**
-     * Returns how key should return
-     */
     output() {
         return [this.low, this.high];
     }
-
-    /**
-     * Function returns maximum between two comparable values
-     * @param interval1
-     * @param interval2
-     * @returns {Interval}
-     */
-    static comparable_max(interval1, interval2) {
-        return interval1.merge(interval2);
-    }
-
-    /**
-     * Predicate returns true if first value less than second value
-     * @param val1
-     * @param val2
-     * @returns {boolean}
-     */
-    static comparable_less_than(val1, val2 ) {
+    // Instance-level comparator so child classes can customize value comparison semantics
+    comparable_less_than(val1, val2) {
         return val1 < val2;
     }
-};
+}
+// 1D numeric/date interval (default)
+class Interval extends IntervalBase {
+    clone() {
+        return new Interval(this.low, this.high);
+    }
+}
+// 2D interval with lexicographic comparison for points [x, y]
+class Interval2D extends IntervalBase {
+    constructor(low, high) {
+        super(low, high);
+    }
+    static pointLess(a, b) {
+        return a[0] < b[0] || (a[0] === b[0] && a[1] < b[1]);
+    }
+    static pointEq(a, b) {
+        return a[0] === b[0] && a[1] === b[1];
+    }
+    clone() {
+        return new Interval2D(this.low, this.high);
+    }
+    less_than(other) {
+        const a = this.low;
+        const b = other.low;
+        if (Interval2D.pointLess(a, b))
+            return true;
+        if (Interval2D.pointEq(a, b)) {
+            const ah = this.high;
+            const bh = other.high;
+            return Interval2D.pointLess(ah, bh);
+        }
+        return false;
+    }
+    equal_to(other) {
+        return Interval2D.pointEq(this.low, other.low) &&
+            Interval2D.pointEq(this.high, other.high);
+    }
+    not_intersect(other) {
+        // Non-intersection in lexicographic 2D ordering (simplistic): treat ranges in the ordered space
+        const highLess = Interval2D.pointLess(this.high, other.low);
+        const otherHighLess = Interval2D.pointLess(other.high, this.low);
+        return highLess || otherHighLess;
+    }
+    merge(other) {
+        const lowA = this.low;
+        const lowB = other.low;
+        const highA = this.high;
+        const highB = other.high;
+        const low = Interval2D.pointLess(lowA, lowB) ? lowA : lowB;
+        const high = Interval2D.pointLess(highA, highB) ? highB : highA;
+        return new Interval2D(low, high);
+    }
+    // Override value comparator to handle 2D points lexicographically
+    comparable_less_than(val1, val2) {
+        return Interval2D.pointLess(val1, val2);
+    }
+    output() {
+        return [this.low, this.high];
+    }
+}
 
 /**
  * Created by Alex Bol on 3/28/2017.
  */
-
-
 // module.exports = {
 //     RB_TREE_COLOR_RED: 0,
 //     RB_TREE_COLOR_BLACK: 1
 // };
-
-const RB_TREE_COLOR_RED = 0;
-const RB_TREE_COLOR_BLACK = 1;
+/**
+ * Red-Black Tree color constants
+ */
+const RB_TREE_COLOR_RED = 1;
+const RB_TREE_COLOR_BLACK = 0;
 
 /**
  * Created by Alex Bol on 4/1/2017.
  */
-
-
 class Node {
-    constructor(key = undefined, value = undefined,
-                left = null, right = null, parent = null, color = RB_TREE_COLOR_BLACK) {
-        this.left = left;                     // reference to left child node
-        this.right = right;                   // reference to right child node
-        this.parent = parent;                 // reference to parent node
+    constructor(key, value, left = null, right = null, parent = null, color = RB_TREE_COLOR_BLACK) {
+        this.left = left;
+        this.right = right;
+        this.parent = parent;
         this.color = color;
-
-        this.item = {key: key, value: value};   // key is supposed to be instance of Interval
-
-        /* If not, this should by an array of two numbers */
-        if (key && key instanceof Array && key.length === 2) {
-            if (!Number.isNaN(key[0]) && !Number.isNaN(key[1])) {
-                let [low, high] = key;
-                if (low > high) [low, high] = [high, low];
-                this.item.key = new Interval(low, high);
+        this.item = { key: undefined, values: [] };
+        if (value !== undefined) {
+            this.item.values.push(value);
+        }
+        // Initialize key if provided
+        if (key !== undefined) {
+            if (Array.isArray(key)) {
+                const [rawLow, rawHigh] = key;
+                if (!Number.isNaN(rawLow) && !Number.isNaN(rawHigh)) {
+                    let low = rawLow;
+                    let high = rawHigh;
+                    if (low > high)
+                        [low, high] = [high, low];
+                    this.item.key = new Interval(low, high);
+                }
+            }
+            else {
+                // Assume a concrete IntervalBase implementation was passed
+                this.item.key = key;
             }
         }
-
         this.max = this.item.key ? this.item.key.max : undefined;
     }
-
     isNil() {
-        return (this.item.key === undefined && this.item.value === undefined &&
-            this.left === null && this.right === null && this.color === RB_TREE_COLOR_BLACK);
+        return (this.item.key === undefined &&
+            this.item.values.length === 0 &&
+            this.left === null &&
+            this.right === null &&
+            this.color === RB_TREE_COLOR_BLACK);
     }
-
-    _value_less_than(other_node) {
-        return this.item.value && other_node.item.value && this.item.value.less_than ?
-            this.item.value.less_than(other_node.item.value) :
-            this.item.value < other_node.item.value;
+    requireKey() {
+        if (!this.item.key) {
+            throw new Error('Node key is undefined (nil/sentinel). Operation is not applicable.');
+        }
+        return this.item.key;
     }
-
     less_than(other_node) {
-        // if tree stores only keys
-        if (this.item.value === this.item.key && other_node.item.value === other_node.item.key) {
-            return this.item.key.less_than(other_node.item.key);
-        }
-        else {    // if tree stores keys and values
-            return this.item.key.less_than(other_node.item.key) ||
-                this.item.key.equal_to((other_node.item.key)) && this._value_less_than(other_node)
-        }
+        // Compare nodes by key only; values are stored in a bucket
+        const a = this.requireKey();
+        const b = other_node.requireKey();
+        return a.less_than(b);
     }
-
     _value_equal(other_node) {
-        return this.item.value && other_node.item.value && this.item.value.equal_to ?
-            this.item.value.equal_to(other_node.item.value) :
-            this.item.value === other_node.item.value;
+        // Deprecated in bucket mode; kept for backward compatibility if ever used
+        // Compare first elements if exist
+        const a = this.item.values[0];
+        const b = other_node.item.values[0];
+        return a && b && a.equal_to ? a.equal_to(b) : a === b;
     }
     equal_to(other_node) {
-        // if tree stores only keys
-        if (this.item.value === this.item.key && other_node.item.value === other_node.item.key) {
-            return this.item.key.equal_to(other_node.item.key);
-        }
-        else {    // if tree stores keys and values
-            return this.item.key.equal_to(other_node.item.key) && this._value_equal(other_node);
-        }
+        // Nodes are equal if keys are equal; values are kept in a bucket
+        const a = this.requireKey();
+        const b = other_node.requireKey();
+        return a.equal_to(b);
     }
-
     intersect(other_node) {
-        return this.item.key.intersect(other_node.item.key);
+        const a = this.requireKey();
+        const b = other_node.requireKey();
+        return a.intersect(b);
     }
-
     copy_data(other_node) {
         this.item.key = other_node.item.key;
-        this.item.value = other_node.item.value;
+        this.item.values = other_node.item.values.slice();
     }
-
     update_max() {
         // use key (Interval) max property instead of key.high
         this.max = this.item.key ? this.item.key.max : undefined;
         if (this.right && this.right.max) {
-            const comparable_max = this.item.key.constructor.comparable_max;  // static method
-            this.max = comparable_max(this.max, this.right.max);
+            this.max = this.max ? this.max.merge(this.right.max) : this.right.max;
         }
         if (this.left && this.left.max) {
-            const comparable_max = this.item.key.constructor.comparable_max;  // static method
-            this.max = comparable_max(this.max, this.left.max);
+            this.max = this.max ? this.max.merge(this.left.max) : this.left.max;
         }
     }
-
-    // Other_node does not intersect any node of left subtree, if this.left.max < other_node.item.key.low
+    // Other_node does not intersect any node of left subtree
     not_intersect_left_subtree(search_node) {
-        const comparable_less_than = this.item.key.constructor.comparable_less_than;  // static method
-        let high = this.left.max.high !== undefined ? this.left.max.high : this.left.max;
-        return comparable_less_than(high, search_node.item.key.low);
+        if (!this.left)
+            return true;
+        const high = this.left.max ? this.left.max.high : this.left.item.key.high;
+        const selfKey = this.requireKey();
+        const searchKey = search_node.requireKey();
+        return selfKey.comparable_less_than(high, searchKey.low);
     }
-
-    // Other_node does not intersect right subtree if other_node.item.key.high < this.right.key.low
+    // Other_node does not intersect right subtree
     not_intersect_right_subtree(search_node) {
-        const comparable_less_than = this.item.key.constructor.comparable_less_than;  // static method
-        let low = this.right.max.low !== undefined ? this.right.max.low : this.right.item.key.low;
-        return comparable_less_than(search_node.item.key.high, low);
+        if (!this.right)
+            return true;
+        const low = this.right.max ? this.right.max.low : this.right.item.key.low;
+        const selfKey = this.requireKey();
+        const searchKey = search_node.requireKey();
+        return selfKey.comparable_less_than(searchKey.high, low);
     }
 }
 
 /**
  * Created by Alex Bol on 3/31/2017.
  */
-
-// const nil_node = new Node();
-
 /**
- * Implementation of interval binary search tree <br/>
- * Interval tree stores items which are couples of {key:interval, value: value} <br/>
- * Interval is an object with high and low properties or simply pair [low,high] of numeric values <br />
- * @type {IntervalTree}
+ * Implementation of interval binary search tree
+ * Interval tree stores items which are couples of {key:interval, value: value}
+ * Interval is an object with high and low properties or simply pair [low,high] of numeric values
  */
 class IntervalTree {
     /**
@@ -261,168 +242,190 @@ class IntervalTree {
         this.root = null;
         this.nil_node = new Node();
     }
-
     /**
      * Returns number of items stored in the interval tree
      * @returns {number}
      */
     get size() {
         let count = 0;
-        this.tree_walk(this.root, () => count++);
+        this.tree_walk(this.root, (node) => count += node.item.values.length);
         return count;
     }
-
     /**
      * Returns array of sorted keys in the ascending order
      * @returns {Array}
      */
     get keys() {
-        let res = [];
-        this.tree_walk(this.root, (node) => res.push(
-            node.item.key.output ? node.item.key.output() : node.item.key
-        ));
+        const res = [];
+        this.tree_walk(this.root, (node) => res.push(node.item.key.output()));
         return res;
     }
-
     /**
      * Return array of values in the ascending keys order
      * @returns {Array}
      */
     get values() {
-        let res = [];
-        this.tree_walk(this.root, (node) => res.push(node.item.value));
+        const res = [];
+        this.tree_walk(this.root, (node) => {
+            for (const v of node.item.values)
+                res.push(v);
+        });
         return res;
     }
-
     /**
      * Returns array of items (<key,value> pairs) in the ascended keys order
      * @returns {Array}
      */
     get items() {
-        let res = [];
-        this.tree_walk(this.root, (node) => res.push({
-            key: node.item.key.output ? node.item.key.output() : node.item.key,
-            value: node.item.value
-        }));
+        const res = [];
+        this.tree_walk(this.root, (node) => {
+            const keyOut = node.item.key.output();
+            for (const v of node.item.values) {
+                res.push({ key: keyOut, value: v });
+            }
+        });
         return res;
     }
-
     /**
      * Returns true if tree is empty
      * @returns {boolean}
      */
     isEmpty() {
-        return (this.root == null || this.root === this.nil_node);
+        return this.root == null || this.root === this.nil_node;
     }
-
     /**
      * Clear tree
      */
     clear() {
         this.root = null;
     }
-
     /**
      * Insert new item into interval tree
-     * @param {Interval} key - interval object or array of two numbers [low, high]
-     * @param {Value<T>} value - value representing any object (optional)
-     * @returns {Node} returns reference to inserted node as an object {key:interval, value: value}
+     * @param key - interval object or array of two numbers [low, high]
+     * @param value - value representing any object (optional)
+     * @returns returns reference to inserted node
      */
     insert(key, value = key) {
-        if (key === undefined) return;
-        let insert_node = new Node(key, value, this.nil_node, this.nil_node, null, RB_TREE_COLOR_RED);
+        if (key === undefined)
+            return;
+        // If node with the same key exists, append value to its bucket
+        const existing = this.tree_search(this.root, new Node(key));
+        if (existing) {
+            existing.item.values.push(value);
+            return existing;
+        }
+        const insert_node = new Node(key, value, this.nil_node, this.nil_node, null, RB_TREE_COLOR_RED);
         this.tree_insert(insert_node);
         this.recalc_max(insert_node);
         return insert_node;
     }
-
     /**
      * Returns true if item {key,value} exist in the tree
-     * @param {Interval} key - interval correspondent to keys stored in the tree
-     * @param {Value<T>} value - value object to be checked
-     * @returns {boolean} true if item {key, value} exist in the tree, false otherwise
+     * @param key - interval correspondent to keys stored in the tree
+     * @param value - value object to be checked
+     * @returns true if item {key, value} exist in the tree, false otherwise
      */
     exist(key, value = key) {
-        let search_node = new Node(key, value);
-        return !!this.tree_search(this.root, search_node);
+        const node = this.tree_search(this.root, new Node(key));
+        if (!node)
+            return false;
+        // If value is omitted (or equals key by default), treat as key existence
+        if (arguments.length < 2 || value === key)
+            return true;
+        // Check if value exists in the bucket
+        return node.item.values.some((v) => (v && v.equal_to ? v.equal_to(value) : v === value));
     }
-
     /**
      * Remove entry {key, value} from the tree
-     * @param {Interval} key - interval correspondent to keys stored in the tree
-     * @param {Value<T>} value - value object
-     * @returns {boolean} true if item {key, value} deleted, false if not found
+     * @param key - interval correspondent to keys stored in the tree
+     * @param value - value object
+     * @returns deleted node or undefined if not found
      */
     remove(key, value = key) {
-        let search_node = new Node(key, value);
-        let delete_node = this.tree_search(this.root, search_node);
-        if (delete_node) {
-            this.tree_delete(delete_node);
+        const node = this.tree_search(this.root, new Node(key));
+        if (!node)
+            return undefined;
+        // If value omitted, remove entire node
+        if (arguments.length < 2) {
+            this.tree_delete(node);
+            return node;
         }
-        return delete_node;
+        // Remove one matching value from bucket
+        const idx = node.item.values.findIndex((v) => (v && v.equal_to ? v.equal_to(value) : v === value));
+        if (idx >= 0) {
+            node.item.values.splice(idx, 1);
+            // If bucket is now empty, remove node from tree
+            if (node.item.values.length === 0) {
+                this.tree_delete(node);
+            }
+            return node;
+        }
+        return undefined;
     }
-
-    /**
-     * Returns array of entry values which keys intersect with given interval <br/>
-     * If no values stored in the tree, returns array of keys which intersect given interval
-     * @param {Interval} interval - search interval, or tuple [low, high]
-     * @param outputMapperFn(value,key) - optional function that maps (value, key) to custom output
-     * @returns {Array}
-     */
     search(interval, outputMapperFn = (value, key) => value === key ? key.output() : value) {
-        let search_node = new Node(interval);
-        let resp_nodes = [];
+        const search_node = new Node(interval);
+        const resp_nodes = [];
         this.tree_search_interval(this.root, search_node, resp_nodes);
-        return resp_nodes.map(node => outputMapperFn(node.item.value, node.item.key))
+        const res = [];
+        for (const node of resp_nodes) {
+            for (const v of node.item.values) {
+                res.push(outputMapperFn(v, node.item.key));
+            }
+        }
+        return res;
     }
-
     /**
      * Returns true if intersection between given and any interval stored in the tree found
-     * @param {Interval} interval - search interval or tuple [low, high]
+     * @param interval - search interval or tuple [low, high]
      * @returns {boolean}
      */
     intersect_any(interval) {
-        let search_node = new Node(interval);
+        const search_node = new Node(interval);
         return this.tree_find_any_interval(this.root, search_node);
     }
-
     /**
-     * Tree visitor. For each node implement a callback function. <br/>
+     * Tree visitor. For each node implement a callback function.
      * Method calls a callback function with two parameters (key, value)
-     * @param visitor(key,value) - function to be called for each tree item
+     * @param visitor - function to be called for each tree item
      */
     forEach(visitor) {
-        this.tree_walk(this.root, (node) => visitor(node.item.key, node.item.value));
+        this.tree_walk(this.root, (node) => {
+            for (const v of node.item.values)
+                visitor(node.item.key, v);
+        });
     }
-
     /**
      * Value Mapper. Walk through every node and map node value to another value
-     * @param callback(value,key) - function to be called for each tree item
+     * @param callback - function to be called for each tree item
      */
     map(callback) {
         const tree = new IntervalTree();
-        this.tree_walk(this.root, (node) => tree.insert(node.item.key, callback(node.item.value, node.item.key)));
+        this.tree_walk(this.root, (node) => {
+            for (const v of node.item.values) {
+                tree.insert(node.item.key, callback(v, node.item.key));
+            }
+        });
         return tree;
     }
-
-    /**
-     * @param {Interval} interval - optional if the iterator is intended to start from the beginning
-     * @param outputMapperFn(value,key) - optional function that maps (value, key) to custom output
-     * @returns {Iterator}
-     */
     *iterate(interval, outputMapperFn = (value, key) => value === key ? key.output() : value) {
-        let node;
+        let node = null;
         if (interval) {
             node = this.tree_search_nearest_forward(this.root, new Node(interval));
-        } else if (this.root) {
+        }
+        else if (this.root) {
             node = this.local_minimum(this.root);
         }
         while (node) {
-            yield outputMapperFn(node.item.value, node.item.key);
+            for (const v of node.item.values) {
+                yield outputMapperFn(v, node.item.key);
+            }
             node = this.tree_successor(node);
         }
     }
-
+    /**
+     * Recalculate max property upward from given node to root
+     * @param node - starting node
+     */
     recalc_max(node) {
         let node_current = node;
         while (node_current.parent != null) {
@@ -430,11 +433,13 @@ class IntervalTree {
             node_current = node_current.parent;
         }
     }
-
+    /**
+     * Insert node into tree and rebalance
+     * @param insert_node - node to insert
+     */
     tree_insert(insert_node) {
         let current_node = this.root;
         let parent_node = null;
-
         if (this.root == null || this.root === this.nil_node) {
             this.root = insert_node;
         }
@@ -448,9 +453,7 @@ class IntervalTree {
                     current_node = current_node.right;
                 }
             }
-
             insert_node.parent = parent_node;
-
             if (insert_node.less_than(parent_node)) {
                 parent_node.left = insert_node;
             }
@@ -458,89 +461,76 @@ class IntervalTree {
                 parent_node.right = insert_node;
             }
         }
-
         this.insert_fixup(insert_node);
     }
-
-// After insertion insert_node may have red-colored parent, and this is a single possible violation
-// Go upwords to the root and re-color until violation will be resolved
+    /**
+     * Restore red-black tree properties after insertion
+     * @param insert_node - inserted node
+     */
     insert_fixup(insert_node) {
         let current_node;
         let uncle_node;
-
         current_node = insert_node;
         while (current_node !== this.root && current_node.parent.color === RB_TREE_COLOR_RED) {
-            if (current_node.parent === current_node.parent.parent.left) {   // parent is left child of grandfather
-                uncle_node = current_node.parent.parent.right;              // right brother of parent
-                if (uncle_node.color === RB_TREE_COLOR_RED) {             // Case 1. Uncle is red
-                    // re-color father and uncle into black
-                    current_node.parent.color = RB_TREE_COLOR_BLACK;
-                    uncle_node.color = RB_TREE_COLOR_BLACK;
-                    current_node.parent.parent.color = RB_TREE_COLOR_RED;
-                    current_node = current_node.parent.parent;
-                }
-                else {                                                    // Case 2 & 3. Uncle is black
-                    if (current_node === current_node.parent.right) {     // Case 2. Current if right child
-                        // This case is transformed into Case 3.
-                        current_node = current_node.parent;
-                        this.rotate_left(current_node);
-                    }
-                    current_node.parent.color = RB_TREE_COLOR_BLACK;    // Case 3. Current is left child.
-                    // Re-color father and grandfather, rotate grandfather right
-                    current_node.parent.parent.color = RB_TREE_COLOR_RED;
-                    this.rotate_right(current_node.parent.parent);
-                }
-            }
-            else {                                                         // parent is right child of grandfather
-                uncle_node = current_node.parent.parent.left;              // left brother of parent
-                if (uncle_node.color === RB_TREE_COLOR_RED) {             // Case 4. Uncle is red
-                    // re-color father and uncle into black
+            if (current_node.parent === current_node.parent.parent.left) {
+                uncle_node = current_node.parent.parent.right;
+                if (uncle_node.color === RB_TREE_COLOR_RED) {
                     current_node.parent.color = RB_TREE_COLOR_BLACK;
                     uncle_node.color = RB_TREE_COLOR_BLACK;
                     current_node.parent.parent.color = RB_TREE_COLOR_RED;
                     current_node = current_node.parent.parent;
                 }
                 else {
-                    if (current_node === current_node.parent.left) {             // Case 5. Current is left child
-                        // Transform into case 6
+                    if (current_node === current_node.parent.right) {
+                        current_node = current_node.parent;
+                        this.rotate_left(current_node);
+                    }
+                    current_node.parent.color = RB_TREE_COLOR_BLACK;
+                    current_node.parent.parent.color = RB_TREE_COLOR_RED;
+                    this.rotate_right(current_node.parent.parent);
+                }
+            }
+            else {
+                uncle_node = current_node.parent.parent.left;
+                if (uncle_node.color === RB_TREE_COLOR_RED) {
+                    current_node.parent.color = RB_TREE_COLOR_BLACK;
+                    uncle_node.color = RB_TREE_COLOR_BLACK;
+                    current_node.parent.parent.color = RB_TREE_COLOR_RED;
+                    current_node = current_node.parent.parent;
+                }
+                else {
+                    if (current_node === current_node.parent.left) {
                         current_node = current_node.parent;
                         this.rotate_right(current_node);
                     }
-                    current_node.parent.color = RB_TREE_COLOR_BLACK;    // Case 6. Current is right child.
-                    // Re-color father and grandfather, rotate grandfather left
+                    current_node.parent.color = RB_TREE_COLOR_BLACK;
                     current_node.parent.parent.color = RB_TREE_COLOR_RED;
                     this.rotate_left(current_node.parent.parent);
                 }
             }
         }
-
         this.root.color = RB_TREE_COLOR_BLACK;
     }
-
+    /**
+     * Delete node from tree and rebalance
+     * @param delete_node - node to delete
+     */
     tree_delete(delete_node) {
-        let cut_node;   // node to be cut - either delete_node or successor_node  ("y" from 14.4)
-        let fix_node;   // node to fix rb tree property   ("x" from 14.4)
-
-        if (delete_node.left === this.nil_node || delete_node.right === this.nil_node) {  // delete_node has less then 2 children
+        let cut_node;
+        let fix_node;
+        if (delete_node.left === this.nil_node || delete_node.right === this.nil_node) {
             cut_node = delete_node;
         }
-        else {                                                    // delete_node has 2 children
+        else {
             cut_node = this.tree_successor(delete_node);
         }
-
-        // fix_node if single child of cut_node
         if (cut_node.left !== this.nil_node) {
             fix_node = cut_node.left;
         }
         else {
             fix_node = cut_node.right;
         }
-
-        // remove cut_node from parent
-        /*if (fix_node != this.nil_node) {*/
-            fix_node.parent = cut_node.parent;
-        /*}*/
-
+        fix_node.parent = cut_node.parent;
         if (cut_node === this.root) {
             this.root = fix_node;
         }
@@ -551,99 +541,94 @@ class IntervalTree {
             else {
                 cut_node.parent.right = fix_node;
             }
-            cut_node.parent.update_max();        // update max property of the parent
+            cut_node.parent.update_max();
         }
-
-        this.recalc_max(fix_node);              // update max property upward from fix_node to root
-
-        // COPY DATA !!!
-        // Delete_node becomes cut_node, it means that we cannot hold reference
-        // to node in outer structure and we will have to delete by key, additional search need
+        this.recalc_max(fix_node);
         if (cut_node !== delete_node) {
             delete_node.copy_data(cut_node);
-            delete_node.update_max();           // update max property of the cut node at the new place
-            this.recalc_max(delete_node);       // update max property upward from delete_node to root
+            delete_node.update_max();
+            this.recalc_max(delete_node);
         }
-
-        if (/*fix_node != this.nil_node && */cut_node.color === RB_TREE_COLOR_BLACK) {
+        if (cut_node.color === RB_TREE_COLOR_BLACK) {
             this.delete_fixup(fix_node);
         }
     }
-
+    /**
+     * Restore red-black tree properties after deletion
+     * @param fix_node - node to fix from
+     */
     delete_fixup(fix_node) {
         let current_node = fix_node;
         let brother_node;
-
-        while (current_node !== this.root && current_node.parent != null && current_node.color === RB_TREE_COLOR_BLACK) {
-            if (current_node === current_node.parent.left) {          // fix node is left child
+        while (current_node !== this.root &&
+            current_node.parent != null &&
+            current_node.color === RB_TREE_COLOR_BLACK) {
+            if (current_node === current_node.parent.left) {
                 brother_node = current_node.parent.right;
-                if (brother_node.color === RB_TREE_COLOR_RED) {   // Case 1. Brother is red
-                    brother_node.color = RB_TREE_COLOR_BLACK;         // re-color brother
-                    current_node.parent.color = RB_TREE_COLOR_RED;    // re-color father
+                if (brother_node.color === RB_TREE_COLOR_RED) {
+                    brother_node.color = RB_TREE_COLOR_BLACK;
+                    current_node.parent.color = RB_TREE_COLOR_RED;
                     this.rotate_left(current_node.parent);
-                    brother_node = current_node.parent.right;                      // update brother
+                    brother_node = current_node.parent.right;
                 }
-                // Derive to cases 2..4: brother is black
                 if (brother_node.left.color === RB_TREE_COLOR_BLACK &&
-                    brother_node.right.color === RB_TREE_COLOR_BLACK) {  // case 2: both nephews black
-                    brother_node.color = RB_TREE_COLOR_RED;              // re-color brother
-                    current_node = current_node.parent;                  // continue iteration
+                    brother_node.right.color === RB_TREE_COLOR_BLACK) {
+                    brother_node.color = RB_TREE_COLOR_RED;
+                    current_node = current_node.parent;
                 }
                 else {
-                    if (brother_node.right.color === RB_TREE_COLOR_BLACK) {   // case 3: left nephew red, right nephew black
-                        brother_node.color = RB_TREE_COLOR_RED;          // re-color brother
-                        brother_node.left.color = RB_TREE_COLOR_BLACK;   // re-color nephew
+                    if (brother_node.right.color === RB_TREE_COLOR_BLACK) {
+                        brother_node.color = RB_TREE_COLOR_RED;
+                        brother_node.left.color = RB_TREE_COLOR_BLACK;
                         this.rotate_right(brother_node);
-                        brother_node = current_node.parent.right;                     // update brother
-                        // Derive to case 4: left nephew black, right nephew red
+                        brother_node = current_node.parent.right;
                     }
-                    // case 4: left nephew black, right nephew red
                     brother_node.color = current_node.parent.color;
                     current_node.parent.color = RB_TREE_COLOR_BLACK;
                     brother_node.right.color = RB_TREE_COLOR_BLACK;
                     this.rotate_left(current_node.parent);
-                    current_node = this.root;                         // exit from loop
+                    current_node = this.root;
                 }
             }
-            else {                                             // fix node is right child
+            else {
                 brother_node = current_node.parent.left;
-                if (brother_node.color === RB_TREE_COLOR_RED) {   // Case 1. Brother is red
-                    brother_node.color = RB_TREE_COLOR_BLACK;         // re-color brother
-                    current_node.parent.color = RB_TREE_COLOR_RED;    // re-color father
+                if (brother_node.color === RB_TREE_COLOR_RED) {
+                    brother_node.color = RB_TREE_COLOR_BLACK;
+                    current_node.parent.color = RB_TREE_COLOR_RED;
                     this.rotate_right(current_node.parent);
-                    brother_node = current_node.parent.left;                        // update brother
+                    brother_node = current_node.parent.left;
                 }
-                // Go to cases 2..4
                 if (brother_node.left.color === RB_TREE_COLOR_BLACK &&
-                    brother_node.right.color === RB_TREE_COLOR_BLACK) {   // case 2
-                    brother_node.color = RB_TREE_COLOR_RED;             // re-color brother
-                    current_node = current_node.parent;                              // continue iteration
+                    brother_node.right.color === RB_TREE_COLOR_BLACK) {
+                    brother_node.color = RB_TREE_COLOR_RED;
+                    current_node = current_node.parent;
                 }
                 else {
-                    if (brother_node.left.color === RB_TREE_COLOR_BLACK) {  // case 3: right nephew red, left nephew black
-                        brother_node.color = RB_TREE_COLOR_RED;            // re-color brother
-                        brother_node.right.color = RB_TREE_COLOR_BLACK;    // re-color nephew
+                    if (brother_node.left.color === RB_TREE_COLOR_BLACK) {
+                        brother_node.color = RB_TREE_COLOR_RED;
+                        brother_node.right.color = RB_TREE_COLOR_BLACK;
                         this.rotate_left(brother_node);
-                        brother_node = current_node.parent.left;                        // update brother
-                        // Derive to case 4: right nephew black, left nephew red
+                        brother_node = current_node.parent.left;
                     }
-                    // case 4: right nephew black, left nephew red
                     brother_node.color = current_node.parent.color;
                     current_node.parent.color = RB_TREE_COLOR_BLACK;
                     brother_node.left.color = RB_TREE_COLOR_BLACK;
                     this.rotate_right(current_node.parent);
-                    current_node = this.root;                               // force exit from loop
+                    current_node = this.root;
                 }
             }
         }
-
         current_node.color = RB_TREE_COLOR_BLACK;
     }
-
+    /**
+     * Search for node with given key and value
+     * @param node - starting node
+     * @param search_node - node to search for
+     * @returns found node or undefined
+     */
     tree_search(node, search_node) {
         if (node == null || node === this.nil_node)
             return undefined;
-
         if (search_node.equal_to(node)) {
             return node;
         }
@@ -654,45 +639,58 @@ class IntervalTree {
             return this.tree_search(node.right, search_node);
         }
     }
-
+    /**
+     * Find nearest forward node from given interval
+     * @param node - starting node
+     * @param search_node - search interval as node
+     * @returns nearest forward node or null
+     */
     tree_search_nearest_forward(node, search_node) {
-        let best;
+        let best = null;
         let curr = node;
         while (curr && curr !== this.nil_node) {
             if (curr.less_than(search_node)) {
                 if (curr.intersect(search_node)) {
                     best = curr;
                     curr = curr.left;
-                } else {
+                }
+                else {
                     curr = curr.right;
                 }
-            } else {
-                if (!best || curr.less_than(best)) best = curr;
+            }
+            else {
+                if (!best || curr.less_than(best))
+                    best = curr;
                 curr = curr.left;
             }
         }
         return best || null;
     }
-
-    // Original search_interval method; container res support push() insertion
-    // Search all intervals intersecting given one
+    /**
+     * Search all intervals intersecting given interval
+     * @param node - starting node
+     * @param search_node - search interval as node
+     * @param res - result array to collect found nodes
+     */
     tree_search_interval(node, search_node, res) {
         if (node != null && node !== this.nil_node) {
-            // if (node->left != this.nil_node && node->left->max >= low) {
             if (node.left !== this.nil_node && !node.not_intersect_left_subtree(search_node)) {
                 this.tree_search_interval(node.left, search_node, res);
             }
-            // if (low <= node->high && node->low <= high) {
             if (node.intersect(search_node)) {
                 res.push(node);
             }
-            // if (node->right != this.nil_node && node->low <= high) {
             if (node.right !== this.nil_node && !node.not_intersect_right_subtree(search_node)) {
                 this.tree_search_interval(node.right, search_node, res);
             }
         }
     }
-
+    /**
+     * Check if any interval intersects with given interval
+     * @param node - starting node
+     * @param search_node - search interval as node
+     * @returns true if intersection found
+     */
     tree_find_any_interval(node, search_node) {
         let found = false;
         if (node != null && node !== this.nil_node) {
@@ -708,7 +706,11 @@ class IntervalTree {
         }
         return found;
     }
-
+    /**
+     * Find node with minimum key in subtree
+     * @param node - root of subtree
+     * @returns node with minimum key
+     */
     local_minimum(node) {
         let node_min = node;
         while (node_min.left != null && node_min.left !== this.nil_node) {
@@ -716,8 +718,11 @@ class IntervalTree {
         }
         return node_min;
     }
-
-    // not in use
+    /**
+     * Find node with maximum key in subtree
+     * @param node - root of subtree
+     * @returns node with maximum key
+     */
     local_maximum(node) {
         let node_max = node;
         while (node_max.right != null && node_max.right !== this.nil_node) {
@@ -725,12 +730,15 @@ class IntervalTree {
         }
         return node_max;
     }
-
+    /**
+     * Find successor node (next in sorted order)
+     * @param node - current node
+     * @returns successor node or null
+     */
     tree_successor(node) {
         let node_successor;
         let current_node;
         let parent_node;
-
         if (node.right !== this.nil_node) {
             node_successor = this.local_minimum(node.right);
         }
@@ -745,28 +753,21 @@ class IntervalTree {
         }
         return node_successor;
     }
-
-    //           |            right-rotate(T,y)       |
-    //           y            ---------------.       x
-    //          / \                                  / \
-    //         x   c          left-rotate(T,x)      a   y
-    //        / \             <---------------         / \
-    //       a   b                                    b   c
-
+    /**
+     * Left rotation around node x
+     * @param x - node to rotate
+     */
     rotate_left(x) {
-        let y = x.right;
-
-        x.right = y.left;           // b goes to x.right
-
+        const y = x.right;
+        x.right = y.left;
         if (y.left !== this.nil_node) {
-            y.left.parent = x;     // x becomes parent of b
+            y.left.parent = x;
         }
-        y.parent = x.parent;       // move parent
-
+        y.parent = x.parent;
         if (x === this.root) {
-            this.root = y;           // y becomes root
+            this.root = y;
         }
-        else {                        // y becomes child of x.parent
+        else {
             if (x === x.parent.left) {
                 x.parent.left = y;
             }
@@ -774,33 +775,30 @@ class IntervalTree {
                 x.parent.right = y;
             }
         }
-        y.left = x;                 // x becomes left child of y
-        x.parent = y;               // and y becomes parent of x
-
+        y.left = x;
+        x.parent = y;
         if (x !== null && x !== this.nil_node) {
             x.update_max();
         }
-
-        y = x.parent;
         if (y != null && y !== this.nil_node) {
             y.update_max();
         }
     }
-
+    /**
+     * Right rotation around node y
+     * @param y - node to rotate
+     */
     rotate_right(y) {
-        let x = y.left;
-
-        y.left = x.right;           // b goes to y.left
-
+        const x = y.left;
+        y.left = x.right;
         if (x.right !== this.nil_node) {
-            x.right.parent = y;        // y becomes parent of b
+            x.right.parent = y;
         }
-        x.parent = y.parent;          // move parent
-
-        if (y === this.root) {        // x becomes root
+        x.parent = y.parent;
+        if (y === this.root) {
             this.root = x;
         }
-        else {                        // y becomes child of x.parent
+        else {
             if (y === y.parent.left) {
                 y.parent.left = x;
             }
@@ -808,42 +806,50 @@ class IntervalTree {
                 y.parent.right = x;
             }
         }
-        x.right = y;                 // y becomes right child of x
-        y.parent = x;               // and x becomes parent of y
-
+        x.right = y;
+        y.parent = x;
         if (y !== null && y !== this.nil_node) {
             y.update_max();
         }
-
-        x = y.parent;
         if (x != null && x !== this.nil_node) {
             x.update_max();
         }
     }
-
+    /**
+     * Performs in-order traversal of the tree
+     * Applies action callback to each node in ascending order of keys
+     * @param node - starting node for traversal (typically root)
+     * @param action - callback function to be executed for each node
+     */
     tree_walk(node, action) {
         if (node != null && node !== this.nil_node) {
             this.tree_walk(node.left, action);
-            // arr.push(node.toArray());
             action(node);
             this.tree_walk(node.right, action);
         }
     }
-
-    /* Return true if all red nodes have exactly two black child nodes */
+    /**
+     * Test red-black tree property: all red nodes have exactly two black child nodes
+     * @returns true if property holds
+     */
     testRedBlackProperty() {
         let res = true;
         this.tree_walk(this.root, function (node) {
             if (node.color === RB_TREE_COLOR_RED) {
-                if (!(node.left.color === RB_TREE_COLOR_BLACK && node.right.color === RB_TREE_COLOR_BLACK)) {
+                if (!(node.left.color === RB_TREE_COLOR_BLACK &&
+                    node.right.color === RB_TREE_COLOR_BLACK)) {
                     res = false;
                 }
             }
         });
         return res;
     }
-
-    /* Throw error if not every path from root to bottom has same black height */
+    /**
+     * Test red-black tree property: every path from root to leaf has same black height
+     * @param node - starting node
+     * @returns black height
+     * @throws Error if property is violated
+     */
     testBlackHeightProperty(node) {
         let height = 0;
         let heightLeft = 0;
@@ -872,5 +878,9 @@ class IntervalTree {
 }
 
 exports.Interval = Interval;
+exports.Interval2D = Interval2D;
+exports.IntervalBase = IntervalBase;
+exports.IntervalTree = IntervalTree;
 exports.Node = Node;
 exports.default = IntervalTree;
+//# sourceMappingURL=main.cjs.map
