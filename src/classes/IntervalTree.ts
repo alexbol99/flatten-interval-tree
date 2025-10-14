@@ -41,7 +41,7 @@ class IntervalTree<V = unknown> {
     get keys(): any[] {
         const res: any[] = [];
         this.tree_walk(this.root, (node) =>
-            res.push(node.item.key.output ? node.item.key.output() : node.item.key)
+            res.push(node.item.key!.output())
         );
         return res;
     }
@@ -65,7 +65,7 @@ class IntervalTree<V = unknown> {
     get items(): Array<{ key: any; value: V }> {
         const res: Array<{ key: any; value: V }> = [];
         this.tree_walk(this.root, (node) => {
-            const keyOut = node.item.key.output ? node.item.key.output() : node.item.key;
+            const keyOut = node.item.key!.output();
             for (const v of node.item.values) {
                 res.push({ key: keyOut, value: v });
             }
@@ -171,7 +171,7 @@ class IntervalTree<V = unknown> {
         const res: any[] = [];
         for (const node of resp_nodes) {
             for (const v of node.item.values) {
-                res.push(outputMapperFn(v, node.item.key));
+                res.push(outputMapperFn(v, node.item.key!));
             }
         }
         return res;
@@ -194,7 +194,7 @@ class IntervalTree<V = unknown> {
      */
     forEach(visitor: (key: IntervalBase, value: V) => void): void {
         this.tree_walk(this.root, (node) => {
-            for (const v of node.item.values) visitor(node.item.key, v);
+            for (const v of node.item.values) visitor(node.item.key!, v);
         });
     }
 
@@ -206,7 +206,7 @@ class IntervalTree<V = unknown> {
         const tree = new IntervalTree<U>();
         this.tree_walk(this.root, (node) => {
             for (const v of node.item.values) {
-                tree.insert(node.item.key, callback(v, node.item.key));
+                tree.insert(node.item.key!, callback(v, node.item.key!));
             }
         });
         return tree;
@@ -235,7 +235,7 @@ class IntervalTree<V = unknown> {
         }
         while (node) {
             for (const v of node.item.values) {
-                yield outputMapperFn(v, node.item.key);
+                yield outputMapperFn(v, node.item.key!);
             }
             node = this.tree_successor(node);
         }

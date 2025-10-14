@@ -127,22 +127,30 @@ const RB_TREE_COLOR_BLACK = 0;
  * Created by Alex Bol on 4/1/2017.
  */
 class Node {
-    constructor(key = undefined, value = undefined, left = null, right = null, parent = null, color = RB_TREE_COLOR_BLACK) {
+    constructor(key, value, left = null, right = null, parent = null, color = RB_TREE_COLOR_BLACK) {
         this.left = left;
         this.right = right;
         this.parent = parent;
         this.color = color;
-        this.item = { key: key, values: [] };
+        this.item = { key: undefined, values: [] };
         if (value !== undefined) {
             this.item.values.push(value);
         }
-        /* If key is an array of two numbers, convert to Interval */
-        if (key && Array.isArray(key) && key.length === 2) {
-            if (!Number.isNaN(key[0]) && !Number.isNaN(key[1])) {
-                let [low, high] = key;
-                if (low > high)
-                    [low, high] = [high, low];
-                this.item.key = new Interval(low, high);
+        // Initialize key if provided
+        if (key !== undefined) {
+            if (Array.isArray(key)) {
+                const [rawLow, rawHigh] = key;
+                if (!Number.isNaN(rawLow) && !Number.isNaN(rawHigh)) {
+                    let low = rawLow;
+                    let high = rawHigh;
+                    if (low > high)
+                        [low, high] = [high, low];
+                    this.item.key = new Interval(low, high);
+                }
+            }
+            else {
+                // Assume a concrete IntervalBase implementation was passed
+                this.item.key = key;
             }
         }
         this.max = this.item.key ? this.item.key.max : undefined;
@@ -154,9 +162,17 @@ class Node {
             this.right === null &&
             this.color === RB_TREE_COLOR_BLACK);
     }
+    requireKey() {
+        if (!this.item.key) {
+            throw new Error('Node key is undefined (nil/sentinel). Operation is not applicable.');
+        }
+        return this.item.key;
+    }
     less_than(other_node) {
         // Compare nodes by key only; values are stored in a bucket
-        return this.item.key.less_than(other_node.item.key);
+        const a = this.requireKey();
+        const b = other_node.requireKey();
+        return a.less_than(b);
     }
     _value_equal(other_node) {
         // Deprecated in bucket mode; kept for backward compatibility if ever used
@@ -167,10 +183,14 @@ class Node {
     }
     equal_to(other_node) {
         // Nodes are equal if keys are equal; values are kept in a bucket
-        return this.item.key.equal_to(other_node.item.key);
+        const a = this.requireKey();
+        const b = other_node.requireKey();
+        return a.equal_to(b);
     }
     intersect(other_node) {
-        return this.item.key.intersect(other_node.item.key);
+        const a = this.requireKey();
+        const b = other_node.requireKey();
+        return a.intersect(b);
     }
     copy_data(other_node) {
         this.item.key = other_node.item.key;
@@ -188,17 +208,21 @@ class Node {
     }
     // Other_node does not intersect any node of left subtree
     not_intersect_left_subtree(search_node) {
-        const high = this.left.max.high !== undefined
-            ? this.left.max.high
-            : this.left.max;
-        return this.item.key.comparable_less_than(high, search_node.item.key.low);
+        if (!this.left)
+            return true;
+        const high = this.left.max ? this.left.max.high : this.left.item.key.high;
+        const selfKey = this.requireKey();
+        const searchKey = search_node.requireKey();
+        return selfKey.comparable_less_than(high, searchKey.low);
     }
     // Other_node does not intersect right subtree
     not_intersect_right_subtree(search_node) {
-        const low = this.right.max.low !== undefined
-            ? this.right.max.low
-            : this.right.item.key.low;
-        return this.item.key.comparable_less_than(search_node.item.key.high, low);
+        if (!this.right)
+            return true;
+        const low = this.right.max ? this.right.max.low : this.right.item.key.low;
+        const selfKey = this.requireKey();
+        const searchKey = search_node.requireKey();
+        return selfKey.comparable_less_than(searchKey.high, low);
     }
 }
 
@@ -233,7 +257,7 @@ class IntervalTree {
      */
     get keys() {
         const res = [];
-        this.tree_walk(this.root, (node) => res.push(node.item.key.output ? node.item.key.output() : node.item.key));
+        this.tree_walk(this.root, (node) => res.push(node.item.key.output()));
         return res;
     }
     /**
@@ -255,7 +279,7 @@ class IntervalTree {
     get items() {
         const res = [];
         this.tree_walk(this.root, (node) => {
-            const keyOut = node.item.key.output ? node.item.key.output() : node.item.key;
+            const keyOut = node.item.key.output();
             for (const v of node.item.values) {
                 res.push({ key: keyOut, value: v });
             }
