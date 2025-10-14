@@ -31,7 +31,7 @@
     "test:watch": "node --loader ts-node/esm ./node_modules/mocha/bin/mocha.js --extensions ts --watch 'test/**/*.ts'",
     "coverage": "c8 --reporter=html --reporter=text node --loader ts-node/esm ./node_modules/mocha/bin/mocha.js --extensions ts 'test/**/*.ts'",
     "docs": "typedoc",
-    "release:alpha": "npm run build && npm test && npm run docs && npm publish",
+    "release": "npm run build && npm test && npm run docs && npm publish",
     "prepublishOnly": "npm run build && npm test"
   },
   "repository": {
