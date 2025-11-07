@@ -27,3 +27,5 @@ jobs:
       # npm >= 11.5.1 supports OIDC trusted publishing (no NPM_TOKEN)
       - name: Publish
         run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
